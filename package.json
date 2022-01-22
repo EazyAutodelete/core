@@ -1,0 +1,32 @@
+{
+  "name": "@eazyautodelete/eazyautodelete-core",
+  "version": "1.0.0",
+  "description": "🧰 Core Package used by the EazyAutodelete Discord Bot",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eazyautodelete/eazyautodelete-core.git"
+  },
+  "author": "qreepex",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eazyautodelete/eazyautodelete-core/issues"
+  },
+  "homepage": "https://github.com/eazyautodelete/eazyautodelete-core#readme",
+  "devDependencies": {
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@top-gg/sdk": "^3.1.3",
+    "axios": "^0.24.0",
+    "chalk": "^4.1.2",
+    "discord.js": "^13.3.1",
+    "request": "^2.88.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}
