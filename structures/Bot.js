@@ -190,6 +190,84 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
         };
     };
 
+    /**
+     * @param {number} mode 
+     * @returns {string}
+     */
+    modeToString(mode) {
+        switch(mode) {
+            case 0:
+                return `Deactivated`
+
+            case 1:
+                return `Wait 30s and then delete the message`
+
+            case 2:
+                return `Delete all messages every 5m`
+
+            case 3:
+                return `Wait 5 messages and then delete all messages`
+
+            case 4:
+                return `Keep the newest 5 messages and delete`
+        }
+    };
+
+    /**
+     * @param {number} filter 
+     * @returns {string}
+     */
+    filterToString(filter) {
+        switch(filter) {
+            case 0:
+                return `all`
+
+            case 1:
+                return `with Emojis`
+
+            case 2:
+                return `without Emojis`
+
+            case 3:
+                return `with Links`
+
+            case 4:
+                return `without Links`
+
+            case 5:
+                return `with Attachment`
+
+            case 6:
+                return `without Attachment`
+
+            case 7:
+                return `pinned`
+
+            case 8:
+                return `not pinned`
+
+            case 9:
+                return `Regex`
+
+            case 10:
+                return `not regex`
+        }
+    }
+
+    /**
+     * @param {string} filterUsage 
+     * @returns {string}
+     */
+    filterUsageToString(filterUsage) {
+        switch (filterUsage) {
+            case "all":
+                return `Meet all specified filters`
+        
+            case "one":
+                return `Meet one of the specified filters`
+        }
+    }
+
     async bulkDelete(channel, messages) {
         if(!channel || typeof channel != "string") return [];
         if(Array.isArray(messages) || messages instanceof Collection) {
