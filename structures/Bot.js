@@ -408,11 +408,7 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
     
     async registerCommands(dir = '') {
         const files = await fs.readdir(dir);
-        console.log("333"+files);
-        console.log("444"+dir)
         for(const file of files) {
-            console.log("222"+file)
-            console.log(`111, ${dir}/${file}`)
             const stat = await fs.lstat(`${dir}/${file}`);
             if(stat.isDirectory()) this.registerCommands(`${dir}/${file}`);
             if(file.endsWith('.js')) {
