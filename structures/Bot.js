@@ -1,7 +1,7 @@
 const   { Client, Collection, User, Intents, GuildMember, SnowflakeUtil } = require("discord.js"),
         util = require("util"),
         WebHook = require("../utils/WebHook.js"),
-        DatabaseHandler = require("../../eazyautodelete-db-client"),
+        DatabaseHandler = require("@eazyautodelete/eazyautodelete-db-client"),
         Command = require("./Command.js"),
         Event = require("./Event.js"),
         Logger = require("../utils/Logger.js"),
@@ -10,7 +10,7 @@ const   { Client, Collection, User, Intents, GuildMember, SnowflakeUtil } = requ
         axios = require('axios'),
         path = require("path"),
         constants = require("../constants/constants.js"),
-        { translate, Translator, locales } = require("../../eazyautodelete-lang");
+        { translate, Translator, locales } = require("@eazyautodelete/eazyautodelete-lang");
 
 /**
  * The main class for the bot and main hub for interacting with the Discord API.
