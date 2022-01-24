@@ -409,12 +409,14 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
     
     async registerCommands(dir = '', client) {
         const filePath = path.join(__dirname, dir);
-        const files = await fs.readdir(filePath);
+        const files = await fs.readdir(dir);
+        console.log(files);
         for(const file of files) {
+            console.log(file)
             const stat = await fs.lstat(path.join(filePath, file));
             if(stat.isDirectory()) this.registerCommands(path.join(dir, file));
             if(file.endsWith('.js')) {
-                const command = require(path.join(filePath, file));
+                const command = require(`${dir}/${file}`);
                 if(command.prototype instanceof Command) {
                     const cmd = new command(client)
                     this.commands.set(cmd.help.name, cmd);
