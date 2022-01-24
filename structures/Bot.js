@@ -390,16 +390,15 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
         return user;
     };
 
-    async registerEvents(dir = '', client) {
-        const filePath = path.join(__dirname, dir);
-        const files = await fs.readdir(filePath);
+    async registerEvents(dir = '') {
+        const files = await fs.readdir(dir);
         for(const file of files) {
-            const stat = await fs.lstat(path.join(filePath, file));
-            if(stat.isDirectory()) this.registerEvents((path.join(dir, file)), client);
+            const stat = await fs.lstat(`${dir}/${file}`);
+            if(stat.isDirectory()) this.registerEvents(`${dir}/${file}`);
             if(file.endsWith('.js')) {
-                const event = require(path.join(filePath, file));
+                const event = require(`${dir}/${file}`);
                 if(event.prototype instanceof Event) {
-                    const evnt = new event(client);
+                    const evnt = new event(this);
                     this.on(evnt.name, evnt.run.bind(evnt, this));
                     this.activeEvents.push(evnt.name)
                 };
@@ -408,7 +407,6 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
     };
     
     async registerCommands(dir = '') {
-        const filePath = path.join(__dirname, dir);
         const files = await fs.readdir(dir);
         console.log("333"+files);
         console.log("444"+dir)
