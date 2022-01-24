@@ -38,12 +38,7 @@ class Bot extends Client {
             ], 
             partials: [
                 "CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION", "USER"
-            ],
-            sweepers: {
-                messages: {
-                    lifetime: 0
-                }
-            }
+            ]
         });
         // config
         this.config = config || {};

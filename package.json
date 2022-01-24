@@ -1,6 +1,6 @@
 {
   "name": "@eazyautodelete/eazyautodelete-core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "🧰 Core Package used by the EazyAutodelete Discord Bot",
   "main": "src/index.js",
   "scripts": {
