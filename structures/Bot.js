@@ -407,18 +407,18 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
         };
     };
     
-    async registerCommands(dir = '', client) {
+    async registerCommands(dir = '') {
         const filePath = path.join(__dirname, dir);
         const files = await fs.readdir(dir);
         console.log(files);
         for(const file of files) {
             console.log(file)
-            const stat = await fs.lstat(path.join(filePath, file));
-            if(stat.isDirectory()) this.registerCommands(path.join(dir, file));
+            const stat = await fs.lstat(`${dir}/${file}`);
+            if(stat.isDirectory()) this.registerCommands(`${dir}/${file}`);
             if(file.endsWith('.js')) {
                 const command = require(`${dir}/${file}`);
                 if(command.prototype instanceof Command) {
-                    const cmd = new command(client)
+                    const cmd = new command(this)
                     this.commands.set(cmd.help.name, cmd);
                 };
             };
