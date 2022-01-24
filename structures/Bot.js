@@ -54,11 +54,11 @@ class Bot extends Client {
         // event logging
         this.startedAt = new Date();
         this.startedAtString = `${this.startedAt.getFullYear()}-${this.startedAt.getMonth()-1}-${this.startedAt.getDate()} ${this.startedAt.getHours()}-${this.startedAt.getMinutes()}-${this.startedAt.getSeconds()}`
-        this.eventLogPath = `./log/shards/events/${this.shard.ids}/${this.startedAtString}.log`
+        this.eventLogPath = `${require.main.path}/log/shards/events/${this.shard.ids}/${this.startedAtString}.log`
         this.eventLog = ``;  
         this.activeEvents = [];
 
-        mkdir(`./log/shards/events/${this.shard.ids}`, () => {})
+        mkdir(`${require.main.path}/log/shards/events/${this.shard.ids}`, () => {})
         writeFileSync(this.eventLogPath, "")
 
         setInterval(() => {
@@ -95,7 +95,7 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
         this.commands = new Collection();
         this.disabledCommands = new Map();
 
-        readFile("./config/disabled.json", (err, data) => {
+        readFile(`${require.main.path}/config/disabled.json`, (err, data) => {
             if(err) return this.Logger.error(err);
             for(let command in data) this.disableCommand(command, data[command]);
         });
@@ -228,7 +228,7 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
         this.disabledCommands.forEach((value, key) => {
             data[key] = value;
         });
-        writeFileSync("./config/disabled.json", JSON.stringify(data));
+        writeFileSync(`${require.main.path}/config/disabled.json`, JSON.stringify(data));
         return reason;
     };
 
@@ -239,7 +239,7 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
         this.disabledCommands.forEach((value, key) => {
             data[key] = value;
         });
-        writeFileSync("./config/disabled.json", JSON.stringify(data));
+        writeFileSync(`${require.main.path}/config/disabled.json`, JSON.stringify(data));
         return true;
     };
 
