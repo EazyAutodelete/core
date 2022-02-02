@@ -46,6 +46,9 @@ class Bot extends Client {
         // 
         this.wait = util.promisify(setTimeout);
 
+        // shards
+        this.allShardsReady = false;
+
         // assets
         this.assets = constants.assets;
         this.colors = constants.assets.colors;
