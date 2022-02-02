@@ -25,7 +25,7 @@ class BaseEvent {
     };
 
     getShard(client) {
-        return client.shard.ids;
+        return client.shard.ids?.[0];
     };
 };
 
