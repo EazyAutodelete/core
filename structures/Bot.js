@@ -109,7 +109,10 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
         // logging
         this.Logger = new Logger();
         this.logger = this.Logger;
-        this.loggedActions = new Map();
+        this.loggedActions = {
+            messages: new Map(),
+            commands: new Map(),
+        };
 
         // database
         this.database = new DatabaseHandler({ redis: this.config?.redis, mongo: this.config?.mongo }, this.Logger);

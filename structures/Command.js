@@ -1,4 +1,4 @@
-const { MessageEmbed, CommandInteraction, Message, ClientApplication, AutocompleteInteraction } = require("discord.js");
+const { MessageEmbed, CommandInteraction, Message, ClientApplication, AutocompleteInteraction, MessageActionRow, MessageButton } = require("discord.js");
 const path = require("path");
 const Bot = require("./Bot.js");
 const Logger = require("../utils/Logger.js")
@@ -84,12 +84,29 @@ class BaseCommand {
     };
 
     /**
+     * @param {string} url 
+     * @returns {MessageActionRow}
+     */
+    docsButton(url) {
+        return new MessageActionRow()
+            .addComponents([ 
+                new MessageButton()
+                    .setDisabled(false)
+                    .setCustomId("docs_button")
+                    .setEmoji("❓")
+                    .setLabel("Help")
+                    .setStyle("LINK")
+                    .setURL(url),
+            ]);
+    };
+
+    /**
      * The function being runned when an application command is executed.
      * @param {CommandInteraction} interaction 
      * @returns {null}
      */
 	async run(interaction) {
-        return this.Logger.warn("Ended up in command.js [" + this.config + "]")
+        return this.Logger.warn("Ended up in command.js [" + this.config + "]");
     };
 
     /**
