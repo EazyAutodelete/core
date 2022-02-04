@@ -106,9 +106,10 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
         // ready
         this.ready = false;
 
-        // loggin
+        // logging
         this.Logger = new Logger();
         this.logger = this.Logger;
+        this.loggedActions = new Map();
 
         // database
         this.database = new DatabaseHandler({ redis: this.config?.redis, mongo: this.config?.mongo }, this.Logger);
@@ -191,6 +192,22 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
             }
             return filteredMessages;
         };
+    };
+
+    /**
+     * Logs an action.
+     * @param {string} action 
+     * @param {number} duration 
+     * @returns {Boolean}
+     */
+    logAction(action, duration) {
+        if(!action || typeof action != "string" || !duration || typeof duration != "number") return false;
+
+        new WebHook(this.assets?.url?.logs?.actions)
+            .setContent(`**Action:**\n> ${action}\n\n**Duration:**\n> ${duration}ms`)
+            .send();
+
+        return true;
     };
 
     /**
@@ -298,8 +315,8 @@ Shard-${this.shard.ids} - - ${`[${d.getDate()}/${d.toDateString().split(" ")[1]}
             let messageIds = messages instanceof Collection ? [...messages.keys()] : messages.map(x => x?.id || x);
             new WebHook(this.assets?.url?.messageWebhook)
                 .setContent(`Deleted **${messageIds.length} messages** in \`#${channelId}\`.\n\n\`\`\`js\n${messageIds}\`\`\``)
-                .send()
-        }
+                .send();
+        };
     };
 
     disableCommand(command, reason) {

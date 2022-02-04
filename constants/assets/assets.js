@@ -4,7 +4,7 @@ const images = require("./img/images.js");
 module.exports = {
     colors,
     images,
-    invite:             "https://discord.com/oauth2/authorize?client_id=746453621821931634&permissions=391232&scope=bot",
+    invite:             "https://eazyautodelete.xyz/invite/",
     statuspage:         "https://status.eazyautodelete.xyz",
     votepage:           "https://eazyautodelete.xyz/vote/",
     url: {
@@ -17,7 +17,8 @@ module.exports = {
         website:        "https://eazyautodelete.xyz/",
         logs: {
             guilds:     "https://discord.com/api/webhooks/924720345867493446/m1bkFQcWyF2zA4n_5N9DB6fQP3THXTh0RbSPusHN_0RMg3m59rG4umskM5OfdUDATK3j",
-            channels:   "https://discord.com/api/webhooks/924720464536940594/OTKLNui2phTEZjIAl3pZA5f7HOq4zckI3JX9XaPSsdOJILzo6ntBlV-uj8M_X73zG0gQ"
+            channels:   "https://discord.com/api/webhooks/924720464536940594/OTKLNui2phTEZjIAl3pZA5f7HOq4zckI3JX9XaPSsdOJILzo6ntBlV-uj8M_X73zG0gQ",
+            actions:    "https://discord.com/api/webhooks/939212244372299846/5JNK6BHeKOuxZ8SPoRQC9HMn4I1UTek_iWbJ-gdX_2pNoL3Nm4cj6LR1-7Jvm3JdNvcv"
         }
     },
 };
