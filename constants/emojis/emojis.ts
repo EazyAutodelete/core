@@ -1,4 +1,4 @@
-module.exports = {
+const emojis = {
     error:"<a:EazyBotsError:825828334164377653>",
     succes:"<a:EazyBotsYes:884461991832465468>",
     yes: "<a:EazyBotsYes:884461991832465468>",
@@ -10,7 +10,7 @@ module.exports = {
     blank:"<:bla:84462458963756564>",
     nodeJS:"<:EazyBotsNodeJS:838388312380932116>",
     dev:"<:EazyBotsDeveloper:838389685289484289>",
-    error: "<a:EazyBotsError:825828334164377653>",
+    err: "<a:EazyBotsError:825828334164377653>",
     uptimerobot:"<:uptimeRobot:883984935407456266>",
     calender: "<:EazyBotsCalender:838384636140453898>",
     discord: {
@@ -30,3 +30,5 @@ module.exports = {
         ONLINE: "<:online:923577402137927760>",
     },
 };
+
+export default emojis;

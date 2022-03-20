@@ -1,8 +1,9 @@
-const { Console } = require("console");
-const { User } = require("discord.js");
-const chalk = require("chalk");
+import { User } from "discord.js";
 
-class Logger extends Console {
+import { Console } from "console";
+import * as chalk from "chalk";
+
+export default class Logger extends Console {
 
     constructor() {
         super(process.stdout, process.stderr);
@@ -11,18 +12,18 @@ class Logger extends Console {
     /**
      * @param {String} input
     */
-    info(input, type = "INFO") {
+    info(input: string, type: string = "INFO"): void {
         if(type === "BLANK") {
             return this.log(chalk.hidden("-"))
         }
         const mess = chalk.bold.cyan(this.date() + " - [ "+type+" ] => ") + input;
-        this.log(mess);
+        super.log(mess);
     };
 
     /**
      * @param {String} input
     */
-    error(input) {
+    error(input: string): void {
         const mess = chalk.bold.redBright(this.date() + " - [ ERR- ] => ") + input;
         super.error(mess);
     };
@@ -30,7 +31,7 @@ class Logger extends Console {
     /**
      * @param {String} input
     */
-    warn(input) {
+    warn(input: string): void {
         const mess = chalk.bold.yellow(this.date() + " - [ WARN ] => ") + input;
         super.warn(mess);
     };
@@ -38,21 +39,19 @@ class Logger extends Console {
     /**
      * @param {User} user
     */
-    command(command, user) {
+    command(command: string, user: User) {
         
     };
 
-    date(msTimeStamp = new Date().getTime()) {
+    date(msTimeStamp: number = new Date().getTime()): string {
         let date = new Date(msTimeStamp);
 
-        var minutes = date.getMinutes();
-        if(minutes.toString().length === 1) minutes = `0${minutes}`;
+        var minutes = `${date.getMinutes()}`;
+        if(minutes.length === 1) minutes = `0${minutes}`;
 
-        var seconds = date.getSeconds();
-        if(seconds.toString().length === 1) seconds = `0${seconds}`;
+        var seconds = `${date.getSeconds()}`;
+        if(seconds.length === 1) seconds = `0${seconds}`;
 
         return `[ ${date.getFullYear()}.${date.getMonth()+1}.${date.getDate()} - ${date.getHours()}:${minutes}:${seconds} ]`;
     };
 };
-
-module.exports = Logger;

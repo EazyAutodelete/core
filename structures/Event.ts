@@ -1,15 +1,21 @@
-const Bot = require("./Bot");
+
 const constants = require("../constants/constants.js");
+import Bot from "./Bot"
 /**
  * An Event which will be run by the bot instance.
  */
-class BaseEvent {
+export default class BaseEvent {
+    name: any;
+    assets: any;
+    colors: any;
+    emojis: any;
+    client: any;
     /**
      * The name of the event.
      * @param {String} name 
      * @param {Bot} client
      */
-    constructor (name, client) {
+    constructor (name: string, client: Bot) {
         this.name = name;
         this.assets = constants.assets;
         this.colors = constants.assets.colors;
@@ -20,13 +26,11 @@ class BaseEvent {
      * The {@link Bot} the event belongs to
      * @param {Bot} client
      */
-    async run(client) {
+    async run(client: Bot) {
         client.logger.warn("Base Event");
     };
 
-    getShard(client) {
+    getShard(client: Bot) {
         return client.shard.ids?.[0];
     };
 };
-
-module.exports = BaseEvent;

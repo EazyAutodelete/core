@@ -1,7 +1,24 @@
-const axios = require("axios");
+import axios from "axios";
 
-module.exports = class WebHook {
-    constructor(webhook_url) {
+export default class WebHook {
+    url:            null | string;
+    content:        null | string;
+    title:          null | string;
+    description:    null | string;
+    color:          null | number;
+    author: {
+        name:       null | string;
+        url:        null | string; 
+        icon_url:   null | string;
+    };
+    footer: { 
+        text:       null | string;
+        icon_url:   null | string;
+    };
+    timestamp:      null | string;
+    webhook_url:    string;
+
+    constructor(webhook_url: string) {
         this.url = null;
         this.content = null;
         this.title = null;
@@ -55,46 +72,46 @@ module.exports = class WebHook {
         return undefined;
     };
 
-    setAuthor(name, icon_url = null, url = null) {
+    setAuthor(name: string, icon_url: string | null = null, url: string | null = null) {
         this.author.name = name;
         this.author.icon_url = icon_url;
         this.author.url = url;
         return this;
     };
 
-    setUrl(url) {
+    setUrl(url: string) {
         this.url = url;
         return this;
     };
 
-    setColor(color = "4647EB") {
+    setColor(color: string) {
         this.color = parseInt(color.replace("#",""), 16);
         if(isNaN(this.color) || !this.color) throw new SyntaxError("Invalid Color");
         return this;
     };
 
-    setTitle(text) {
+    setTitle(text: string) {
         this.title = text;
         return this;
     };
 
-    setContent(text) {
+    setContent(text: string) {
         this.content = text;
         return this;
     };
 
-    setDescription(text) {
+    setDescription(text: string) {
         this.description = text;
         return this;
     };
 
-    setFooter(text, icon_url = null) {
+    setFooter(text: string, icon_url: string | null = null) {
         this.footer.text = text;
         this.footer.icon_url = icon_url;
         return this;
     };
 
-    setTimestamp(timestamp = new Date().getTime()) {
+    setTimestamp(timestamp: number = new Date().getTime()) {
         this.timestamp = new Date(timestamp).toISOString();
         return this;
     };

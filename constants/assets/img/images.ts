@@ -1,4 +1,4 @@
-module.exports = {
+const images = {
     avatar: "https://cdn.discordapp.com/avatars/748215564455116961/ff37be1ab3cdf46c6c4179dcc9c11a91.png?size=1024",
     logo: {
         png: {
@@ -21,3 +21,5 @@ module.exports = {
         },
     },
 };
+
+export default images;

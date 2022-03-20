@@ -1,7 +1,7 @@
-const colors = require("./colors/colors.js");
-const images = require("./img/images.js");
+import images from "./img/images.js";
+import colors from "./colors/colors"
 
-module.exports = {
+const assets = {
     colors,
     images,
     invite:             "https://eazyautodelete.xyz/invite/",
@@ -22,3 +22,5 @@ module.exports = {
         }
     },
 };
+
+export default assets;

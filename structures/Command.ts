@@ -1,14 +1,24 @@
-const { MessageEmbed, CommandInteraction, Message, ClientApplication, AutocompleteInteraction, MessageActionRow, MessageButton } = require("discord.js");
-const path = require("path");
-const Bot = require("./Bot.js");
-const Logger = require("../utils/Logger.js")
+import { APIEmbed } from "discord-api-types";
+import { MessageEmbed, MessageActionRow, MessageButton, MessageEmbedOptions, Interaction, CommandInteraction, AutocompleteInteraction, SelectMenuInteraction } from "discord.js";
+import * as path from "path"
+import Bot from "./Bot"
 
 /**
  * An Application Command which will be posted globally on the bot.
  */
 
-class BaseCommand {
-    constructor(client, {
+export default class BaseCommand {
+    config: { options: any[]; name: string; description: string; cooldown: number; usage: string; example: string; permissionLevel: string; };
+    help: { name: string; description: string; permissionLevel: string; cooldown: number; usage: string; example: string; aliases: any[]; };
+    data: { name: any; description: any; options: any; };
+    assets: any;
+    colors: any;
+    urls: any;
+    emojis: any;
+    Logger: any;
+    reply: (interaction: any, input: any, ephemeral?: boolean, components?: any[]) => Promise<any>;
+    client: Bot;
+    constructor(client: Bot, {
         name = "",
         description = "",
 
@@ -25,16 +35,14 @@ class BaseCommand {
         usage = "",
 
 		options = []
-    }) {
+    }: any) {
         /**
          * The category the command will be displayed in.
-         * @type {String}
          */
-        const category = (dirname ? dirname.split(path.sep)[parseInt(dirname.split(path.sep).length-1, 10)] : "General");
+       // const category = (dirname ? dirname.split(path.sep)[parseInt(dirname.split(path.sep).length-1, 10)] : "General");
 
         /**
          * The Bot the Command belongs to.
-         * @type {Bot}
          */
 		this.client = client;
 
@@ -46,7 +54,7 @@ class BaseCommand {
         /**
          * The data for any type of help commands to access.
          */
-        const commandHelpData = { name, description, category, permissionLevel, cooldown, usage, example, aliases };
+        const commandHelpData = { name, description, /*category,*/ permissionLevel, cooldown, usage, example, aliases };
 		this.help = commandHelpData;
 
         /**
@@ -83,16 +91,11 @@ class BaseCommand {
         this.reply = this.response;
     };
 
-    /**
-     * @param {string} url 
-     * @returns {MessageActionRow}
-     */
-    docsButton(url) {
+    docsButton(url: string) {
         return new MessageActionRow()
             .addComponents([ 
                 new MessageButton()
                     .setDisabled(false)
-                    .setCustomId("docs_button")
                     .setEmoji("❓")
                     .setLabel("Help")
                     .setStyle("LINK")
@@ -105,7 +108,7 @@ class BaseCommand {
      * @param {CommandInteraction} interaction 
      * @returns {null}
      */
-	async run(interaction) {
+	async run(interaction: CommandInteraction) {
         return this.Logger.warn("Ended up in command.js [" + this.config + "]");
     };
 
@@ -114,7 +117,7 @@ class BaseCommand {
      * @param {String} query 
      * @returns {Array}
      */
-    autocompleteHandler(query) {
+    autocompleteHandler(query: string) {
         this.Logger.warn("Ended up in command.js [" + this.config + "]");
         return [];
     }
@@ -124,7 +127,7 @@ class BaseCommand {
      * @param {AutocompleteInteraction} interaction 
      * @returns {Object[]}
      */
-    selectMenuHandler(interaction) {
+    selectMenuHandler(interaction: SelectMenuInteraction) {
         return;
     }
 
@@ -134,7 +137,7 @@ class BaseCommand {
      * @param {String} args 
      * @returns {String}
      */
-    translate(options) {
+    translate(options: any) {
         return this.client.translate(options)
     };
 
@@ -146,7 +149,7 @@ class BaseCommand {
      * @param {Array} [components = []]
      * @returns {Message}
      */
-    async response(interaction, input, ephemeral = true, components = []) {
+    async response(interaction: CommandInteraction, input: string | MessageEmbed | any, ephemeral = true, components: MessageActionRow | any) {
         if(typeof input === "object") {
             if(input.description || input.title) return await interaction.reply({ embeds: [ input ], components: components.components ? [ components ] : components, ephemeral: ephemeral }).catch(this.client.Logger.error);
             else return await interaction.reply({ embeds: input, components: components.components ? [ components ] : components, ephemeral: ephemeral }).catch(this.client.Logger.error)
@@ -161,8 +164,8 @@ class BaseCommand {
      * @param {String} text The text of the error message.
      * @returns {Message}
      */
-	error(interaction, text) {
-        return interaction.reply({ embeds: [new MessageEmbed().setColor('#ff0000').setDescription(":x: " + text)] }).catch(this.client.Logger.error);
+	error(interaction: CommandInteraction, text: string) {
+        return interaction.reply({ ephemeral: true, embeds: [new MessageEmbed().setColor('#ff0000').setDescription(":x: " + text)] }).catch(this.client.Logger.error);
 	};
 
     /**
@@ -171,9 +174,9 @@ class BaseCommand {
      */
     get embed() {
         return class extends MessageEmbed {
-            constructor(options) {
+            constructor(options: MessageEmbed | MessageEmbedOptions | APIEmbed) {
                 super(options);
-                this.color = "#4647EB",
+                this.color = 4605931,
                 this.timestamp = Date.now(),
                 this.footer = {
                     text: "EazyAutodelete",
@@ -195,5 +198,3 @@ class BaseCommand {
         return this.client.shard.ids;
     }
 };
-
-module.exports = BaseCommand;
