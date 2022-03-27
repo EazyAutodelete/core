@@ -1,12 +1,15 @@
 {
   "name": "@eazyautodelete/eazyautodelete-core",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "🧰 Core Package used by the EazyAutodelete Discord Bot",
   "main": "build/src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "files": ["build/*.js", "build/**/*.js"],
+  "files": [
+    "build/*.js",
+    "build/**/*.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eazyautodelete/eazyautodelete-core.git"
