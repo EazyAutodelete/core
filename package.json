@@ -16,7 +16,7 @@
     "type": "git",
     "url": "git+https://github.com/eazyautodelete/eazyautodelete-core.git"
   },
-  "typings": "./build/typings/index.d.ts",
+  "typings": "build/typings/index.d.ts",
   "author": {
     "email": "dev@qreepex.xyz",
     "name": "qreepex",
