@@ -2,7 +2,7 @@
   "name": "@eazyautodelete/eazyautodelete-core",
   "version": "1.1.0",
   "description": "🧰 Core Package used by the EazyAutodelete Discord Bot",
-  "main": "src/build/index.js",
+  "main": "build/src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
