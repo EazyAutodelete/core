@@ -285,7 +285,7 @@ declare module "@eazyautodelete/eazyautodelete-core" {
     assets: typeof assets;
     colors: typeof colors;
     emojis: typeof emojis;
-    Logger: import("c:/Users/bensc/OneDrive/Development/Discord Bots/eazyautodelete/eazyautodelete-core/utils/Logger").default;
+    Logger: Logger;
     reply: (
       interaction: CommandInteraction,
       input: string | MessageEmbed | any,
