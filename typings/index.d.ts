@@ -424,7 +424,7 @@ declare module "@eazyautodelete/eazyautodelete-core" {
     colors: typeof colors;
     assets: typeof assets;
     constructor(name: string, client: Bot);
-    run(client: Bot): Promise<void>;
+    run(client: Bot, arg1: any, arg2: any, arg3: any): Promise<any>;
     getShard(client: Bot): number;
   }
 
