@@ -7,6 +7,9 @@ import {
   Intents,
   SnowflakeUtil,
   GuildMember,
+  Shard,
+  ShardClientUtil,
+  Awaitable,
 } from "discord.js";
 import util from "util";
 import WebHook from "../utils/WebHook";
@@ -39,7 +42,7 @@ export default class Bot extends Client {
   startedAtString: string;
   activeEvents: string[];
   eventLog: string;
-  shard: any;
+  shard!: ShardClientUtil | null;
   stats: { commandsRan: number };
   locales: locales;
   Translator: Translator;
@@ -203,7 +206,7 @@ export default class Bot extends Client {
         : d.getSeconds()
     } +1200]`;
     this.eventLog = `${this.eventLog}
-Shard-${this.shard.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot" "-"`;
+Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot" "-"`;
   }
 
   filterMessages(
@@ -542,13 +545,12 @@ Shard-${this.shard.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot"
     );
   }
 
-  async clientValue(value: string): Promise<Array<string>> {
-    let results = await this.shard
-      .fetchClientValue(value)
-      .catch(this.Logger.error);
-    return results
-      ? results.reduce((prev: string, val: string) => prev + val, 0)
-      : undefined;
+  async clientValue(value: string): Promise<string | void> {
+    let results = await this.shard?.fetchClientValues(value).catch(this.Logger.error);
+    if(!Array.isArray(results)) return;
+    let r: string[] = [];
+    results.forEach((v) => r.push(`${v}`))
+    return r ? r.reduce((prev: string, val: string) => prev + val) : undefined;
   }
 
   sendShardWebhook(message: string): void {
@@ -563,9 +565,9 @@ Shard-${this.shard.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot"
     new WebHook(this.assets.url.logs.guilds).setContent(message).send();
   }
 
-  async shardEval(input: string): Promise<Array<string>> {
+  async shardEval(input: (client: Client<boolean>) => any): Promise<void | {}[] | undefined> {
     let results = await this.shard
-      .broadcastEval(input)
+      ?.broadcastEval(input)
       .catch(this.Logger.error);
     return results;
   }
