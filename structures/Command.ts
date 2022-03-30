@@ -204,6 +204,6 @@ export default class Command {
   }
 
   get shard() {
-    return this.client.shard.ids;
+    return this.client.shard?.ids;
   }
 }

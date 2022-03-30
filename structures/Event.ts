@@ -23,7 +23,7 @@ export default class Event {
     client.logger.warn("Base Event");
   }
 
-  getShard(client: Bot): number {
-    return client.shard.ids?.[0];
+  getShard(client: Bot): number | undefined {
+    return client.shard?.ids?.[0];
   }
 }
