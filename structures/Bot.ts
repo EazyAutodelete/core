@@ -413,7 +413,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
         return `not regex`;
 
       default:
-        return "";
+        return "An error occured [Core.Bot.filterToString.default]";
     }
   }
 
