@@ -651,39 +651,34 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
       if (stat.isDirectory()) this.registerEvents(client, `${dir}/${file}`);
       if (file.endsWith(".js")) {
         const event = require(require.main?.path + `/${dir}/${file}`).default;
-        if(event) {
+        if (event) {
           if (event.prototype instanceof Event) {
             const evnt = new event(client);
             client.on(evnt.name, evnt.run.bind(evnt, client));
             client.activeEvents.push(evnt.name);
           }
-        };
-        
+        }
       }
     }
   }
 
   async registerCommands(client: Bot, dir = ""): Promise<void> {
-
     const files = await fs.readdir(require.main?.path + dir);
 
     for (const file of files) {
-
       const stat = await fs.lstat(require.main?.path + `${dir}/${file}`);
 
       if (stat.isDirectory()) client.registerCommands(client, `${dir}/${file}`);
 
       if (file.endsWith(".js")) {
-
         const command = require(require.main?.path + `/${dir}/${file}`).default;
 
-        if(command) {
+        if (command) {
           if (command.prototype instanceof Command) {
-
             const cmd = new command(client);
             client.commands.set(cmd.help.name, cmd);
           }
-        };
+        }
       }
     }
   }
