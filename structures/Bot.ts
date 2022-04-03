@@ -653,7 +653,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
       const stat = await fs.lstat(`${dir}/${file}`);
       if (stat.isDirectory()) this.registerEvents(`${dir}/${file}`);
       if (file.endsWith(".js")) {
-        const event = require(require.main?.path + `${dir}/${file}`).default;
+        const event = require(require.main?.path + `/${dir}/${file}`).default;
         if (event.prototype instanceof Event) {
           const evnt = new event(this);
           this.on(evnt.name, evnt.run.bind(evnt, this));
@@ -669,7 +669,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
       const stat = await fs.lstat(`${dir}/${file}`);
       if (stat.isDirectory()) this.registerCommands(`${dir}/${file}`);
       if (file.endsWith(".js")) {
-        const command = require(require.main?.path + `${dir}/${file}`).default;
+        const command = require(require.main?.path + `/${dir}/${file}`).default;
         if (command.prototype instanceof Command) {
           const cmd = new command(this);
           this.commands.set(cmd.help.name, cmd);
