@@ -28,6 +28,7 @@ import Logger from "../utils/Logger";
 import colors from "../constants/assets/colors/colors";
 import assets from "../constants/assets/assets";
 import emojis from "../constants/emojis/emojis";
+import Event from "./Event";
 
 export default class Bot extends Client {
   config: BotConfig;
@@ -123,16 +124,12 @@ export default class Bot extends Client {
     this.eventLog = ``;
     this.activeEvents = [];
 
-    this.eventLogPath = "./logs/shards/events";
+    this.eventLogPath = "logs/shards/events";
 
     setInterval(() => {
       if (this.eventLog === ``) return;
 
-      const data = readFileSync(this.eventLogPath, { encoding: "utf-8" });
-
-      writeFileSync(this.eventLogPath, `${data}${this.eventLog}`);
-
-      this.eventLog = ``;
+      // TODO: POST STATS
     }, 1000);
 
     // stats
@@ -647,33 +644,46 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     return user;
   }
 
-  async registerEvents(dir = ""): Promise<void> {
-    const files = await fs.readdir(dir);
+  async registerEvents(client: Bot, dir = ""): Promise<void> {
+    const files = await fs.readdir(require.main?.path + dir);
     for (const file of files) {
-      const stat = await fs.lstat(`${dir}/${file}`);
-      if (stat.isDirectory()) this.registerEvents(`${dir}/${file}`);
+      const stat = await fs.lstat(require.main?.path + `${dir}/${file}`);
+      if (stat.isDirectory()) this.registerEvents(client, `${dir}/${file}`);
       if (file.endsWith(".js")) {
         const event = require(require.main?.path + `/${dir}/${file}`).default;
-        if (event.prototype instanceof Event) {
-          const evnt = new event(this);
-          this.on(evnt.name, evnt.run.bind(evnt, this));
-          this.activeEvents.push(evnt.name);
-        }
+        if(event) {
+          if (event.prototype instanceof Event) {
+            const evnt = new event(client);
+            client.on(evnt.name, evnt.run.bind(evnt, client));
+            client.activeEvents.push(evnt.name);
+          }
+        };
+        
       }
     }
   }
 
-  async registerCommands(dir = ""): Promise<void> {
-    const files = await fs.readdir(dir);
+  async registerCommands(client: Bot, dir = ""): Promise<void> {
+
+    const files = await fs.readdir(require.main?.path + dir);
+
     for (const file of files) {
-      const stat = await fs.lstat(`${dir}/${file}`);
-      if (stat.isDirectory()) this.registerCommands(`${dir}/${file}`);
+
+      const stat = await fs.lstat(require.main?.path + `${dir}/${file}`);
+
+      if (stat.isDirectory()) client.registerCommands(client, `${dir}/${file}`);
+
       if (file.endsWith(".js")) {
+
         const command = require(require.main?.path + `/${dir}/${file}`).default;
-        if (command.prototype instanceof Command) {
-          const cmd = new command(this);
-          this.commands.set(cmd.help.name, cmd);
-        }
+
+        if(command) {
+          if (command.prototype instanceof Command) {
+
+            const cmd = new command(client);
+            client.commands.set(cmd.help.name, cmd);
+          }
+        };
       }
     }
   }
