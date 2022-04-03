@@ -11,7 +11,7 @@ import colors from "../constants/assets/colors/colors";
 import images from "../constants/assets/img/images";
 import permissions from "../helpers/permissions";
 
-const core = {
+export default {
   Bot,
   Command,
   Event,
@@ -26,4 +26,9 @@ const core = {
   permissions,
 };
 
-export default core;
+export { default as Bot } from "../structures/Bot";
+export { default as Command } from "../structures/Command";
+export { default as Event } from "../structures/Event";
+export { default as ShardEvent } from "../structures/ShardEvent";
+export { default as Logger } from "../utils/Logger";
+export { default as WebHook } from "../utils/WebHook";

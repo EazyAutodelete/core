@@ -36,7 +36,7 @@ const permissions = [
   {
     level: 5,
     name: "Bot Dev",
-    check: (member: Member) => member.client.config.decs.includes(member.id),
+    check: (member: Member) => member.client.config.devs.includes(member.id),
   },
   {
     level: 6,

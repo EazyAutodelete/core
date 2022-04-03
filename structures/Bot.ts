@@ -1,4 +1,4 @@
-import { APIGuild, APIMessage } from "discord-api-types/v10";
+import { APIGuild, APIMessage, APIUser } from "discord-api-types/v10";
 import {
   Collection,
   Guild,
@@ -7,16 +7,16 @@ import {
   Intents,
   SnowflakeUtil,
   GuildMember,
-  Shard,
+  Serialized,
   ShardClientUtil,
-  Awaitable,
 } from "discord.js";
 import util from "util";
 import WebHook from "../utils/WebHook";
 import DatabaseHandler from "@eazyautodelete/eazyautodelete-db-client";
 import Command from "./Command";
 import fs from "fs/promises";
-import { writeFileSync, readFile, readFileSync } from "fs";
+import { BotConfig } from "../typings/index";
+import { writeFileSync, readFileSync } from "fs";
 import axios from "axios";
 import constants from "../constants/constants";
 import {
@@ -30,7 +30,7 @@ import assets from "../constants/assets/assets";
 import emojis from "../constants/emojis/emojis";
 
 export default class Bot extends Client {
-  config: any;
+  config: BotConfig;
   wait: <T = void>(
     delay?: number | undefined,
     value?: T | undefined,
@@ -49,11 +49,14 @@ export default class Bot extends Client {
   translate: translate;
   cooldownUsers: Collection<string, number>;
   commands: Collection<string, Command>;
-  disabledCommands: Map<any, any>;
+  disabledCommands: Map<string, string>;
   ready: boolean;
   Logger: Logger;
   logger: Logger;
-  loggedActions: { messages: Map<any, any>; commands: Map<any, any> };
+  loggedActions: {
+    messages: Map<string, Message>;
+    commands: Map<string, number>;
+  };
   database: DatabaseHandler;
   activeChannels: string[];
   checkedChannels: string[];
@@ -77,7 +80,7 @@ export default class Bot extends Client {
   eventLogPath: string;
   assets: typeof assets;
   colors: typeof colors;
-  constructor(config: any) {
+  constructor(config: BotConfig) {
     super({
       intents: [
         Intents.FLAGS.DIRECT_MESSAGES,
@@ -191,8 +194,8 @@ export default class Bot extends Client {
   }
 
   logEvent(eventName: string): void {
-    let d = new Date();
-    let date = `[${d.getDate()}/${
+    const d = new Date();
+    const date = `[${d.getDate()}/${
       d.toDateString().split(" ")[1]
     }/${d.getFullYear()}:${
       1 === d.getHours().toString().length ? `0${d.getHours()}` : d.getHours()
@@ -214,12 +217,13 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     filters: string[],
     filterUsage: string,
     regex: RegExp
-  ): Collection<any, any> {
-    let emojiRegex = /<a?:(\w+):(\d+)>/gm;
-    let urlRegex =
-      /(((http|https)\:\/\/)|www\.)[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,6}/;
-
-    let filteredMessages = new Collection();
+  ): Collection<string, Message | APIMessage> {
+    const emojiRegex = /<a?:(\w+):(\d+)>/gm;
+    const urlRegex = new RegExp(
+      /(((http|https):\/\/)|www\.)[a-zA-Z0-9\-.]+.[a-zA-Z]{2,6}/
+    );
+    const filteredMessages: Collection<string, Message | APIMessage> =
+      new Collection();
 
     if (filterUsage === this.filters.FLAGS.USAGE_ALL) {
       messages.forEach((message): void => {
@@ -432,10 +436,10 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
 
   async bulkDelete(
     channel: string,
-    messages: Collection<string, Message> | any
+    messages: Collection<string, Message | APIMessage>
   ): Promise<void | string[]> {
     if (!channel || typeof channel != "string") return [];
-    if (Array.isArray(messages) || messages instanceof Collection) {
+    if (messages instanceof Collection) {
       let messageIds =
         messages instanceof Collection
           ? [...messages.keys()]
@@ -467,11 +471,11 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
 
   createDeleteLog(
     channelId: string,
-    messages: Collection<string, Message> | any
+    messages: Collection<string, Message>
   ): void {
     if (!channelId || typeof channelId != "string") return;
     if (Array.isArray(messages) || messages instanceof Collection) {
-      let messageIds =
+      const messageIds =
         messages instanceof Collection
           ? [...messages.keys()]
           : messages.map((x: Message) => x?.id || x);
@@ -484,7 +488,9 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
   }
 
   parseDuration(duration: number): string {
-    var years = Math.floor((duration / (1000 * 60 * 60 * 24 * 7 * 365)) % 999),
+    const years = Math.floor(
+        (duration / (1000 * 60 * 60 * 24 * 7 * 365)) % 999
+      ),
       weeks = Math.floor((duration / (1000 * 60 * 60 * 24 * 7)) % 51),
       days = Math.floor((duration / (1000 * 60 * 60 * 24)) % 7),
       hours = Math.floor((duration / (1000 * 60 * 60)) % 24),
@@ -504,27 +510,27 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     return uptime;
   }
 
-  parseDate(timestamp: string): string {
-    let date = new Date(timestamp);
+  parseDate(timestamp: number): string {
+    const date = new Date(timestamp);
 
-    let day =
+    const day =
       date.getDate().toString().length === 1
         ? "0" + date.getDate().toString()
         : date.getDate().toString();
-    let month =
+    const month =
       (date.getMonth() + 1).toString().length === 1
         ? "0" + (date.getMonth() + 1).toString()
         : (date.getMonth() + 1).toString();
 
-    let hours =
+    const hours =
       date.getHours().toString().length === 1
         ? "0" + date.getHours().toString()
         : date.getHours().toString();
-    let minutes =
+    const minutes =
       date.getMinutes().toString().length === 1
         ? "0" + date.getMinutes().toString()
         : date.getMinutes().toString();
-    let seconds =
+    const seconds =
       date.getSeconds().toString().length === 1
         ? "0" + date.getSeconds().toString()
         : date.getSeconds().toString();
@@ -546,10 +552,12 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
   }
 
   async clientValue(value: string): Promise<string | void> {
-    let results = await this.shard?.fetchClientValues(value).catch(this.Logger.error);
-    if(!Array.isArray(results)) return;
-    let r: string[] = [];
-    results.forEach((v) => r.push(`${v}`))
+    const results = await this.shard
+      ?.fetchClientValues(value)
+      .catch(this.Logger.error);
+    if (!Array.isArray(results)) return;
+    const r: string[] = [];
+    results.forEach((v) => r.push(`${v}`));
     return r ? r.reduce((prev: string, val: string) => prev + val) : undefined;
   }
 
@@ -565,8 +573,10 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     new WebHook(this.assets.url.logs.guilds).setContent(message).send();
   }
 
-  async shardEval(input: (client: Client<boolean>) => any): Promise<void | {}[] | undefined> {
-    let results = await this.shard
+  async shardEval(
+    input: <T>(client: Client<boolean>) => Promise<Serialized<T>[]>
+  ): Promise<void | Record<string, unknown>[][] | undefined> {
+    const results = await this.shard
       ?.broadcastEval(input)
       .catch(this.Logger.error);
     return results;
@@ -582,7 +592,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     if (search.match(/^<@!?(\d+)>$/)) {
       const id = search.match(/^<@!?(\d+)>$/)?.[1];
       if (!id) return;
-      member = await guild.members.fetch(id).catch(() => {});
+      member = await guild.members.fetch(id).catch(this.logger.error);
       if (member) return member;
     }
     // Try username search
@@ -593,7 +603,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
       );
       if (member) return member;
     }
-    member = await guild.members.fetch(search).catch(() => {});
+    member = await guild.members.fetch(search).catch(this.logger.error);
     return member;
   }
 
@@ -602,31 +612,32 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
       Authorization: `Bot ${this.config.token}`,
     };
 
-    let apiResult = await axios.get(`http://discord.com/api/guilds/${id}`, {
+    const apiResult = await axios.get(`http://discord.com/api/guilds/${id}`, {
       headers: headers,
     });
 
-    let data = JSON.parse(apiResult.data);
+    const data = JSON.parse(apiResult.data);
 
     return data;
   }
 
-  async getApiUser(id: string): Promise<any | void> {
+  async getApiUser(id: string): Promise<APIUser | void> {
     const headers = {
       Authorization: `Bot ${this.config.token}`,
     };
 
-    let apiResult = await axios.get(`http://discord.com/api/users/${id}`, {
+    const apiResult = await axios.get(`http://discord.com/api/users/${id}`, {
       headers: headers,
     });
 
-    let data = JSON.parse(apiResult.data);
+    const data = apiResult.data;
 
     if (!data) return;
     if (!data.id) return;
 
-    let user = {
+    const user = {
       id: data.id,
+      discriminator: data.discriminator,
       tag: data.username + "#" + data.discriminator,
       avatar: `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`,
       username: data.username,
@@ -636,7 +647,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     return user;
   }
 
-  async registerEvents(dir: string = ""): Promise<void> {
+  async registerEvents(dir = ""): Promise<void> {
     const files = await fs.readdir(dir);
     for (const file of files) {
       const stat = await fs.lstat(`${dir}/${file}`);
@@ -652,7 +663,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     }
   }
 
-  async registerCommands(dir: string = ""): Promise<void> {
+  async registerCommands(dir = ""): Promise<void> {
     const files = await fs.readdir(dir);
     for (const file of files) {
       const stat = await fs.lstat(`${dir}/${file}`);

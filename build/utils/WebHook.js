@@ -1,24 +1,13 @@
-import axios from "axios";
-
-export default class WebHook {
-  url: null | string;
-  content: null | string;
-  title: null | string;
-  description: null | string;
-  color: null | number;
-  author: {
-    name: null | string;
-    url: null | string;
-    icon_url: null | string;
+"use strict";
+var __importDefault =
+  (this && this.__importDefault) ||
+  function (mod) {
+    return mod && mod.__esModule ? mod : { default: mod };
   };
-  footer: {
-    text: null | string;
-    icon_url: null | string;
-  };
-  timestamp: null | string;
-  webhook_url: string;
-
-  constructor(webhook_url: string) {
+Object.defineProperty(exports, "__esModule", { value: true });
+const axios_1 = __importDefault(require("axios"));
+class WebHook {
+  constructor(webhook_url) {
     this.url = null;
     this.content = null;
     this.title = null;
@@ -36,10 +25,9 @@ export default class WebHook {
     this.timestamp = null;
     this.webhook_url = webhook_url;
   }
-
   send() {
     const objBody = {
-      content: this?.content,
+      content: this === null || this === void 0 ? void 0 : this.content,
       embeds:
         this.description || this.title
           ? [
@@ -62,65 +50,51 @@ export default class WebHook {
             ]
           : [],
     };
-
     if (!this.webhook_url) throw new SyntaxError("No WebHook URL");
-
-    axios({
+    (0, axios_1.default)({
       method: "post",
       url: this.webhook_url,
       data: JSON.stringify(objBody),
       headers: { "Content-Type": "application/json" },
     });
-
     return;
   }
-
-  setAuthor(
-    name: string,
-    icon_url: string | null = null,
-    url: string | null = null
-  ) {
+  setAuthor(name, icon_url = null, url = null) {
     this.author.name = name;
     this.author.icon_url = icon_url;
     this.author.url = url;
     return this;
   }
-
-  setUrl(url: string) {
+  setUrl(url) {
     this.url = url;
     return this;
   }
-
-  setColor(color: string) {
+  setColor(color) {
     this.color = parseInt(color.replace("#", ""), 16);
     if (isNaN(this.color) || !this.color)
       throw new SyntaxError("Invalid Color");
     return this;
   }
-
-  setTitle(text: string) {
+  setTitle(text) {
     this.title = text;
     return this;
   }
-
-  setContent(text: string) {
+  setContent(text) {
     this.content = text;
     return this;
   }
-
-  setDescription(text: string) {
+  setDescription(text) {
     this.description = text;
     return this;
   }
-
-  setFooter(text: string, icon_url: string | null = null) {
+  setFooter(text, icon_url = null) {
     this.footer.text = text;
     this.footer.icon_url = icon_url;
     return this;
   }
-
-  setTimestamp(timestamp: number = new Date().getTime()) {
+  setTimestamp(timestamp = new Date().getTime()) {
     this.timestamp = new Date(timestamp).toISOString();
     return this;
   }
 }
+exports.default = WebHook;

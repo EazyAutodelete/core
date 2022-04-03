@@ -19,8 +19,10 @@ export default class Event {
     this.client = client;
   }
 
-  async run(client: Bot, arg1: any, arg2: any, arg3: any): Promise<any> {
-    client.logger.warn("Base Event");
+  async run(client: Bot, arg1: any, arg2: any, arg3: any): Promise<void> {
+    return this.client.Logger.warn(
+      "Ended up in Event.ts [ " + this.name + " ]"
+    );
   }
 
   getShard(client: Bot): number | undefined {

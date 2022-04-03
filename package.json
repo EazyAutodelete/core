@@ -1,10 +1,16 @@
 {
   "name": "@eazyautodelete/eazyautodelete-core",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "🧰 Core Package used by the EazyAutodelete Discord Bot",
   "main": "build/src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "husky install",
+    "format": "npx prettier --write .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:typings": "eslint typings/index.d.ts",
+    "test": "npm run lint && npm run lint:typings && npm run test:typescript",
+    "test:typescript": "tsc"
   },
   "files": [
     "build/*.js",
@@ -16,7 +22,7 @@
     "type": "git",
     "url": "git+https://github.com/eazyautodelete/eazyautodelete-core.git"
   },
-  "typings": "build/typings/index.d.ts",
+  "typings": "build/src/index.d.ts",
   "author": {
     "email": "dev@qreepex.xyz",
     "name": "qreepex",
@@ -28,9 +34,14 @@
   },
   "homepage": "https://github.com/eazyautodelete/eazyautodelete-core#readme",
   "devDependencies": {
-    "@types/node": "^17.0.21",
-    "prettier": "2.6.1",
-    "typescript": "^4.5.4"
+    "@types/node": "^17.0.23",
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0",
+    "eslint": "^8.12.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.7",
+    "prettier": "^2.6.1",
+    "typescript": "^4.6.3"
   },
   "dependencies": {
     "@eazyautodelete/eazyautodelete-db-client": "^1.0.6",
@@ -38,7 +49,7 @@
     "axios": "^0.24.0",
     "chalk": "^4.1.2",
     "discord-api-types": "^0.30.0",
-    "discord.js": "^13.3.1"
+    "discord.js": "^13.6.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/eazyautodelete"

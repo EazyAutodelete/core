@@ -6,22 +6,12 @@ import {
   SelectMenuInteraction,
   ApplicationCommandOptionData,
 } from "discord.js";
+import { AutocompleteOption, CommandOptions } from "../typings";
 import assets from "../constants/assets/assets";
 import colors from "../constants/assets/colors/colors";
 import emojis from "../constants/emojis/emojis";
 import Bot from "./Bot";
-
-export interface CommandOptions {
-  name: string;
-  description: string;
-  dirname: string;
-  permissionLevel: string;
-  cooldown: number;
-  aliases: Array<string>;
-  example: string;
-  usage: string;
-  options: Array<ApplicationCommandOptionData>;
-}
+import Logger from "../utils/Logger";
 
 export default class Command {
   client: Bot;
@@ -40,6 +30,7 @@ export default class Command {
     permissionLevel: string;
     cooldown: number;
     usage: string;
+    category: string;
     example: string;
     aliases: string[];
   };
@@ -51,12 +42,12 @@ export default class Command {
   assets: typeof assets;
   colors: typeof colors;
   emojis: typeof emojis;
-  Logger: import("c:/Users/bensc/OneDrive/Development/Discord Bots/eazyautodelete/eazyautodelete-core/utils/Logger").default;
+  Logger: Logger;
   reply: (
     interaction: CommandInteraction,
-    input: string | MessageEmbed | any,
-    ephemeral: boolean | undefined,
-    components: MessageActionRow | any
+    input: string | MessageEmbed | MessageEmbed[],
+    ephemeral: boolean,
+    components?: MessageActionRow | undefined
   ) => Promise<void>;
   constructor(
     client: Bot,
@@ -91,16 +82,16 @@ export default class Command {
       permissionLevel,
     };
 
-    const commandHelpData = {
+    this.help = {
       name,
       description,
       permissionLevel,
       cooldown,
+      category: dirname.split("\\")[dirname.split("\\").length - 1],
       usage,
       example,
       aliases,
     };
-    this.help = commandHelpData;
 
     this.data = {
       name: this.help.name,
@@ -130,59 +121,69 @@ export default class Command {
     ]);
   }
 
-  async run(interaction: CommandInteraction) {
-    return this.Logger.warn("Ended up in command.js [" + this.config + "]");
+  async run(client: Bot, interaction: CommandInteraction): Promise<void> {
+    return this.Logger.warn(
+      "Ended up in command.js [ " +
+        this.config +
+        " - " +
+        interaction.guild?.id +
+        " - " +
+        interaction.channel?.id +
+        " ]"
+    );
   }
 
-  autocompleteHandler(query: string) {
-    this.Logger.warn("Ended up in command.js [" + this.config + "]");
+  autocompleteHandler(query: string): AutocompleteOption[] {
+    this.Logger.warn(
+      "Ended up in command.js [ " + this.config + " - " + query + " ]"
+    );
+
     return [];
   }
 
   selectMenuHandler(interaction: SelectMenuInteraction) {
-    return;
-  }
+    this.Logger.warn(
+      "Ended up in command.js [ " + this.config + " - " + interaction.id + " ]"
+    );
 
-  translate(options: any) {
-    return this.client.translate(options);
+    return;
   }
 
   async response(
     interaction: CommandInteraction,
-    input: string | MessageEmbed | any,
-    ephemeral = true,
-    components: MessageActionRow | any
-  ) {
-    if (typeof input === "object") {
-      if (input.description || input.title)
-        return await interaction
-          .reply({
-            embeds: [input],
-            components: components.components ? [components] : components,
-            ephemeral: ephemeral,
-          })
-          .catch(this.client.Logger.error);
-      else
-        return await interaction
-          .reply({
-            embeds: input,
-            components: components.components ? [components] : components,
-            ephemeral: ephemeral,
-          })
-          .catch(this.client.Logger.error);
-    } else if (typeof input === "string") {
+    input: string | MessageEmbed | MessageEmbed[],
+    ephemeral: boolean,
+    components?: MessageActionRow
+  ): Promise<void> {
+    if (typeof input === "string") {
       return await interaction
         .reply({
           content: input,
-          components: components.components ? [components] : components,
           ephemeral: ephemeral,
+          components: components?.components ? [components] : [],
+        })
+        .catch(this.client.Logger.error);
+    } else if (Array.isArray(input)) {
+      return await interaction
+        .reply({
+          embeds: input,
+          ephemeral: ephemeral,
+          components: components?.components ? [components] : [],
+        })
+        .catch(this.client.Logger.error);
+    } else if (input.description || input.title) {
+      return await interaction
+        .reply({
+          embeds: [input],
+          ephemeral: ephemeral,
+          components: components?.components ? [components] : [],
         })
         .catch(this.client.Logger.error);
     }
   }
 
-  error(interaction: CommandInteraction, text: string) {
-    return interaction
+  async error(interaction: CommandInteraction, text: string) {
+    await interaction
       .reply({
         ephemeral: true,
         embeds: [
@@ -193,7 +194,7 @@ export default class Command {
   }
 
   get embed(): MessageEmbed {
-    let embed = new MessageEmbed().setTimestamp().setFooter({
+    const embed = new MessageEmbed().setTimestamp().setFooter({
       text: "EazyAutodelete",
       iconURL:
         "https://cdn.discordapp.com/avatars/748215564455116961/ff37be1ab3cdf46c6c4179dcc9c11a91.png?size=1024",
