@@ -4,7 +4,11 @@ import Event from "../structures/Event";
 import ShardEvent from "../structures/ShardEvent";
 import Logger from "../utils/Logger";
 import WebHook from "../utils/WebHook";
-import { ApplicationCommandOptionData, ColorResolvable, GuildMember } from "discord.js";
+import {
+  ApplicationCommandOptionData,
+  ColorResolvable,
+  GuildMember,
+} from "discord.js";
 
 declare const _default: {
   Bot: typeof Bot;
