@@ -6,7 +6,7 @@ import {
   SelectMenuInteraction,
   ApplicationCommandOptionData,
 } from "discord.js";
-import { AutocompleteOption, CommandOptions } from "../typings";
+import { AutocompleteOption, CommandOptions, Cooldown, PermissionLevel } from "../typings";
 import assets from "../constants/assets/assets";
 import colors from "../constants/assets/colors/colors";
 import emojis from "../constants/emojis/emojis";
@@ -19,16 +19,16 @@ export default class Command {
     options: ApplicationCommandOptionData[];
     name: string;
     description: string;
-    cooldown: number;
+    cooldown: Cooldown;
     usage: string;
     example: string;
-    permissionLevel: string;
+    permissionLevel: PermissionLevel;
   };
   help: {
     name: string;
     description: string;
-    permissionLevel: string;
-    cooldown: number;
+    permissionLevel: PermissionLevel;
+    cooldown: Cooldown;
     usage: string;
     category: string;
     example: string;
@@ -57,7 +57,7 @@ export default class Command {
 
       dirname = __dirname,
 
-      permissionLevel = "Bot Dev",
+      permissionLevel = 1,
 
       cooldown = 5000,
 

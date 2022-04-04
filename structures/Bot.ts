@@ -19,16 +19,13 @@ import { BotConfig } from "../typings/index";
 import { writeFileSync, readFileSync } from "fs";
 import axios from "axios";
 import constants from "../constants/constants";
-import {
-  translate,
-  Translator,
-  locales,
-} from "@eazyautodelete/eazyautodelete-lang";
+import Lang from "@eazyautodelete/eazyautodelete-lang";
 import Logger from "../utils/Logger";
 import colors from "../constants/assets/colors/colors";
 import assets from "../constants/assets/assets";
 import emojis from "../constants/emojis/emojis";
 import Event from "./Event";
+import i18n from "i18n"
 
 export default class Bot extends Client {
   config: BotConfig;
@@ -45,9 +42,6 @@ export default class Bot extends Client {
   eventLog: string;
   shard!: ShardClientUtil | null;
   stats: { commandsRan: number };
-  locales: locales;
-  Translator: Translator;
-  translate: translate;
   cooldownUsers: Collection<string, number>;
   commands: Collection<string, Command>;
   disabledCommands: Map<string, string>;
@@ -81,6 +75,9 @@ export default class Bot extends Client {
   eventLogPath: string;
   assets: typeof assets;
   colors: typeof colors;
+  locales: string[];
+  Translator: i18n.I18n;
+  translate: { (phraseOrOptions: string | i18n.TranslateOptions, ...replace: string[]): string; (phraseOrOptions: string | i18n.TranslateOptions, replacements: i18n.Replacements): string; };
   constructor(config: BotConfig) {
     super({
       intents: [
@@ -138,9 +135,9 @@ export default class Bot extends Client {
     };
 
     // language
-    this.locales = locales;
-    this.Translator = Translator;
-    this.translate = translate;
+    this.locales = Lang.locales;
+    this.Translator = Lang.Translator;
+    this.translate = Lang.translate;
     // this.translate({ phrase: "", locale: "" })
 
     // cooldown
