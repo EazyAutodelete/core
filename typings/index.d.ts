@@ -264,7 +264,7 @@ export interface BotConfig {
   staffs: string[];
   owners: string[];
   devs: string[];
-  sharding: Record<string, HostConfig>
+  sharding: Record<string, HostConfig>;
 }
 
 export interface Member extends GuildMember {
