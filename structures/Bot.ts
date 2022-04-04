@@ -30,14 +30,17 @@ import i18n from "i18n";
 
 export interface CustomShardUtil extends ShardClientUtil {
   broadcastEval<T>(fn: (client: Bot) => Awaitable<T>): Promise<Serialized<T>[]>;
-  broadcastEval<T>(fn: (client: Bot) => Awaitable<T>, options: { shard: number }): Promise<Serialized<T>>;
+  broadcastEval<T>(
+    fn: (client: Bot) => Awaitable<T>,
+    options: { shard: number }
+  ): Promise<Serialized<T>>;
   broadcastEval<T, P>(
     fn: (client: Bot, context: Serialized<P>) => Awaitable<T>,
-    options: { context: P },
+    options: { context: P }
   ): Promise<Serialized<T>[]>;
   broadcastEval<T, P>(
     fn: (client: Bot, context: Serialized<P>) => Awaitable<T>,
-    options: { context: P; shard: number },
+    options: { context: P; shard: number }
   ): Promise<Serialized<T>>;
 }
 
