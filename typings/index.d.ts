@@ -288,6 +288,18 @@ export interface CommandOptions {
   options: ApplicationCommandOptionData[];
 }
 
-export type PermissionLevel = 1 | 2 | 3 | 4 | 5 | 6
+export type PermissionLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-export type Cooldown = 0 | 3e3 | 5e3 | 1e4 | 15e3 | 20e3 | 25e3 | 3e4 | 45e3 | 6e4 | 12e4 | 3e5
+export type Cooldown =
+  | 0
+  | 3e3
+  | 5e3
+  | 1e4
+  | 15e3
+  | 20e3
+  | 25e3
+  | 3e4
+  | 45e3
+  | 6e4
+  | 12e4
+  | 3e5;

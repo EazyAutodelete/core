@@ -6,7 +6,12 @@ import {
   SelectMenuInteraction,
   ApplicationCommandOptionData,
 } from "discord.js";
-import { AutocompleteOption, CommandOptions, Cooldown, PermissionLevel } from "../typings";
+import {
+  AutocompleteOption,
+  CommandOptions,
+  Cooldown,
+  PermissionLevel,
+} from "../typings";
 import assets from "../constants/assets/assets";
 import colors from "../constants/assets/colors/colors";
 import emojis from "../constants/emojis/emojis";

@@ -25,7 +25,7 @@ import colors from "../constants/assets/colors/colors";
 import assets from "../constants/assets/assets";
 import emojis from "../constants/emojis/emojis";
 import Event from "./Event";
-import i18n from "i18n"
+import i18n from "i18n";
 
 export default class Bot extends Client {
   config: BotConfig;
@@ -77,7 +77,16 @@ export default class Bot extends Client {
   colors: typeof colors;
   locales: string[];
   Translator: i18n.I18n;
-  translate: { (phraseOrOptions: string | i18n.TranslateOptions, ...replace: string[]): string; (phraseOrOptions: string | i18n.TranslateOptions, replacements: i18n.Replacements): string; };
+  translate: {
+    (
+      phraseOrOptions: string | i18n.TranslateOptions,
+      ...replace: string[]
+    ): string;
+    (
+      phraseOrOptions: string | i18n.TranslateOptions,
+      replacements: i18n.Replacements
+    ): string;
+  };
   constructor(config: BotConfig) {
     super({
       intents: [
