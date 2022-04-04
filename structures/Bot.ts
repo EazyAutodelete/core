@@ -9,6 +9,7 @@ import {
   GuildMember,
   Serialized,
   ShardClientUtil,
+  Awaitable,
 } from "discord.js";
 import util from "util";
 import WebHook from "../utils/WebHook";
@@ -27,6 +28,19 @@ import emojis from "../constants/emojis/emojis";
 import Event from "./Event";
 import i18n from "i18n";
 
+export interface CustomShardUtil extends ShardClientUtil {
+  broadcastEval<T>(fn: (client: Bot) => Awaitable<T>): Promise<Serialized<T>[]>;
+  broadcastEval<T>(fn: (client: Bot) => Awaitable<T>, options: { shard: number }): Promise<Serialized<T>>;
+  broadcastEval<T, P>(
+    fn: (client: Bot, context: Serialized<P>) => Awaitable<T>,
+    options: { context: P },
+  ): Promise<Serialized<T>[]>;
+  broadcastEval<T, P>(
+    fn: (client: Bot, context: Serialized<P>) => Awaitable<T>,
+    options: { context: P; shard: number },
+  ): Promise<Serialized<T>>;
+}
+
 export default class Bot extends Client {
   config: BotConfig;
   wait: <T = void>(
@@ -40,7 +54,7 @@ export default class Bot extends Client {
   startedAtString: string;
   activeEvents: string[];
   eventLog: string;
-  shard!: ShardClientUtil | null;
+  shard!: CustomShardUtil | null;
   stats: { commandsRan: number };
   cooldownUsers: Collection<string, number>;
   commands: Collection<string, Command>;
