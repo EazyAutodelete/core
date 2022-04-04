@@ -4,7 +4,7 @@ import Event from "../structures/Event";
 import ShardEvent from "../structures/ShardEvent";
 import Logger from "../utils/Logger";
 import WebHook from "../utils/WebHook";
-import { ApplicationCommandOptionData, GuildMember } from "discord.js";
+import { ApplicationCommandOptionData, ColorResolvable, GuildMember } from "discord.js";
 
 declare const _default: {
   Bot: typeof Bot;
@@ -131,11 +131,11 @@ declare const _default: {
   };
   assets: {
     colors: {
-      error: string;
-      succesfull: string;
-      default: string;
+      error: ColorResolvable;
+      succesfull: ColorResolvable;
+      default: ColorResolvable;
       partners: {
-        serverblaze: string;
+        serverblaze: ColorResolvable;
       };
     };
     images: {
@@ -180,11 +180,11 @@ declare const _default: {
     };
   };
   colors: {
-    error: string;
-    succesfull: string;
-    default: string;
+    error: ColorResolvable;
+    succesfull: ColorResolvable;
+    default: ColorResolvable;
     partners: {
-      serverblaze: string;
+      serverblaze: ColorResolvable;
     };
   };
   images: {
