@@ -13,11 +13,14 @@ import {
 } from "discord.js";
 import util from "util";
 import WebHook from "../utils/WebHook";
+import DatabaseHandler from "@eazyautodelete/eazyautodelete-db-client";
 import Command from "./Command";
 import fs from "fs/promises";
-import { BotConfig, DatabaseHandler } from "../typings/index";
+import { BotConfig } from "../typings/index";
+import { writeFileSync, readFileSync } from "fs";
 import axios from "axios";
 import constants from "../constants/constants";
+import Lang from "@eazyautodelete/eazyautodelete-lang";
 import Logger from "../utils/Logger";
 import colors from "../constants/assets/colors/colors";
 import assets from "../constants/assets/assets";
@@ -89,8 +92,8 @@ export default class Bot extends Client {
   eventLogPath: string;
   assets: typeof assets;
   colors: typeof colors;
-  Translator: i18n.I18n;
   locales: string[];
+  Translator: i18n.I18n;
   translate: {
     (
       phraseOrOptions: string | i18n.TranslateOptions,
@@ -101,11 +104,7 @@ export default class Bot extends Client {
       replacements: i18n.Replacements
     ): string;
   };
-  constructor(
-    config: BotConfig,
-    Database: DatabaseHandler,
-    Translator: i18n.I18n
-  ) {
+  constructor(config: BotConfig) {
     super({
       intents: [
         Intents.FLAGS.DIRECT_MESSAGES,
@@ -162,9 +161,10 @@ export default class Bot extends Client {
     };
 
     // language
-    this.locales = Translator.getLocales();
-    this.Translator = Translator;
-    this.translate = Translator.__;
+    this.locales = Lang.locales;
+    this.Translator = Lang.Translator;
+    this.translate = Lang.translate;
+    // this.translate({ phrase: "", locale: "" })
 
     // cooldown
     this.cooldownUsers = new Collection();
@@ -185,7 +185,10 @@ export default class Bot extends Client {
     };
 
     // database
-    this.database = Database;
+    this.database = new DatabaseHandler(
+      { redis: this.config?.redis, mongo: this.config?.mongo },
+      this.Logger
+    );
 
     this.activeChannels = [];
     this.checkedChannels = [];
