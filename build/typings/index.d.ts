@@ -6,8 +6,11 @@ import Logger from "../utils/Logger";
 import WebHook from "../utils/WebHook";
 import {
   ApplicationCommandOptionData,
-  ColorResolvable,
   GuildMember,
+  ColorResolvable,
+  Awaitable,
+  Serialized,
+  ShardClientUtil,
 } from "discord.js";
 
 declare const _default: {
@@ -308,6 +311,22 @@ export type Cooldown =
   | 6e4
   | 12e4
   | 3e5;
+
+export interface CustomShardUtil extends ShardClientUtil {
+  broadcastEval<T>(fn: (client: Bot) => Awaitable<T>): Promise<Serialized<T>[]>;
+  broadcastEval<T>(
+    fn: (client: Bot) => Awaitable<T>,
+    options: { shard: number }
+  ): Promise<Serialized<T>>;
+  broadcastEval<T, P>(
+    fn: (client: Bot, context: Serialized<P>) => Awaitable<T>,
+    options: { context: P }
+  ): Promise<Serialized<T>[]>;
+  broadcastEval<T, P>(
+    fn: (client: Bot, context: Serialized<P>) => Awaitable<T>,
+    options: { context: P; shard: number }
+  ): Promise<Serialized<T>>;
+}
 
 export class MongoHandler {
   config: MongoHandlerConfig;
