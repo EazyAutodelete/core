@@ -29,7 +29,7 @@ export default class Command {
     usage: string;
     example: string;
     permissionLevel: PermissionLevel;
-    botPermissions: string[]
+    botPermissions: bigint[];
   };
   help: {
     name: string;
@@ -89,7 +89,7 @@ export default class Command {
       usage,
       example,
       permissionLevel,
-      botPermissions
+      botPermissions,
     };
 
     this.help = {

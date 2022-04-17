@@ -294,7 +294,7 @@ export interface CommandOptions {
   example: string;
   usage: string;
   options: ApplicationCommandOptionData[];
-  botPermissions: string[];
+  botPermissions: bigint[];
 }
 
 export type PermissionLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6;
