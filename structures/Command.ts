@@ -29,6 +29,7 @@ export default class Command {
     usage: string;
     example: string;
     permissionLevel: PermissionLevel;
+    botPermissions: string[]
   };
   help: {
     name: string;
@@ -65,6 +66,8 @@ export default class Command {
 
       permissionLevel = 1,
 
+      botPermissions = [],
+
       cooldown = 5000,
 
       aliases = [],
@@ -86,6 +89,7 @@ export default class Command {
       usage,
       example,
       permissionLevel,
+      botPermissions
     };
 
     this.help = {
