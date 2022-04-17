@@ -5,6 +5,7 @@ import {
   CommandInteraction,
   SelectMenuInteraction,
   ApplicationCommandOptionData,
+  ButtonInteraction,
 } from "discord.js";
 import {
   AutocompleteOption,
@@ -127,9 +128,14 @@ export default class Command {
   }
 
   async run(client: Bot, interaction: CommandInteraction): Promise<void> {
+    this.error(
+      interaction,
+      "An Error occured - Please contact staff: Core.Command.run"
+    );
+
     return this.Logger.warn(
       "Ended up in command.js [ " +
-        this.config +
+        this.config.name +
         " - " +
         interaction.guild?.id +
         " - " +
@@ -138,17 +144,33 @@ export default class Command {
     );
   }
 
-  autocompleteHandler(query: string): AutocompleteOption[] {
+  async autocompleteHandler(query: string): Promise<AutocompleteOption[]> {
     this.Logger.warn(
-      "Ended up in command.js [ " + this.config + " - " + query + " ]"
+      "Ended up in command.js [ " + this.config.name + " - " + query + " ]"
     );
 
     return [];
   }
 
-  selectMenuHandler(interaction: SelectMenuInteraction) {
+  async selectMenuHandler(interaction: SelectMenuInteraction): Promise<void> {
     this.Logger.warn(
-      "Ended up in command.js [ " + this.config + " - " + interaction.id + " ]"
+      "Ended up in command.js [ " +
+        this.config.name +
+        " - " +
+        interaction.id +
+        " ]"
+    );
+
+    return;
+  }
+
+  async buttonHandler(interaction: ButtonInteraction): Promise<void> {
+    this.Logger.warn(
+      "Ended up in command.js [ " +
+        this.config.name +
+        " - " +
+        interaction.id +
+        " ]"
     );
 
     return;
