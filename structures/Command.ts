@@ -6,6 +6,7 @@ import {
   SelectMenuInteraction,
   ApplicationCommandOptionData,
   ButtonInteraction,
+  AutocompleteInteraction,
 } from "discord.js";
 import {
   AutocompleteOption,
@@ -181,7 +182,7 @@ export default class Command {
   }
 
   async response(
-    interaction: CommandInteraction,
+    interaction: CommandInteraction | ButtonInteraction | SelectMenuInteraction,
     input: string | MessageEmbed | MessageEmbed[],
     ephemeral: boolean,
     components?: MessageActionRow
