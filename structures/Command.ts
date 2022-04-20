@@ -5,8 +5,7 @@ import {
   CommandInteraction,
   SelectMenuInteraction,
   ApplicationCommandOptionData,
-  ButtonInteraction,
-  AutocompleteInteraction,
+  ButtonInteraction
 } from "discord.js";
 import {
   AutocompleteOption,
@@ -121,15 +120,19 @@ export default class Command {
     this.reply = this.response;
   }
 
-  docsButton(url: string) {
-    return new MessageActionRow().addComponents([
+  urlButton(url: string, label: string, emoji?: string) {
+    new MessageActionRow().addComponents([
       new MessageButton()
         .setDisabled(false)
-        .setEmoji("❓")
-        .setLabel("Help")
+        .setLabel(label)
+        .setEmoji(emoji || "🔗")
         .setStyle("LINK")
         .setURL(url),
     ]);
+  }
+
+  docsButton(url: string) {
+    return this.urlButton(url, "Help", "❓")
   }
 
   async run(client: Bot, interaction: CommandInteraction): Promise<void> {
