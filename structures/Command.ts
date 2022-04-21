@@ -51,7 +51,7 @@ export default class Command {
   emojis: typeof emojis;
   Logger: Logger;
   reply: (
-    interaction: CommandInteraction,
+    interaction: CommandInteraction | ButtonInteraction | SelectMenuInteraction,
     input: string | MessageEmbed | MessageEmbed[],
     ephemeral: boolean,
     components?: MessageActionRow | undefined
