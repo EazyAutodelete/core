@@ -132,7 +132,7 @@ export default class Command {
   }
 
   docsButton(url: string): MessageActionRow {
-    return this.urlButton(url, "Help", "❓");
+    return this.urlButton("https://docs.eazyautodelete.xyz/"+url, "Help", "❓");
   }
 
   async run(client: Bot, interaction: CommandInteraction): Promise<void> {

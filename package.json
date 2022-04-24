@@ -11,7 +11,7 @@
     "lint:typings": "eslint typings/index.d.ts",
     "test": "npm run lint && npm run lint:typings && npm run test:typescript",
     "test:typescript": "tsc",
-    "build": "tsc & npm run format"
+    "build": "npm run format & tsc"
   },
   "files": [
     "build/*.js",

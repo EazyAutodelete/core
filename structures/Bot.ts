@@ -527,6 +527,62 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     return uptime;
   }
 
+  stringToMs(s: string): number {
+    const e = s.split(" ");
+    let c = 0;
+    return e.forEach((s) => (c += this.ms(s))), c;
+  }
+  ms(s: string): number {
+    var a =
+        /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
+          s
+        );
+    if (!a) return 0;
+    var r = parseFloat(a[1]);
+    switch ((a[2] || "ms").toLowerCase()) {
+      case "years":
+      case "year":
+      case "yrs":
+      case "yr":
+      case "y":
+        return 315576e5 * r;
+      case "weeks":
+      case "week":
+      case "w":
+        return 6048e5 * r;
+      case "days":
+      case "day":
+      case "d":
+        return r * 24 * 36e5;
+      case "hours":
+      case "hour":
+      case "hrs":
+      case "hr":
+      case "h":
+        return r * 36e5;
+      case "minutes":
+      case "minute":
+      case "mins":
+      case "min":
+      case "m":
+        return 6e4 * r;
+      case "seconds":
+      case "second":
+      case "secs":
+      case "sec":
+      case "s":
+        return 1e3 * r;
+      case "milliseconds":
+      case "millisecond":
+      case "msecs":
+      case "msec":
+      case "ms":
+        return r;
+      default:
+        return 0;
+    }
+  }
+
   parseDate(timestamp: number): string {
     const date = new Date(timestamp);
 
