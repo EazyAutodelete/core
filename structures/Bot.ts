@@ -8,6 +8,7 @@ import {
   SnowflakeUtil,
   GuildMember,
   Serialized,
+  TextChannel,
 } from "discord.js";
 import util from "util";
 import WebHook from "../utils/WebHook";
@@ -54,7 +55,7 @@ export default class Bot extends Client {
     commands: Map<string, number>;
   };
   database: DatabaseHandler;
-  activeChannels: string[];
+  activeChannels: TextChannel[];
   checkedChannels: string[];
   eventLogPath: string;
   assets: typeof assets;
@@ -102,8 +103,8 @@ export default class Bot extends Client {
     };
   };
   messageCaches: {
-    single: Collection<string, CacheMessage>;
-    bulk: Collection<string, CacheMessage>;
+    single: Collection<string, Message>;
+    bulk: Collection<string, Message>;
   };
   constructor(
     config: BotConfig,
