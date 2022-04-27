@@ -318,6 +318,15 @@ export type Cooldown =
   | 12e4
   | 3e5;
 
+export interface CacheMessage {
+  id: string;
+  channel: string;
+  guild: string;
+  content: string;
+  pinned: boolean;
+  attachments: number;
+}
+
 export interface CustomShardUtil extends ShardClientUtil {
   broadcastEval<T>(fn: (client: Bot) => Awaitable<T>): Promise<Serialized<T>[]>;
   broadcastEval<T>(

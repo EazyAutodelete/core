@@ -8,14 +8,17 @@ import {
   SnowflakeUtil,
   GuildMember,
   Serialized,
-  ShardClientUtil,
-  Awaitable,
 } from "discord.js";
 import util from "util";
 import WebHook from "../utils/WebHook";
 import Command from "./Command";
 import fs from "fs/promises";
-import { BotConfig, DatabaseHandler } from "../typings/index";
+import {
+  BotConfig,
+  CacheMessage,
+  CustomShardUtil,
+  DatabaseHandler,
+} from "../typings/index";
 import axios from "axios";
 import constants from "../constants/constants";
 import Logger from "../utils/Logger";
@@ -24,22 +27,6 @@ import assets from "../constants/assets/assets";
 import emojis from "../constants/emojis/emojis";
 import Event from "./Event";
 import i18n from "i18n";
-
-export interface CustomShardUtil extends ShardClientUtil {
-  broadcastEval<T>(fn: (client: Bot) => Awaitable<T>): Promise<Serialized<T>[]>;
-  broadcastEval<T>(
-    fn: (client: Bot) => Awaitable<T>,
-    options: { shard: number }
-  ): Promise<Serialized<T>>;
-  broadcastEval<T, P>(
-    fn: (client: Bot, context: Serialized<P>) => Awaitable<T>,
-    options: { context: P }
-  ): Promise<Serialized<T>[]>;
-  broadcastEval<T, P>(
-    fn: (client: Bot, context: Serialized<P>) => Awaitable<T>,
-    options: { context: P; shard: number }
-  ): Promise<Serialized<T>>;
-}
 
 export default class Bot extends Client {
   config: BotConfig;
@@ -69,6 +56,21 @@ export default class Bot extends Client {
   database: DatabaseHandler;
   activeChannels: string[];
   checkedChannels: string[];
+  eventLogPath: string;
+  assets: typeof assets;
+  colors: typeof colors;
+  Translator: i18n.I18n;
+  locales: string[];
+  translate: {
+    (
+      phraseOrOptions: string | i18n.TranslateOptions,
+      ...replace: string[]
+    ): string;
+    (
+      phraseOrOptions: string | i18n.TranslateOptions,
+      replacements: i18n.Replacements
+    ): string;
+  };
   filters: {
     FLAGS: {
       PINNED: string;
@@ -85,21 +87,23 @@ export default class Bot extends Client {
       USAGE_ALL: string;
       USAGE_ONE: string;
     };
+    IDS: {
+      PINNED: number;
+      NOT_PINNED: number;
+      REGEX: number;
+      NOT_REGEX: number;
+      ALL: number;
+      WITH_LINK: number;
+      WITHOUT_LINK: number;
+      WITH_EMOJIS: number;
+      WITHOUT_EMOJIS: number;
+      WITH_ATTACHMENT: number;
+      WITHOUT_ATTACHMENT: number;
+    };
   };
-  eventLogPath: string;
-  assets: typeof assets;
-  colors: typeof colors;
-  Translator: i18n.I18n;
-  locales: string[];
-  translate: {
-    (
-      phraseOrOptions: string | i18n.TranslateOptions,
-      ...replace: string[]
-    ): string;
-    (
-      phraseOrOptions: string | i18n.TranslateOptions,
-      replacements: i18n.Replacements
-    ): string;
+  messageCaches: {
+    single: Collection<string, CacheMessage>;
+    bulk: Collection<string, CacheMessage>;
   };
   constructor(
     config: BotConfig,
@@ -184,6 +188,12 @@ export default class Bot extends Client {
       commands: new Map(),
     };
 
+    // message Caches
+    this.messageCaches = {
+      single: new Collection(),
+      bulk: new Collection(),
+    };
+
     // database
     this.database = Database;
 
@@ -206,6 +216,19 @@ export default class Bot extends Client {
         WITHOUT_ATTACHMENT: "without_attachment",
         USAGE_ALL: "all",
         USAGE_ONE: "one",
+      },
+      IDS: {
+        PINNED: 7,
+        NOT_PINNED: 8,
+        REGEX: 9,
+        NOT_REGEX: 10,
+        ALL: 0,
+        WITH_LINK: 3,
+        WITHOUT_LINK: 4,
+        WITH_EMOJIS: 1,
+        WITHOUT_EMOJIS: 2,
+        WITH_ATTACHMENT: 5,
+        WITHOUT_ATTACHMENT: 6,
       },
     };
   }
@@ -231,7 +254,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
 
   filterMessages(
     messages: Message[] | APIMessage[],
-    filters: string[],
+    filters: number[],
     filterUsage: string,
     regex: RegExp
   ): Collection<string, Message | APIMessage> {
@@ -246,52 +269,52 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
       messages.forEach((message): void => {
         let i = 0;
         filters.forEach((filter) => {
-          if (filter === this.filters.FLAGS.PINNED && message.pinned) i++;
-          if (filter === this.filters.FLAGS.NOT_PINNED && !message.pinned) i++;
+          if (filter === this.filters.IDS.PINNED && message.pinned) i++;
+          if (filter === this.filters.IDS.NOT_PINNED && !message.pinned) i++;
           if (
-            filter === this.filters.FLAGS.REGEX &&
+            filter === this.filters.IDS.REGEX &&
             regex &&
             regex?.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.NOT_REGEX &&
+            filter === this.filters.IDS.NOT_REGEX &&
             regex &&
             !regex?.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITH_ATTACHMENT &&
+            filter === this.filters.IDS.WITH_ATTACHMENT &&
             message?.attachments?.keys.length >= 0
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITHOUT_ATTACHMENT &&
+            filter === this.filters.IDS.WITHOUT_ATTACHMENT &&
             !message.attachments
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITHOUT_EMOJIS &&
+            filter === this.filters.IDS.WITHOUT_EMOJIS &&
             !emojiRegex.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITH_EMOJIS &&
+            filter === this.filters.IDS.WITH_EMOJIS &&
             emojiRegex.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITHOUT_EMOJIS &&
+            filter === this.filters.IDS.WITHOUT_EMOJIS &&
             !emojiRegex.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITH_LINK &&
+            filter === this.filters.IDS.WITH_LINK &&
             urlRegex.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITHOUT_LINK &&
+            filter === this.filters.IDS.WITHOUT_LINK &&
             !urlRegex.test(message.content)
           )
             i++;
@@ -303,52 +326,52 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
       messages.forEach((message): void => {
         let i = 0;
         filters.forEach((filter) => {
-          if (filter === this.filters.FLAGS.PINNED && message.pinned) i++;
-          if (filter === this.filters.FLAGS.NOT_PINNED && !message.pinned) i++;
+          if (filter === this.filters.IDS.PINNED && message.pinned) i++;
+          if (filter === this.filters.IDS.NOT_PINNED && !message.pinned) i++;
           if (
-            filter === this.filters.FLAGS.REGEX &&
+            filter === this.filters.IDS.REGEX &&
             regex &&
             regex?.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.NOT_REGEX &&
+            filter === this.filters.IDS.NOT_REGEX &&
             regex &&
             !regex?.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITH_ATTACHMENT &&
+            filter === this.filters.IDS.WITH_ATTACHMENT &&
             message?.attachments?.keys.length >= 0
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITHOUT_ATTACHMENT &&
+            filter === this.filters.IDS.WITHOUT_ATTACHMENT &&
             (!message.attachments || message?.attachments?.keys.length === 0)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITHOUT_EMOJIS &&
+            filter === this.filters.IDS.WITHOUT_EMOJIS &&
             !emojiRegex.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITH_EMOJIS &&
+            filter === this.filters.IDS.WITH_EMOJIS &&
             emojiRegex.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITHOUT_EMOJIS &&
+            filter === this.filters.IDS.WITHOUT_EMOJIS &&
             !emojiRegex.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITH_LINK &&
+            filter === this.filters.IDS.WITH_LINK &&
             urlRegex.test(message.content)
           )
             i++;
           if (
-            filter === this.filters.FLAGS.WITHOUT_LINK &&
+            filter === this.filters.IDS.WITHOUT_LINK &&
             !urlRegex.test(message.content)
           )
             i++;
@@ -534,9 +557,9 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
   }
   ms(s: string): number {
     var a =
-        /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
-          s
-        );
+      /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
+        s
+      );
     if (!a) return 0;
     var r = parseFloat(a[1]);
     switch ((a[2] || "ms").toLowerCase()) {
