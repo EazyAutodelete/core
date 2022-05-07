@@ -356,38 +356,83 @@ export class DatabaseHandler {
   config: DatabaseHandlerConfig;
   constructor(config: DatabaseHandlerConfig, Logger: Logger);
   connect(): Promise<void>;
+  getAllActiveChannels(): Promise<string[]>;
   getUserSettings(userId: string): Promise<UserSettings>;
-  createUserSettings(userId: string, { lang, registered, }?: {
+  createUserSettings(
+    userId: string,
+    {
+      lang,
+      registered,
+    }?: {
       lang?: string;
       registered?: number;
-  }): Promise<UserSettings>;
+    }
+  ): Promise<UserSettings>;
   deleteUserSettings(userId: string): Promise<void>;
-  updateUserSettings(userId: string, { lang, registered }?: {
+  updateUserSettings(
+    userId: string,
+    {
+      lang,
+      registered,
+    }?: {
       lang?: string;
       registered?: number;
-  }): Promise<UserSettings>;
+    }
+  ): Promise<UserSettings>;
   deleteUserCache(userId: string): Promise<void>;
   updateUserCache(userId: string): Promise<void>;
   getGuildSettings(guildId: string): Promise<GuildSettings>;
-  createGuildSettings(guildId: string, { registered, prefix, premium, adminroles, modroles, }: {
+  createGuildSettings(
+    guildId: string,
+    {
+      registered,
+      prefix,
+      premium,
+      adminroles,
+      modroles,
+    }: {
       registered?: number;
       prefix?: string;
       premium?: boolean;
       adminroles?: Array<string>;
       modroles?: Array<string>;
-  }): Promise<GuildSettings>;
+    }
+  ): Promise<GuildSettings>;
   deleteGuildSettings(guildId: string): Promise<void>;
-  updateGuildSettings(guildId: string, { registered, prefix, premium, adminroles, modroles, }?: {
+  updateGuildSettings(
+    guildId: string,
+    {
+      registered,
+      prefix,
+      premium,
+      adminroles,
+      modroles,
+    }?: {
       registered?: number;
       prefix?: string;
       premium?: boolean;
       adminroles?: Array<string>;
       modroles?: Array<string>;
-  }): Promise<GuildSettings>;
+    }
+  ): Promise<GuildSettings>;
   deleteGuildCache(guildId: string): Promise<void>;
   updateGuildCache(guildId: string): Promise<void>;
-  getChannelSettings(channelId: string, guild: string): Promise<ChannelSettings>;
-  createChannelSettings(channelId: string, guild: string, { registered, limit, mode, ignore, filters, regex, filterUsage, }?: {
+  getChannelSettings(
+    channelId: string,
+    guild: string
+  ): Promise<ChannelSettings>;
+  createChannelSettings(
+    channelId: string,
+    guild: string,
+    {
+      registered,
+      limit,
+      mode,
+      ignore,
+      filters,
+      regex,
+      filterUsage,
+    }?: {
       registered?: number;
       limit?: number;
       mode?: number;
@@ -395,9 +440,21 @@ export class DatabaseHandler {
       filters?: Array<number>;
       regex?: RegExp | null;
       filterUsage?: string;
-  }): Promise<ChannelSettings>;
+    }
+  ): Promise<ChannelSettings>;
   deleteChannelSettings(channelId: string): Promise<void>;
-  updateChannelSettings(channelId: string, guild: string, { registered, limit, mode, ignore, filters, regex, filterUsage, }: {
+  updateChannelSettings(
+    channelId: string,
+    guild: string,
+    {
+      registered,
+      limit,
+      mode,
+      ignore,
+      filters,
+      regex,
+      filterUsage,
+    }: {
       registered?: number;
       limit?: number;
       mode?: number;
@@ -405,7 +462,8 @@ export class DatabaseHandler {
       filters?: Array<number>;
       regex?: RegExp | null;
       filterUsage?: string;
-  }): Promise<ChannelSettings>;
+    }
+  ): Promise<ChannelSettings>;
   deleteChannelCache(channelId: string): Promise<void>;
   updateChannelCache(channelId: string, guild: string): Promise<void>;
 }
@@ -418,7 +476,10 @@ export class RedisHandler {
   connect(): Promise<void>;
   getKey(key: string): Promise<string | null>;
   getHashfields(key: string): Promise<Record<string, string>>;
-  setHash(key: string, data: UserSettings | ChannelSettings | GuildSettings | any): Promise<void>;
+  setHash(
+    key: string,
+    data: UserSettings | ChannelSettings | GuildSettings | any
+  ): Promise<void>;
   deleteKey(key: string): Promise<void>;
 }
 
@@ -432,22 +493,48 @@ export class MongoHandler {
   constructor(config: MongoHandlerConfig, Logger: Logger);
   connect(): Promise<void>;
   getUserSettings(userId: string): Promise<UserSettings | undefined>;
-  createUserSettings(userId: string, { lang, registered, }?: {
+  createUserSettings(
+    userId: string,
+    {
+      lang,
+      registered,
+    }?: {
       lang?: string;
       registered?: number;
-  }): Promise<UserSettings>;
+    }
+  ): Promise<UserSettings>;
   deleteUserSettings(userId: string): Promise<void>;
   getGuildSettings(guildId: string): Promise<GuildSettings | undefined>;
-  createGuildSettings(guildId: string, { registered, prefix, premium, adminroles, modroles, }?: {
+  createGuildSettings(
+    guildId: string,
+    {
+      registered,
+      prefix,
+      premium,
+      adminroles,
+      modroles,
+    }?: {
       registered?: number;
       prefix?: string;
       premium?: boolean;
       adminroles?: Array<string>;
       modroles?: Array<string>;
-  }): Promise<GuildSettings>;
+    }
+  ): Promise<GuildSettings>;
   deleteGuildSettings(guildId: string): Promise<void>;
   getChannelSettings(channelId: string): Promise<ChannelSettings | undefined>;
-  createChannelSettings(channelId: string, guild: string, { registered, limit, mode, ignore, filters, regex, filterUsage, }?: {
+  createChannelSettings(
+    channelId: string,
+    guild: string,
+    {
+      registered,
+      limit,
+      mode,
+      ignore,
+      filters,
+      regex,
+      filterUsage,
+    }?: {
       registered?: number;
       limit?: number;
       mode?: number;
@@ -455,7 +542,8 @@ export class MongoHandler {
       filters?: Array<number>;
       regex?: RegExp | null;
       filterUsage?: string;
-  }): Promise<ChannelSettings>;
+    }
+  ): Promise<ChannelSettings>;
   deleteChannelSettings(channelId: string): Promise<void>;
 }
 
