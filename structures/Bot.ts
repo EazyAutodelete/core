@@ -22,8 +22,8 @@ import colors from "../constants/assets/colors/colors";
 import assets from "../constants/assets/assets";
 import emojis from "../constants/emojis/emojis";
 import Event from "./Event";
-import i18n from "i18n";
 import CommandResponseHandler from "./discord/CommandResponseHandler";
+import Lang, { Locale } from "@eazyautodelete/eazyautodelete-lang";
 
 export default class Bot extends Client {
   config: BotConfig;
@@ -57,15 +57,6 @@ export default class Bot extends Client {
   eventLogPath: string;
   assets: typeof assets;
   colors: typeof colors;
-  Translator: i18n.I18n;
-  locales: string[];
-  translate: {
-    (phraseOrOptions: string | i18n.TranslateOptions, ...replace: string[]): string;
-    (
-      phraseOrOptions: string | i18n.TranslateOptions,
-      replacements: i18n.Replacements
-    ): string;
-  };
   filters: {
     FLAGS: {
       PINNED: string;
@@ -100,7 +91,11 @@ export default class Bot extends Client {
     single: Collection<string, Message>;
     bulk: Collection<string, Message>;
   };
-  constructor(config: BotConfig, Database: DatabaseHandler, Translator: i18n.I18n) {
+
+  locales: Locale[];
+  Translator: any;
+  
+  constructor(config: BotConfig, Database: DatabaseHandler) {
     super({
       intents: [
         Intents.FLAGS.DIRECT_MESSAGES,
@@ -160,9 +155,8 @@ export default class Bot extends Client {
     };
 
     // language
-    this.locales = Translator.getLocales();
-    this.Translator = Translator;
-    this.translate = Translator.__;
+    this.locales = Lang.locales;
+    this.Translator = new Lang.Translator({ defaultLocale: "en", locales: Lang.locales });
 
     // cooldown
     this.cooldownUsers = new Collection();
@@ -225,6 +219,10 @@ export default class Bot extends Client {
         WITHOUT_ATTACHMENT: 6,
       },
     };
+  }
+
+  public translate(data: { phrase: string, locale: Locale}, ...args: string[]): string {
+    return this.Translator.translate(data.locale, data.phrase, ...args) as string;
   }
 
   logEvent(eventName: string): void {

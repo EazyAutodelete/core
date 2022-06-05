@@ -600,7 +600,7 @@ export interface RedisHandlerConfig {
 export interface UserSettings {
   id: string;
   registered: number;
-  language: string;
+  language: Locale;
 }
 
 export interface ChannelSettings {
@@ -624,44 +624,45 @@ export interface GuildSettings {
   modroles: Array<string>;
 }
 
-export type UserSettingsLanguage = string;
-/**
-                                        "en"    |   // English 
-                                        "bg"    |   // Bulgarian
-                                        "hr"    |   // Croatian
-                                        "cs"    |   // Czech
-                                        "da"    |   // Danish 
-                                        "nl"    |   // Dutch
-                                        "fi"    |   // Finnish
-                                        "fr"    |   // French
-                                        "de"    |   // German
-                                        "el"    |   // Greek
-                                        "hi"    |   // Hindi
-                                        "hu"    |   // Hungarian
-                                        "it"    |   // Italian
-                                        "ja"    |   // Japanese
-                                        "ko"    |   // Korean
-                                        "lt"    |   // Lithuanian
-                                        "no"    |   // Norwegian
-                                        "pl"    |   // Polish
-                                        "pt"    |   // Portuguese
-                                        "ro"    |   // Romanian
-                                        "ru"    |   // Russian
-                                        "es"    |   // Spanish 
-                                        "sv-SE" |   // Swedish
-                                        "th"    |   // Thai
-                                        "tr"    |   // Turkish
-                                        "uk"    |   // Ukrainian
-                                        "vi";       // Vietnamese*/
+export type FilterType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
-export type FilterType = number; // 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type FilterUsage = "all" | "one";
 
-export type FilterUsage = string; //"all" | "one"
-
-export type ModeType = number; //0 | 1 | 2 | 3 | 4;
+export type ModeType = 0 | 1 | 2 | 3 | 4;
 
 export type ResponseData =
   | string
   | string[]
   | MessageEmbedOptions
   | MessageEmbedOptions[];
+
+export type Locale =
+| "en"
+| "bg"
+| "zh-CN"
+| "zh-TW"
+| "hr"
+| "cs"
+| "da"
+| "nl"
+| "fi"
+| "fr"
+| "de"
+| "el"
+| "hi"
+| "hu"
+| "it"
+| "ja"
+| "ko"
+| "lt"
+| "no"
+| "pl"
+| "pt"
+| "ro"
+| "ru"
+| "es"
+| "sv-SE"
+| "th"
+| "tr"
+| "uk"
+| "vi";
