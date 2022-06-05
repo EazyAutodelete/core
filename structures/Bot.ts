@@ -94,8 +94,8 @@ export default class Bot extends Client {
 
   locales: Locale[];
   Translator: any;
-  
-  constructor(config: BotConfig, Database: DatabaseHandler) {
+
+  constructor(config: BotConfig, Database: any) {
     super({
       intents: [
         Intents.FLAGS.DIRECT_MESSAGES,
@@ -221,7 +221,7 @@ export default class Bot extends Client {
     };
   }
 
-  public translate(data: { phrase: string, locale: Locale}, ...args: string[]): string {
+  public translate(data: { phrase: string; locale: Locale }, ...args: string[]): string {
     return this.Translator.translate(data.locale, data.phrase, ...args) as string;
   }
 
