@@ -9,8 +9,7 @@ const images = {
   },
   sponsors: {
     serverblaze: {
-      logo_light:
-        "https://serverblaze.eu/assets/mainpage/images/logo-light.png",
+      logo_light: "https://serverblaze.eu/assets/mainpage/images/logo-light.png",
     },
     uptimerobot: {
       banners: {

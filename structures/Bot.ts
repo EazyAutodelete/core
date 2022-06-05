@@ -14,12 +14,7 @@ import util from "util";
 import WebHook from "../utils/WebHook";
 import Command from "./Command";
 import fs from "fs/promises";
-import {
-  BotConfig,
-  CacheMessage,
-  CustomShardUtil,
-  DatabaseHandler,
-} from "../typings/index";
+import { BotConfig, CustomShardUtil, DatabaseHandler } from "../typings/index";
 import axios from "axios";
 import constants from "../constants/constants";
 import Logger from "../utils/Logger";
@@ -28,6 +23,7 @@ import assets from "../constants/assets/assets";
 import emojis from "../constants/emojis/emojis";
 import Event from "./Event";
 import i18n from "i18n";
+import CommandResponseHandler from "./discord/CommandResponseHandler";
 
 export default class Bot extends Client {
   config: BotConfig;
@@ -37,6 +33,7 @@ export default class Bot extends Client {
     options?: import("timers").TimerOptions | undefined
   ) => Promise<T>;
   allShardsReady: boolean;
+  response: CommandResponseHandler;
   customEmojis: typeof emojis;
   startedAt: Date;
   startedAtString: string;
@@ -63,10 +60,7 @@ export default class Bot extends Client {
   Translator: i18n.I18n;
   locales: string[];
   translate: {
-    (
-      phraseOrOptions: string | i18n.TranslateOptions,
-      ...replace: string[]
-    ): string;
+    (phraseOrOptions: string | i18n.TranslateOptions, ...replace: string[]): string;
     (
       phraseOrOptions: string | i18n.TranslateOptions,
       replacements: i18n.Replacements
@@ -106,11 +100,7 @@ export default class Bot extends Client {
     single: Collection<string, Message>;
     bulk: Collection<string, Message>;
   };
-  constructor(
-    config: BotConfig,
-    Database: DatabaseHandler,
-    Translator: i18n.I18n
-  ) {
+  constructor(config: BotConfig, Database: DatabaseHandler, Translator: i18n.I18n) {
     super({
       intents: [
         Intents.FLAGS.DIRECT_MESSAGES,
@@ -134,11 +124,14 @@ export default class Bot extends Client {
     // config
     this.config = config || {};
 
-    //
+    // wait
     this.wait = util.promisify(setTimeout);
 
     // shards
     this.allShardsReady = false;
+
+    // response
+    this.response = new CommandResponseHandler(this);
 
     // assets
     this.assets = constants.assets;
@@ -236,18 +229,10 @@ export default class Bot extends Client {
 
   logEvent(eventName: string): void {
     const d = new Date();
-    const date = `[${d.getDate()}/${
-      d.toDateString().split(" ")[1]
-    }/${d.getFullYear()}:${
+    const date = `[${d.getDate()}/${d.toDateString().split(" ")[1]}/${d.getFullYear()}:${
       1 === d.getHours().toString().length ? `0${d.getHours()}` : d.getHours()
-    }:${
-      1 === d.getMinutes().toString().length
-        ? `0${d.getMinutes()}`
-        : d.getMinutes()
-    }:${
-      1 === d.getSeconds().toString().length
-        ? `0${d.getSeconds()}`
-        : d.getSeconds()
+    }:${1 === d.getMinutes().toString().length ? `0${d.getMinutes()}` : d.getMinutes()}:${
+      1 === d.getSeconds().toString().length ? `0${d.getSeconds()}` : d.getSeconds()
     } +1200]`;
     this.eventLog = `${this.eventLog}
 Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot" "-"`;
@@ -263,20 +248,15 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     const urlRegex = new RegExp(
       /(((http|https):\/\/)|www\.)[a-zA-Z0-9\-.]+.[a-zA-Z]{2,6}/
     );
-    const filteredMessages: Collection<string, Message | APIMessage> =
-      new Collection();
+    const filteredMessages: Collection<string, Message | APIMessage> = new Collection();
 
     if (filterUsage === this.filters.FLAGS.USAGE_ALL) {
       messages.forEach((message): void => {
         let i = 0;
-        filters.forEach((filter) => {
+        filters.forEach(filter => {
           if (filter === this.filters.IDS.PINNED && message.pinned) i++;
           if (filter === this.filters.IDS.NOT_PINNED && !message.pinned) i++;
-          if (
-            filter === this.filters.IDS.REGEX &&
-            regex &&
-            regex?.test(message.content)
-          )
+          if (filter === this.filters.IDS.REGEX && regex && regex?.test(message.content))
             i++;
           if (
             filter === this.filters.IDS.NOT_REGEX &&
@@ -289,35 +269,22 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
             message?.attachments?.keys.length >= 0
           )
             i++;
+          if (filter === this.filters.IDS.WITHOUT_ATTACHMENT && !message.attachments) i++;
           if (
-            filter === this.filters.IDS.WITHOUT_ATTACHMENT &&
-            !message.attachments
+            filter === this.filters.IDS.WITHOUT_EMOJIS &&
+            !emojiRegex.test(message.content)
           )
+            i++;
+          if (filter === this.filters.IDS.WITH_EMOJIS && emojiRegex.test(message.content))
             i++;
           if (
             filter === this.filters.IDS.WITHOUT_EMOJIS &&
             !emojiRegex.test(message.content)
           )
             i++;
-          if (
-            filter === this.filters.IDS.WITH_EMOJIS &&
-            emojiRegex.test(message.content)
-          )
+          if (filter === this.filters.IDS.WITH_LINK && urlRegex.test(message.content))
             i++;
-          if (
-            filter === this.filters.IDS.WITHOUT_EMOJIS &&
-            !emojiRegex.test(message.content)
-          )
-            i++;
-          if (
-            filter === this.filters.IDS.WITH_LINK &&
-            urlRegex.test(message.content)
-          )
-            i++;
-          if (
-            filter === this.filters.IDS.WITHOUT_LINK &&
-            !urlRegex.test(message.content)
-          )
+          if (filter === this.filters.IDS.WITHOUT_LINK && !urlRegex.test(message.content))
             i++;
         });
         if (i === filters.length) filteredMessages.set(message.id, message);
@@ -326,14 +293,10 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     } else if (filterUsage === this.filters.FLAGS.USAGE_ONE) {
       messages.forEach((message): void => {
         let i = 0;
-        filters.forEach((filter) => {
+        filters.forEach(filter => {
           if (filter === this.filters.IDS.PINNED && message.pinned) i++;
           if (filter === this.filters.IDS.NOT_PINNED && !message.pinned) i++;
-          if (
-            filter === this.filters.IDS.REGEX &&
-            regex &&
-            regex?.test(message.content)
-          )
+          if (filter === this.filters.IDS.REGEX && regex && regex?.test(message.content))
             i++;
           if (
             filter === this.filters.IDS.NOT_REGEX &&
@@ -356,25 +319,16 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
             !emojiRegex.test(message.content)
           )
             i++;
-          if (
-            filter === this.filters.IDS.WITH_EMOJIS &&
-            emojiRegex.test(message.content)
-          )
+          if (filter === this.filters.IDS.WITH_EMOJIS && emojiRegex.test(message.content))
             i++;
           if (
             filter === this.filters.IDS.WITHOUT_EMOJIS &&
             !emojiRegex.test(message.content)
           )
             i++;
-          if (
-            filter === this.filters.IDS.WITH_LINK &&
-            urlRegex.test(message.content)
-          )
+          if (filter === this.filters.IDS.WITH_LINK && urlRegex.test(message.content))
             i++;
-          if (
-            filter === this.filters.IDS.WITHOUT_LINK &&
-            !urlRegex.test(message.content)
-          )
+          if (filter === this.filters.IDS.WITHOUT_LINK && !urlRegex.test(message.content))
             i++;
         });
         if (i !== 0) filteredMessages.set(message.id, message);
@@ -385,12 +339,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
   }
 
   logAction(action: string, duration: number): boolean {
-    if (
-      !action ||
-      typeof action != "string" ||
-      !duration ||
-      typeof duration != "number"
-    )
+    if (!action || typeof action != "string" || !duration || typeof duration != "number")
       return false;
 
     new WebHook(this.assets?.url?.logs?.actions)
@@ -510,10 +459,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     }
   }
 
-  createDeleteLog(
-    channelId: string,
-    messages: Collection<string, Message>
-  ): void {
+  createDeleteLog(channelId: string, messages: Collection<string, Message>): void {
     if (!channelId || typeof channelId != "string") return;
     if (Array.isArray(messages) || messages instanceof Collection) {
       const messageIds =
@@ -529,9 +475,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
   }
 
   parseDuration(duration: number): string {
-    const years = Math.floor(
-        (duration / (1000 * 60 * 60 * 24 * 7 * 365)) % 999
-      ),
+    const years = Math.floor((duration / (1000 * 60 * 60 * 24 * 7 * 365)) % 999),
       weeks = Math.floor((duration / (1000 * 60 * 60 * 24 * 7)) % 51),
       days = Math.floor((duration / (1000 * 60 * 60 * 24)) % 7),
       hours = Math.floor((duration / (1000 * 60 * 60)) % 24),
@@ -545,7 +489,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
         minutes === 1 ? minutes + " " + "minute" : minutes + " " + "minutes",
         seconds === 1 ? seconds + " " + "second" : seconds + " " + "seconds",
       ]
-        .filter((time) => !time.startsWith("0"))
+        .filter(time => !time.startsWith("0"))
         .join(", ");
 
     return uptime;
@@ -554,15 +498,15 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
   stringToMs(s: string): number {
     const e = s.split(" ");
     let c = 0;
-    return e.forEach((s) => (c += this.ms(s))), c;
+    return e.forEach(s => (c += this.ms(s))), c;
   }
   ms(s: string): number {
-    var a =
+    const a =
       /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
         s
       );
     if (!a) return 0;
-    var r = parseFloat(a[1]);
+    const r = parseFloat(a[1]);
     switch ((a[2] || "ms").toLowerCase()) {
       case "years":
       case "year":
@@ -649,12 +593,10 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
   }
 
   async clientValue(value: string): Promise<string | void> {
-    const results = await this.shard
-      ?.fetchClientValues(value)
-      .catch(this.Logger.error);
+    const results = await this.shard?.fetchClientValues(value).catch(this.Logger.error);
     if (!Array.isArray(results)) return;
     const r: string[] = [];
-    results.forEach((v) => r.push(`${v}`));
+    results.forEach(v => r.push(`${v}`));
     return r ? r.reduce((prev: string, val: string) => prev + val) : undefined;
   }
 
@@ -673,16 +615,11 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
   async shardEval(
     input: <T>(client: Client<boolean>) => Promise<Serialized<T>[]>
   ): Promise<void | Record<string, unknown>[][] | undefined> {
-    const results = await this.shard
-      ?.broadcastEval(input)
-      .catch(this.Logger.error);
+    const results = await this.shard?.broadcastEval(input).catch(this.Logger.error);
     return results;
   }
 
-  async resolveMember(
-    search: string,
-    guild: Guild
-  ): Promise<GuildMember | void> {
+  async resolveMember(search: string, guild: Guild): Promise<GuildMember | void> {
     let member;
     if (!search || typeof search !== "string") return;
     // Try ID search
@@ -695,9 +632,7 @@ Shard-${this.shard?.ids} - - ${date} "GET /${eventName} HTTP/1.1" 200 1 "-" "Bot
     // Try username search
     if (search.match(/^!?([^#]+)#(\d+)$/)) {
       await guild.members.fetch();
-      member = guild.members.cache.find(
-        (m: GuildMember) => m.user.tag === search
-      );
+      member = guild.members.cache.find((m: GuildMember) => m.user.tag === search);
       if (member) return member;
     }
     member = await guild.members.fetch(search).catch(this.logger.error);

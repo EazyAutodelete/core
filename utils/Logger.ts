@@ -10,8 +10,7 @@ export default class Logger extends Console {
     if (type === "BLANK") {
       return this.log(chalk.hidden("-"));
     }
-    const mess =
-      chalk.bold.cyan(this.date() + " - [ " + type + " ] => ") + input;
+    const mess = chalk.bold.cyan(this.date() + " - [ " + type + " ] => ") + input;
     super.log(mess);
   }
 

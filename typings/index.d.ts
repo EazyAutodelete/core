@@ -5,6 +5,8 @@ import {
   Awaitable,
   Serialized,
   ShardClientUtil,
+  User,
+  MessageEmbedOptions,
 } from "discord.js";
 import mongoose from "mongoose";
 
@@ -250,6 +252,10 @@ export interface CustomTextChannel extends TextChannel {
   client: Bot;
 }
 
+export interface CustomUser extends User {
+  settings: UserSettings;
+}
+
 export interface HostConfig {
   token: string;
   shardCount: number;
@@ -305,6 +311,34 @@ export interface CommandOptions {
   usage: string;
   options: ApplicationCommandOptionData[];
   botPermissions: bigint[];
+}
+
+export interface CommandConfig {
+  options: ApplicationCommandOptionData[];
+  name: string;
+  description: string;
+  cooldown: Cooldown;
+  usage: string;
+  example: string;
+  permissionLevel: PermissionLevel;
+  botPermissions: bigint[];
+}
+
+export interface CommandHelp {
+  name: string;
+  description: string;
+  permissionLevel: PermissionLevel;
+  cooldown: Cooldown;
+  usage: string;
+  category: string;
+  example: string;
+  aliases: string[];
+}
+
+export interface CommandData {
+  name: string;
+  description: string;
+  options: Array<ApplicationCommandOptionData>;
 }
 
 export type PermissionLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -417,10 +451,7 @@ export class DatabaseHandler {
   ): Promise<GuildSettings>;
   deleteGuildCache(guildId: string): Promise<void>;
   updateGuildCache(guildId: string): Promise<void>;
-  getChannelSettings(
-    channelId: string,
-    guild: string
-  ): Promise<ChannelSettings>;
+  getChannelSettings(channelId: string, guild: string): Promise<ChannelSettings>;
   createChannelSettings(
     channelId: string,
     guild: string,
@@ -628,3 +659,9 @@ export type FilterType = number; // 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 export type FilterUsage = string; //"all" | "one"
 
 export type ModeType = number; //0 | 1 | 2 | 3 | 4;
+
+export type ResponseData =
+  | string
+  | string[]
+  | MessageEmbedOptions
+  | MessageEmbedOptions[];

@@ -14,14 +14,12 @@ const permissions = [
   {
     level: 1,
     name: "Server Team",
-    check: (member: Member) =>
-      member.roles.cache.get(member.client.database /*INSERT*/),
+    check: (member: Member) => member.roles.cache.get(member.client.database /*INSERT*/),
   },
   {
     level: 2,
     name: "Server Administrator",
-    check: (member: Member) =>
-      member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
+    check: (member: Member) => member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
   },
   {
     level: 3,

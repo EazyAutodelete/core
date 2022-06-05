@@ -2,60 +2,33 @@ import {
   MessageEmbed,
   MessageActionRow,
   MessageButton,
-  CommandInteraction,
   SelectMenuInteraction,
-  ApplicationCommandOptionData,
   ButtonInteraction,
 } from "discord.js";
 import {
   AutocompleteOption,
+  CommandConfig,
+  CommandData,
+  CommandHelp,
   CommandOptions,
-  Cooldown,
-  PermissionLevel,
 } from "../typings";
 import assets from "../constants/assets/assets";
 import colors from "../constants/assets/colors/colors";
 import emojis from "../constants/emojis/emojis";
 import Bot from "./Bot";
 import Logger from "../utils/Logger";
+import CommandMessage from "./CommandMessage";
+import Args from "./Args";
 
 export default class Command {
   client: Bot;
-  config: {
-    options: ApplicationCommandOptionData[];
-    name: string;
-    description: string;
-    cooldown: Cooldown;
-    usage: string;
-    example: string;
-    permissionLevel: PermissionLevel;
-    botPermissions: bigint[];
-  };
-  help: {
-    name: string;
-    description: string;
-    permissionLevel: PermissionLevel;
-    cooldown: Cooldown;
-    usage: string;
-    category: string;
-    example: string;
-    aliases: string[];
-  };
-  data: {
-    name: string;
-    description: string;
-    options: Array<ApplicationCommandOptionData>;
-  };
+  config: CommandConfig;
+  help: CommandHelp;
+  data: CommandData;
   assets: typeof assets;
   colors: typeof colors;
   emojis: typeof emojis;
   Logger: Logger;
-  reply: (
-    interaction: CommandInteraction | ButtonInteraction | SelectMenuInteraction,
-    input: string | MessageEmbed | MessageEmbed[],
-    ephemeral: boolean,
-    components?: MessageActionRow | undefined
-  ) => Promise<void>;
   constructor(
     client: Bot,
     {
@@ -116,8 +89,6 @@ export default class Command {
     this.emojis = this.client.customEmojis;
 
     this.Logger = client?.Logger;
-
-    this.reply = this.response;
   }
 
   urlButton(url: string, label: string, emoji?: string): MessageActionRow {
@@ -132,18 +103,11 @@ export default class Command {
   }
 
   docsButton(url: string): MessageActionRow {
-    return this.urlButton(
-      "https://docs.eazyautodelete.xyz/" + url,
-      "Help",
-      "❓"
-    );
+    return this.urlButton("https://docs.eazyautodelete.xyz/" + url, "Help", "❓");
   }
 
-  async run(client: Bot, interaction: CommandInteraction): Promise<void> {
-    this.error(
-      interaction,
-      "An Error occured - Please contact staff: Core.Command.run"
-    );
+  async run(client: Bot, interaction: CommandMessage, args: Args): Promise<void> {
+    interaction.sendError("An Error occured - Please contact staff: Core.Command.run");
 
     return this.Logger.warn(
       "Ended up in command.js [ " +
@@ -166,11 +130,7 @@ export default class Command {
 
   async selectMenuHandler(interaction: SelectMenuInteraction): Promise<void> {
     this.Logger.warn(
-      "Ended up in command.js [ " +
-        this.config.name +
-        " - " +
-        interaction.id +
-        " ]"
+      "Ended up in command.js [ " + this.config.name + " - " + interaction.id + " ]"
     );
 
     return;
@@ -178,58 +138,10 @@ export default class Command {
 
   async buttonHandler(interaction: ButtonInteraction): Promise<void> {
     this.Logger.warn(
-      "Ended up in command.js [ " +
-        this.config.name +
-        " - " +
-        interaction.id +
-        " ]"
+      "Ended up in command.js [ " + this.config.name + " - " + interaction.id + " ]"
     );
 
     return;
-  }
-
-  async response(
-    interaction: CommandInteraction | ButtonInteraction | SelectMenuInteraction,
-    input: string | MessageEmbed | MessageEmbed[],
-    ephemeral: boolean,
-    components?: MessageActionRow
-  ): Promise<void> {
-    if (typeof input === "string") {
-      return await interaction
-        .reply({
-          content: input,
-          ephemeral: ephemeral,
-          components: components?.components ? [components] : [],
-        })
-        .catch(this.client.Logger.error);
-    } else if (Array.isArray(input)) {
-      return await interaction
-        .reply({
-          embeds: input,
-          ephemeral: ephemeral,
-          components: components?.components ? [components] : [],
-        })
-        .catch(this.client.Logger.error);
-    } else if (input.description || input.title) {
-      return await interaction
-        .reply({
-          embeds: [input],
-          ephemeral: ephemeral,
-          components: components?.components ? [components] : [],
-        })
-        .catch(this.client.Logger.error);
-    }
-  }
-
-  async error(interaction: CommandInteraction, text: string) {
-    await interaction
-      .reply({
-        ephemeral: true,
-        embeds: [
-          new MessageEmbed().setColor("#ff0000").setDescription(":x: " + text),
-        ],
-      })
-      .catch(this.client.Logger.error);
   }
 
   get embed(): MessageEmbed {
