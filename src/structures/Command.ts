@@ -100,7 +100,7 @@ export default class Command {
   }
 
   async run(client: Bot, interaction: CommandMessage, args: Args): Promise<void> {
-    interaction.sendError("An Error occured - Please contact staff: Core.Command.run");
+    interaction.error("An Error occured - Please contact staff: Core.Command.run");
 
     return this.Logger.warn(
       "Ended up in command.js [ " +
