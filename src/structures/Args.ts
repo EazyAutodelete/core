@@ -11,9 +11,9 @@ export default class Args {
     this.command = this.getCommand();
   }
 
-  get(argName: string): string {
+  get(argName: string): string | null {
     const value = this.message.message.options.get(argName)?.value;
-    return value ? value.toString().replace(/\\n/g, "\n") : "";
+    return value ? value.toString().replace(/\\n/g, "\n") : null;
   }
 
   getCommand(): string {
@@ -36,9 +36,9 @@ export default class Args {
     return this.getSubcommandGroup() === compareTo;
   }
 
-  consume(argName: string): string;
-  consume(argNames: string[]): string[];
-  consume(argName: string | string[]): string | string[] {
+  consume(argName: string): string | null;
+  consume(argNames: string[]): string[] | null[];
+  consume(argName: string | string[]): string | (null | string)[] | null {
     const args = Array.isArray(argName)
       ? argName.map(x => this.get(x))
       : this.get(argName);
