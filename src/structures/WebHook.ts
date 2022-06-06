@@ -38,7 +38,7 @@ export default class WebHook {
   }
 
   send() {
-    let objBody = {
+    const objBody = {
       content: this?.content,
       embeds:
         this.description || this.title
@@ -72,14 +72,10 @@ export default class WebHook {
       headers: { "Content-Type": "application/json" },
     });
 
-    return undefined;
+    return;
   }
 
-  setAuthor(
-    name: string,
-    icon_url: string | null = null,
-    url: string | null = null
-  ) {
+  setAuthor(name: string, icon_url: string | null = null, url: string | null = null) {
     this.author.name = name;
     this.author.icon_url = icon_url;
     this.author.url = url;
@@ -93,8 +89,7 @@ export default class WebHook {
 
   setColor(color: string) {
     this.color = parseInt(color.replace("#", ""), 16);
-    if (isNaN(this.color) || !this.color)
-      throw new SyntaxError("Invalid Color");
+    if (isNaN(this.color) || !this.color) throw new SyntaxError("Invalid Color");
     return this;
   }
 
