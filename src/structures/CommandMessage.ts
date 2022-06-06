@@ -41,15 +41,15 @@ export default class CommandMessage {
   }
 
   public translate(phrase: string, ...replace: string[]): string {
-    console.log(replace);
-
-    return this.client.translate(
+    const data = this.client.translate(
       {
         phrase: phrase,
         locale: (this.data.user.language as Locale) || "en",
       },
       ...replace
     );
+
+    return data || phrase;
   }
 
   public async error(message: string, ...args: string[]): Promise<CommandMessage> {

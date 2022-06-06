@@ -13,7 +13,7 @@ import { readdirSync, readFileSync } from "fs";
 import { lstat, readdir } from "fs/promises";
 import { parse } from "json5";
 import path from "path";
-import Event from "./Event"
+import Event from "./Event";
 
 type AssetType = "urls" | "emojis" | "images" | "colors";
 type AssetValue =
