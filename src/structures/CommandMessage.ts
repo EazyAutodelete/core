@@ -55,7 +55,7 @@ export default class CommandMessage {
   public async error(message: string, ...args: string[]): Promise<CommandMessage> {
     try {
       await this.send(
-        new MessageEmbed({ description: this.translate(message, ...args) || message }),
+        new MessageEmbed({ description: this.translate(message, ...args) || message }).setColor("#ff0000"),
         true
       ).catch(this.Logger.error);
     } catch (e) {
@@ -70,7 +70,7 @@ export default class CommandMessage {
     ephemeral: boolean | undefined = false,
     components: MessageActionRow | MessageActionRow[] = []
   ): Promise<CommandMessage> {
-    try {
+  //  try {
       await this.client.response
         .send(
           this.message,
@@ -83,9 +83,9 @@ export default class CommandMessage {
           Array.isArray(components) ? components : [components]
         )
         .catch(this.Logger.error);
-    } catch (e) {
-      this.Logger.error(e as string);
-    }
+   // } catch (e) {
+   //   this.Logger.error(e as string);
+   // }
     return this;
   }
 

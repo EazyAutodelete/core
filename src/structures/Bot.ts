@@ -109,6 +109,9 @@ class Bot extends Discord.Client {
     // shards
     this.allShardsReady = false;
 
+    // logging
+    this.Logger = new Logger();
+
     // response
     this.response = new CommandResponseHandler(this);
 
@@ -124,9 +127,6 @@ class Bot extends Discord.Client {
 
     // ready
     this.ready = false;
-
-    // logging
-    this.Logger = new Logger();
 
     // database
     this.database = new DatabaseHandler(
