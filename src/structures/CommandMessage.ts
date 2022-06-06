@@ -1,7 +1,7 @@
-import Discord from "discord.js";
+import Discord, { MessageActionRow, MessageEmbed, MessageEmbedOptions } from "discord.js";
 import Bot from "./Bot";
 import Logger from "./Logger";
-import { UserSettings, GuildSettings } from "@eazyautodelete/eazyautodelete-db-client"
+import { UserSettings, GuildSettings } from "@eazyautodelete/eazyautodelete-db-client";
 import { Locale } from "@eazyautodelete/eazyautodelete-lang";
 import { ResponseData } from "../";
 
@@ -16,7 +16,7 @@ export default class CommandMessage {
   createdTimestamp: number;
   locale: string;
   Logger: Logger;
-  data!: { guild: GuildSettings, user: UserSettings}
+  data!: { guild: GuildSettings; user: UserSettings };
 
   constructor(message: Discord.CommandInteraction, client: Bot) {
     this.client = client;
@@ -33,9 +33,11 @@ export default class CommandMessage {
 
   public async loadData() {
     this.data = {
-      guild: await this.client.database.getGuildSettings(this.message.guild?.id as string),
-      user: await this.client.database.getUserSettings(this.message.id)
-    }
+      guild: await this.client.database.getGuildSettings(
+        this.message.guild?.id as string
+      ),
+      user: await this.client.database.getUserSettings(this.message.id),
+    };
   }
 
   public translate(phrase: string, ...replace: string[]): string {
@@ -44,33 +46,18 @@ export default class CommandMessage {
     return this.client.translate(
       {
         phrase: phrase,
-        locale: this.data.user.language as Locale || "en",
+        locale: (this.data.user.language as Locale) || "en",
       },
       ...replace
     );
   }
 
-  public async sendError(message: string, ...args: string[]): Promise<CommandMessage> {
+  public async error(message: string, ...args: string[]): Promise<CommandMessage> {
     try {
-      await this.client.response
-        .sendError(this, this.translate(message, ...args) || message, true)
-        .catch(this.Logger.error);
-    } catch (e) {
-      this.Logger.error(e as string);
-    }
-
-    return this;
-  }
-
-  public async sendSuccess(
-    message: string,
-    ephemeral: boolean | undefined = false,
-    ...args: string[]
-  ): Promise<CommandMessage> {
-    try {
-      await this.client.response
-        .sendSuccess(this, this.translate(message, ...args) || message, ephemeral)
-        .catch(this.Logger.error);
+      await this.send(
+        new MessageEmbed({ description: this.translate(message, ...args) || message }),
+        true
+      ).catch(this.Logger.error);
     } catch (e) {
       this.Logger.error(e as string);
     }
@@ -79,22 +66,21 @@ export default class CommandMessage {
   }
 
   public async send(
-    message: ResponseData,
+    message: MessageEmbed | MessageEmbed[] | MessageEmbedOptions | MessageEmbedOptions[],
     ephemeral: boolean | undefined = false,
-    ...args: string[]
+    components: MessageActionRow | MessageActionRow[] = []
   ): Promise<CommandMessage> {
     try {
       await this.client.response
         .send(
           this.message,
-          typeof message === "string"
-            ? this.translate(message, ...args) || message
-            : Array.isArray(message)
+          Array.isArray(message)
             ? message.map(m => {
-                return typeof m === "string" ? { description: m } : m;
+                return m instanceof MessageEmbed ? m : new MessageEmbed(m);
               })
-            : message,
-          ephemeral
+            : [message instanceof MessageEmbed ? message : new MessageEmbed(message)],
+          ephemeral,
+          Array.isArray(components) ? components : [components]
         )
         .catch(this.Logger.error);
     } catch (e) {

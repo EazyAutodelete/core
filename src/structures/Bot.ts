@@ -5,18 +5,22 @@ import Discord, { ColorResolvable } from "discord.js";
 import Logger from "./Logger";
 import Timers from "timers";
 import util from "util";
-import Utils from "@eazyautodelete/bot-utils";
 import { DatabaseHandler } from "@eazyautodelete/eazyautodelete-db-client";
 import Translator, { Locale, locales } from "@eazyautodelete/eazyautodelete-lang";
 import { APIMessage } from "discord-api-types/v10";
 import WebHook from "./WebHook";
 import { readdirSync, readFileSync } from "fs";
-import { lstat, readdir } from "fs/promises"
+import { lstat, readdir } from "fs/promises";
 import { parse } from "json5";
 import path from "path";
 
 type AssetType = "urls" | "emojis" | "images" | "colors";
-type AssetValue = string | Record<string, string | Record<string, string | Record<string, string | Record<string, string>>>>;
+type AssetValue =
+  | string
+  | Record<
+      string,
+      string | Record<string, string | Record<string, string | Record<string, string>>>
+    >;
 
 class Bot extends Discord.Client {
   activeEvents: string[];
@@ -37,8 +41,41 @@ class Bot extends Discord.Client {
     options?: Timers.TimerOptions | undefined
   ) => Promise<T>;
 
-  private filters: typeof Utils.FilterFlags;
   private _assets: Record<AssetType, AssetValue>;
+  urls: Record<string, AssetValue>;
+  customEmojis: Record<string, AssetValue>;
+  images: Record<string, AssetValue>;
+  colors: Record<string, Discord.ColorResolvable>;
+  filters: {
+    FLAGS: {
+      PINNED: string;
+      NOT_PINNED: string;
+      REGEX: string;
+      NOT_REGEX: string;
+      ALL: string;
+      WITH_LINK: string;
+      WITHOUT_LINK: string;
+      WITH_EMOJIS: string;
+      WITHOUT_EMOJIS: string;
+      WITH_ATTACHMENT: string;
+      WITHOUT_ATTACHMENT: string;
+      USAGE_ALL: string;
+      USAGE_ONE: string;
+    };
+    IDS: {
+      PINNED: number;
+      NOT_PINNED: number;
+      REGEX: number;
+      NOT_REGEX: number;
+      ALL: number;
+      WITH_LINK: number;
+      WITHOUT_LINK: number;
+      WITH_EMOJIS: number;
+      WITHOUT_EMOJIS: number;
+      WITH_ATTACHMENT: number;
+      WITHOUT_ATTACHMENT: number;
+    };
+  };
 
   constructor(config: BotConfig) {
     super({
@@ -97,7 +134,36 @@ class Bot extends Discord.Client {
     );
 
     // Filter Flags
-    this.filters = Utils.FilterFlags;
+    this.filters = {
+      FLAGS: {
+        PINNED: "pinned",
+        NOT_PINNED: "not_pinned",
+        REGEX: "regex",
+        NOT_REGEX: "not_regex",
+        ALL: "all",
+        WITH_LINK: "with_link",
+        WITHOUT_LINK: "without_link",
+        WITH_EMOJIS: "with_emojis",
+        WITHOUT_EMOJIS: "without_emojis",
+        WITH_ATTACHMENT: "with_attachment",
+        WITHOUT_ATTACHMENT: "without_attachment",
+        USAGE_ALL: "all",
+        USAGE_ONE: "one",
+      },
+      IDS: {
+        PINNED: 7,
+        NOT_PINNED: 8,
+        REGEX: 9,
+        NOT_REGEX: 10,
+        ALL: 0,
+        WITH_LINK: 3,
+        WITHOUT_LINK: 4,
+        WITH_EMOJIS: 1,
+        WITHOUT_EMOJIS: 2,
+        WITH_ATTACHMENT: 5,
+        WITHOUT_ATTACHMENT: 6,
+      },
+    };
 
     // assets
     this._assets = {
@@ -108,36 +174,25 @@ class Bot extends Discord.Client {
     };
     this.loadAssets();
 
+    this.urls = this._assets.urls as Record<string, AssetValue>;
+    this.images = this._assets.images as Record<string, AssetValue>;
+    this.customEmojis = this._assets.emojis as Record<string, AssetValue>;
+    this.colors = this._assets.colors as Record<string, ColorResolvable>;
+
     // active events
     this.activeEvents = [];
   }
 
   private loadAssets(): void {
     for (const file of readdirSync(
-      path.join(require.main?.path || "", "config/assets")
+      path.join(require.main?.path || "", "..", "config/assets")
     )) {
       this._assets[file.replace(".json5", "") as AssetType] = parse(
-        readFileSync(path.join(require.main?.path || "", "config/assets", file), {
+        readFileSync(path.join(require.main?.path || "", "..", "config/assets", file), {
           encoding: "utf-8",
         })
       );
     }
-  }
-
-  public get urls(): Record<string, AssetValue> {
-    return this._assets.urls as Record<string, AssetValue>;
-  }
-
-  public get images(): Record<string, AssetValue> {
-    return this._assets.images as Record<string, AssetValue>;
-  }
-
-  public get customEmojis(): Record<string, AssetValue> {
-    return this._assets.emojis as Record<string, AssetValue>;
-  }
-
-  public get colors(): Record<string, ColorResolvable> {
-    return this._assets.colors as Record<string, ColorResolvable>;
   }
 
   public translate(data: { phrase: string; locale: Locale }, ...args: string[]): string {

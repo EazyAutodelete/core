@@ -6,12 +6,7 @@ import {
   ButtonInteraction,
   ApplicationCommandOptionChoiceData,
 } from "discord.js";
-import {
-  CommandConfig,
-  CommandData,
-  CommandHelp,
-  CommandOptions,
-} from "../";
+import { CommandConfig, CommandData, CommandHelp, CommandOptions } from "../";
 import Bot from "./Bot";
 import Logger from "./Logger";
 import CommandMessage from "./CommandMessage";
@@ -23,6 +18,8 @@ export default class Command {
   help: CommandHelp;
   data: CommandData;
   Logger: Logger;
+  embed: MessageEmbed;
+  shardId: number[] | undefined;
   constructor(
     client: Bot,
     {
@@ -77,6 +74,14 @@ export default class Command {
     };
 
     this.Logger = client?.Logger;
+
+    this.embed = new MessageEmbed({ color: 4605931 }).setTimestamp().setFooter({
+      text: "EazyAutodelete",
+      iconURL:
+        "https://cdn.discordapp.com/avatars/748215564455116961/ff37be1ab3cdf46c6c4179dcc9c11a91.png?size=1024",
+    });
+
+    this.shardId = client.shard?.ids;
   }
 
   urlButton(url: string, label: string, emoji?: string): MessageActionRow {
@@ -108,7 +113,9 @@ export default class Command {
     );
   }
 
-  async autocompleteHandler(query: string): Promise<ApplicationCommandOptionChoiceData[]> {
+  async autocompleteHandler(
+    query: string
+  ): Promise<ApplicationCommandOptionChoiceData[]> {
     this.Logger.warn(
       "Ended up in command.js [ " + this.config.name + " - " + query + " ]"
     );
@@ -130,20 +137,5 @@ export default class Command {
     );
 
     return;
-  }
-
-  get embed(): MessageEmbed {
-    const embed = new MessageEmbed().setTimestamp().setFooter({
-      text: "EazyAutodelete",
-      iconURL:
-        "https://cdn.discordapp.com/avatars/748215564455116961/ff37be1ab3cdf46c6c4179dcc9c11a91.png?size=1024",
-    });
-
-    embed.color = 4605931;
-    return embed;
-  }
-
-  get shard() {
-    return this.client.shard?.ids;
   }
 }

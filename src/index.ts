@@ -1,16 +1,20 @@
-import { ApplicationCommandOptionData, MessageEmbedOptions } from "discord.js"
+import {
+  ApplicationCommandOptionData,
+  MessageEmbed,
+  MessageEmbedOptions,
+} from "discord.js";
 
-export { default as Args } from "./structures/Args"
-export { default as Bot } from "./structures/Bot"
-export { default as Command } from "./structures/Command"
-export { default as CommandMessage } from "./structures/CommandMessage"
-export { default as CommandResponseHandler } from "./structures/discord/CommandResponseHandler"
-export { default as Logger } from "./structures/Logger"
-export { default as Event } from "./structures/Event"
-export { default as ShardEvent } from "./structures/ShardEvent"
-export { default as WebHook } from "./structures/WebHook"
+export { default as Args } from "./structures/Args";
+export { default as Bot } from "./structures/Bot";
+export { default as Command } from "./structures/Command";
+export { default as CommandMessage } from "./structures/CommandMessage";
+export { default as CommandResponseHandler } from "./structures/discord/CommandResponseHandler";
+export { default as Logger } from "./structures/Logger";
+export { default as Event } from "./structures/Event";
+export { default as ShardEvent } from "./structures/ShardEvent";
+export { default as WebHook } from "./structures/WebHook";
 
-export { default as commandDeployer } from "./helpers/commandDeployer"
+export { default as commandDeployer } from "./helpers/commandDeployer";
 
 // config
 export interface BotConfig {
@@ -106,4 +110,6 @@ export type ResponseData =
   | string
   | string[]
   | MessageEmbedOptions
-  | MessageEmbedOptions[];
+  | MessageEmbedOptions[]
+  | MessageEmbed
+  | MessageEmbed[];
