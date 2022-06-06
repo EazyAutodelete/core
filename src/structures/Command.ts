@@ -4,19 +4,16 @@ import {
   MessageButton,
   SelectMenuInteraction,
   ButtonInteraction,
+  ApplicationCommandOptionChoiceData,
 } from "discord.js";
 import {
-  AutocompleteOption,
   CommandConfig,
   CommandData,
   CommandHelp,
   CommandOptions,
-} from "../typings";
-import assets from "../constants/assets/assets";
-import colors from "../constants/assets/colors/colors";
-import emojis from "../constants/emojis/emojis";
+} from "../";
 import Bot from "./Bot";
-import Logger from "../utils/Logger";
+import Logger from "./Logger";
 import CommandMessage from "./CommandMessage";
 import Args from "./Args";
 
@@ -25,9 +22,6 @@ export default class Command {
   config: CommandConfig;
   help: CommandHelp;
   data: CommandData;
-  assets: typeof assets;
-  colors: typeof colors;
-  emojis: typeof emojis;
   Logger: Logger;
   constructor(
     client: Bot,
@@ -82,12 +76,6 @@ export default class Command {
       options: this.config.options,
     };
 
-    this.assets = this.client.assets;
-
-    this.colors = this.assets.colors;
-
-    this.emojis = this.client.customEmojis;
-
     this.Logger = client?.Logger;
   }
 
@@ -120,7 +108,7 @@ export default class Command {
     );
   }
 
-  async autocompleteHandler(query: string): Promise<AutocompleteOption[]> {
+  async autocompleteHandler(query: string): Promise<ApplicationCommandOptionChoiceData[]> {
     this.Logger.warn(
       "Ended up in command.js [ " + this.config.name + " - " + query + " ]"
     );

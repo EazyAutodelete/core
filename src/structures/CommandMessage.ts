@@ -1,19 +1,22 @@
 import Discord from "discord.js";
-import { CustomUser, ResponseData } from "../typings";
 import Bot from "./Bot";
-import Logger from "../utils/Logger";
+import Logger from "./Logger";
+import { UserSettings, GuildSettings } from "@eazyautodelete/eazyautodelete-db-client"
+import { Locale } from "@eazyautodelete/eazyautodelete-lang";
+import { ResponseData } from "../";
 
 export default class CommandMessage {
   message: Discord.CommandInteraction;
   channel!: Discord.TextBasedChannel;
   member: Discord.GuildMember;
-  author: CustomUser;
+  author: Discord.User;
   client: Bot;
   guild!: Discord.Guild;
   id: Discord.Snowflake;
   createdTimestamp: number;
   locale: string;
   Logger: Logger;
+  data!: { guild: GuildSettings, user: UserSettings}
 
   constructor(message: Discord.CommandInteraction, client: Bot) {
     this.client = client;
@@ -22,11 +25,17 @@ export default class CommandMessage {
     if (message.guild) this.guild = message.guild;
     this.id = message.id;
     this.createdTimestamp = message.createdTimestamp;
-
     this.member = this.message.member as Discord.GuildMember;
-    this.author = this.message.user as CustomUser;
+    this.author = this.message.user as Discord.User;
     this.locale = this.message.locale;
     this.Logger = client.Logger;
+  }
+
+  public async loadData() {
+    this.data = {
+      guild: await this.client.database.getGuildSettings(this.message.guild?.id as string),
+      user: await this.client.database.getUserSettings(this.message.id)
+    }
   }
 
   public translate(phrase: string, ...replace: string[]): string {
@@ -35,7 +44,7 @@ export default class CommandMessage {
     return this.client.translate(
       {
         phrase: phrase,
-        locale: this.author.settings.language || "en",
+        locale: this.data.user.language as Locale || "en",
       },
       ...replace
     );

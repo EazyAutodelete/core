@@ -1,8 +1,8 @@
 import Discord from "discord.js";
-import colorToInt from "../../utils/colorToInt";
+import { colorToInt } from "@eazyautodelete/bot-utils";
 import Bot from "../Bot";
 import CommandMessage from "../CommandMessage.js";
-import Logger from "../../utils/Logger";
+import Logger from "../Logger";
 
 type Message =
   | CommandMessage
@@ -25,7 +25,7 @@ export default class CommandResponseHandler {
     ephemeral = true
   ): Promise<void> {
     if (typeof embed === "string") embed = { description: embed };
-    embed.color = colorToInt(this.client.colors.error);
+    embed.color = colorToInt(this.client.colors.error as string);
     return this.send(message, embed, ephemeral);
   }
 
@@ -35,7 +35,7 @@ export default class CommandResponseHandler {
     ephemeral = false
   ): Promise<void> {
     if (typeof embed === "string") embed = { description: embed };
-    Array.isArray(embed) || (embed.color = colorToInt(this.client.colors.succesfull));
+    Array.isArray(embed) || (embed.color = colorToInt(this.client.colors.succesfull as string));
     return this.send(message, embed, ephemeral);
   }
 
@@ -49,7 +49,7 @@ export default class CommandResponseHandler {
       const responseData: Discord.MessageEmbedOptions[] = Array.isArray(data)
         ? data.map(embed => {
             return (
-              embed.color || (embed.color = colorToInt(this.client.colors.default)), embed
+              embed.color || (embed.color = colorToInt(this.client.colors.default as string)), embed
             );
           })
         : [data];

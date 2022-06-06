@@ -1,6 +1,6 @@
 import Discord from "discord.js";
-import ms from "../utils/ms.js";
 import CommandMessage from "./CommandMessage.js";
+import { ms } from "@eazyautodelete/bot-utils";
 
 export default class Args {
   command: string;
