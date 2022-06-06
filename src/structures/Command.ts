@@ -18,7 +18,6 @@ export default class Command {
   help: CommandHelp;
   data: CommandData;
   Logger: Logger;
-  embed: MessageEmbed;
   shardId: number[] | undefined;
   constructor(
     client: Bot,
@@ -75,13 +74,15 @@ export default class Command {
 
     this.Logger = client?.Logger;
 
-    this.embed = new MessageEmbed({ color: 4605931 }).setTimestamp().setFooter({
+    this.shardId = client.shard?.ids;
+  }
+
+  get embed(): MessageEmbed {
+    return new MessageEmbed({ color: 4605931 }).setTimestamp().setFooter({
       text: "EazyAutodelete",
       iconURL:
         "https://cdn.discordapp.com/avatars/748215564455116961/ff37be1ab3cdf46c6c4179dcc9c11a91.png?size=1024",
     });
-
-    this.shardId = client.shard?.ids;
   }
 
   urlButton(url: string, label: string, emoji?: string): MessageActionRow {
