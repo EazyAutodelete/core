@@ -9,6 +9,10 @@ export default class ButtonArgs {
     this.command = this.getCommand();
   }
 
+  isCommand(): boolean {
+    return this.button.interaction.customId?.startsWith("cmd_") || false;
+  }
+
   getCommand(): string {
     return this.button.interaction.customId.split("_")[1] as string;
   }

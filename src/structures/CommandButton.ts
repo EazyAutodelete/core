@@ -123,9 +123,19 @@ export default class CommandButton {
     return this;
   }
 
-  async continue(): Promise<CommandButton> {
+  async continue(ephemeral: boolean = true): Promise<CommandButton> {
     try {
-      await this.interaction.deferReply().catch(this.Logger.error);
+      await this.interaction.deferReply({ ephemeral: ephemeral}).catch(this.Logger.error);
+    } catch (e) {
+      this.Logger.error(e as string);
+    }
+
+    return this;
+  }
+
+  async deferUpdate() {
+    try {
+      await this.interaction.deferUpdate().catch(this.Logger.error);
     } catch (e) {
       this.Logger.error(e as string);
     }
