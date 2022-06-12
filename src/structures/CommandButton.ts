@@ -125,7 +125,9 @@ export default class CommandButton {
 
   async continue(ephemeral: boolean = true): Promise<CommandButton> {
     try {
-      await this.interaction.deferReply({ ephemeral: ephemeral}).catch(this.Logger.error);
+      await this.interaction
+        .deferReply({ ephemeral: ephemeral })
+        .catch(this.Logger.error);
     } catch (e) {
       this.Logger.error(e as string);
     }
