@@ -197,7 +197,7 @@ class Bot extends Discord.Client {
   }
 
   public translate(data: { phrase: string; locale: Locale }, ...args: string[]): string {
-    return this.Translator.translate(data.locale, data.phrase, ...args) as string;
+    return this.Translator.translate(data.phrase, data.locale, ...args) as string;
   }
 
   public filterMessages(
