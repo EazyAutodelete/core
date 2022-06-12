@@ -4,8 +4,7 @@ import Logger from "./Logger";
 import { UserSettings, GuildSettings } from "@eazyautodelete/eazyautodelete-db-client";
 import { Locale } from "@eazyautodelete/eazyautodelete-lang";
 
-export default class CommandMessage {
-  message: Discord.CommandInteraction;
+export default class CommandButton {
   channel!: Discord.TextBasedChannel;
   member: Discord.GuildMember;
   author: Discord.User;
@@ -16,17 +15,20 @@ export default class CommandMessage {
   locale: string;
   Logger: Logger;
   data!: { guild: GuildSettings; user: UserSettings };
+  message: Discord.Message;
+  interaction: Discord.ButtonInteraction;
 
-  constructor(message: Discord.CommandInteraction, client: Bot) {
+  constructor(interaction: Discord.ButtonInteraction, client: Bot) {
     this.client = client;
-    this.message = message;
-    if (message.channel) this.channel = message.channel;
-    if (message.guild) this.guild = message.guild;
-    this.id = message.id;
-    this.createdTimestamp = message.createdTimestamp;
-    this.member = this.message.member as Discord.GuildMember;
-    this.author = this.message.user as Discord.User;
-    this.locale = this.message.locale;
+    this.message = interaction.message as Discord.Message;
+    this.interaction = interaction;
+    if (interaction.channel) this.channel = interaction.channel;
+    if (interaction.guild) this.guild = interaction.guild;
+    this.id = interaction.id;
+    this.createdTimestamp = interaction.createdTimestamp;
+    this.member = this.interaction.member as Discord.GuildMember;
+    this.author = this.interaction.user as Discord.User;
+    this.locale = this.interaction.locale;
     this.Logger = client.Logger;
   }
 
@@ -51,7 +53,7 @@ export default class CommandMessage {
     return data || phrase;
   }
 
-  public async error(message: string, ...args: string[]): Promise<CommandMessage> {
+  public async error(message: string, ...args: string[]): Promise<CommandButton> {
     try {
       await this.send(
         new MessageEmbed({
@@ -70,11 +72,11 @@ export default class CommandMessage {
     message: MessageEmbed | MessageEmbed[] | MessageEmbedOptions | MessageEmbedOptions[],
     ephemeral: boolean | undefined = false,
     components: MessageActionRow | MessageActionRow[] = []
-  ): Promise<CommandMessage> {
+  ): Promise<CommandButton> {
     try {
       await this.client.response
         .send(
-          this.message,
+          this.interaction,
           Array.isArray(message)
             ? message.map((m: MessageEmbed | MessageEmbedOptions) => {
                 return m instanceof MessageEmbed ? m : new MessageEmbed(m);
@@ -90,9 +92,9 @@ export default class CommandMessage {
     return this;
   }
 
-  async react(emoji: string): Promise<CommandMessage> {
+  async react(emoji: string): Promise<CommandButton> {
     try {
-      await this.message.followUp({
+      await this.interaction.followUp({
         ephemeral: true,
         content: emoji,
       });
@@ -103,17 +105,17 @@ export default class CommandMessage {
     return this;
   }
 
-  async delete(): Promise<CommandMessage | void> {
+  async delete(): Promise<CommandButton | void> {
     try {
-      return await this.message.deleteReply().catch(this.Logger.error);
+      return await this.interaction.deleteReply().catch(this.Logger.error);
     } catch (e) {
       return this.Logger.error(e as string);
     }
   }
 
-  async edit(payload: Discord.InteractionReplyOptions): Promise<CommandMessage> {
+  async edit(payload: Discord.InteractionReplyOptions): Promise<CommandButton> {
     try {
-      await this.message.editReply(payload).catch(this.Logger.error);
+      await this.interaction.editReply(payload).catch(this.Logger.error);
     } catch (e) {
       this.Logger.error(e as string);
     }
@@ -121,9 +123,19 @@ export default class CommandMessage {
     return this;
   }
 
-  async continue(): Promise<CommandMessage> {
+  async continue(ephemeral: boolean = true): Promise<CommandButton> {
     try {
-      await this.message.deferReply().catch(this.Logger.error);
+      await this.interaction.deferReply({ ephemeral: ephemeral}).catch(this.Logger.error);
+    } catch (e) {
+      this.Logger.error(e as string);
+    }
+
+    return this;
+  }
+
+  async deferUpdate() {
+    try {
+      await this.interaction.deferUpdate().catch(this.Logger.error);
     } catch (e) {
       this.Logger.error(e as string);
     }

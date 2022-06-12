@@ -3,14 +3,15 @@ import {
   MessageActionRow,
   MessageButton,
   SelectMenuInteraction,
-  ButtonInteraction,
   ApplicationCommandOptionChoiceData,
 } from "discord.js";
 import { CommandConfig, CommandData, CommandHelp, CommandOptions } from "../";
 import Bot from "./Bot";
+import ButtonArgs from "./ButtonArgs";
 import Logger from "./Logger";
+import CommandArgs from "./CommandArgs";
+import CommandButton from "./CommandButton";
 import CommandMessage from "./CommandMessage";
-import Args from "./Args";
 
 export default class Command {
   client: Bot;
@@ -100,16 +101,16 @@ export default class Command {
     return this.urlButton("https://docs.eazyautodelete.xyz/" + url, "Help", "❓");
   }
 
-  async run(client: Bot, interaction: CommandMessage, args: Args): Promise<void> {
-    interaction.error("An Error occured - Please contact staff: Core.Command.run");
+  async run(client: Bot, message: CommandMessage, args: CommandArgs): Promise<void> {
+    message.error("An Error occured - Please contact staff: Core.Command.run");
 
     return this.Logger.warn(
       "Ended up in command.js [ " +
         this.config.name +
         " - " +
-        interaction.guild?.id +
+        message.guild?.id +
         " - " +
-        interaction.channel?.id +
+        message.channel?.id +
         " ]"
     );
   }
@@ -132,9 +133,9 @@ export default class Command {
     return;
   }
 
-  async buttonHandler(interaction: ButtonInteraction): Promise<void> {
+  async buttonHandler(button: CommandButton, args: ButtonArgs): Promise<void> {
     this.Logger.warn(
-      "Ended up in command.js [ " + this.config.name + " - " + interaction.id + " ]"
+      "Ended up in command.js [ " + this.config.name + " - " + button.id + " ]"
     );
 
     return;

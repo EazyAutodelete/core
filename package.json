@@ -1,6 +1,6 @@
 {
   "name": "@eazyautodelete/eazyautodelete-core",
-  "version": "1.4.0",
+  "version": "1.5.2",
   "description": "🧰 Core Package used by the EazyAutodelete Discord Bot",
   "main": "build/index.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "lint:typings": "eslint typings/index.d.ts",
     "test": "npm run lint && npm run lint:typings && npm run test:typescript",
     "test:typescript": "tsc",
-    "build": "npm run format & tsc"
+    "build": "npm run format & tsc",
+    "publish": "git push --follow-tags origin main && npm publish"
   },
   "files": [
     "build/*.js",
