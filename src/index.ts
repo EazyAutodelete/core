@@ -4,8 +4,9 @@ import {
   MessageEmbedOptions,
 } from "discord.js";
 
-export { default as Args } from "./structures/Args";
 export { default as Bot } from "./structures/Bot";
+export { default as ButtonArgs } from "./structures/ButtonArgs";
+export { default as CommandArgs } from "./structures/CommandArgs";
 export { default as Command } from "./structures/Command";
 export { default as CommandMessage } from "./structures/CommandMessage";
 export { default as CommandResponseHandler } from "./structures/discord/CommandResponseHandler";

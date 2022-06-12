@@ -10,7 +10,7 @@ import { CommandConfig, CommandData, CommandHelp, CommandOptions } from "../";
 import Bot from "./Bot";
 import Logger from "./Logger";
 import CommandMessage from "./CommandMessage";
-import Args from "./Args";
+import Args from "./CommandArgs";
 
 export default class Command {
   client: Bot;
