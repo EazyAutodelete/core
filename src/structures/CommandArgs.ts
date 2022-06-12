@@ -12,7 +12,7 @@ export default class CommandArgs {
   }
 
   get(argName: string): string | null {
-    const value = this.message.message.options.get(argName);
+    const value = this.message.message.options.get(argName)?.value;
     return value ? value.toString().replace(/\\n/g, "\n") : null;
   }
 
