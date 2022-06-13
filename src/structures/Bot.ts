@@ -1,11 +1,11 @@
 import { BotConfig } from "../";
 import Command from "./Command";
 import CommandResponseHandler from "./discord/CommandResponseHandler";
-import Discord, { ColorResolvable } from "discord.js";
+import Discord, { ColorResolvable, TextChannel } from "discord.js";
 import Logger from "./Logger";
 import Timers from "timers";
 import util from "util";
-import { DatabaseHandler } from "@eazyautodelete/eazyautodelete-db-client";
+import { ChannelSettings, DatabaseHandler } from "@eazyautodelete/eazyautodelete-db-client";
 import Translator, { Locale, locales } from "@eazyautodelete/eazyautodelete-lang";
 import { APIMessage } from "discord-api-types/v10";
 import WebHook from "./WebHook";
@@ -77,6 +77,7 @@ class Bot extends Discord.Client {
       WITHOUT_ATTACHMENT: number;
     };
   };
+  activeChannels: { config: ChannelSettings, channel: TextChannel }[];
 
   constructor(config: BotConfig) {
     super({
@@ -182,6 +183,9 @@ class Bot extends Discord.Client {
 
     // active events
     this.activeEvents = [];
+
+    // active channels
+    this.activeChannels = [];
   }
 
   private loadAssets(): void {

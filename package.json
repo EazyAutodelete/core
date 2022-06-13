@@ -1,6 +1,6 @@
 {
   "name": "@eazyautodelete/eazyautodelete-core",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "description": "🧰 Core Package used by the EazyAutodelete Discord Bot",
   "main": "build/index.js",
   "scripts": {
@@ -50,8 +50,8 @@
   "dependencies": {
     "@discordjs/rest": "^0.5.0",
     "@eazyautodelete/bot-utils": "^1.0.4",
-    "@eazyautodelete/eazyautodelete-db-client": "^1.2.3",
-    "@eazyautodelete/eazyautodelete-lang": "^1.2.4",
+    "@eazyautodelete/eazyautodelete-db-client": "^1.2.7",
+    "@eazyautodelete/eazyautodelete-lang": "^1.2.6",
     "axios": "^0.24.0",
     "chalk": "^4.1.2",
     "discord-api-types": "^0.30.0",
