@@ -5,9 +5,7 @@ import Discord, { ColorResolvable, TextChannel } from "discord.js";
 import Logger from "./Logger";
 import Timers from "timers";
 import util from "util";
-import {
-  DatabaseHandler,
-} from "@eazyautodelete/eazyautodelete-db-client";
+import { DatabaseHandler } from "@eazyautodelete/eazyautodelete-db-client";
 import Translator, { Locale, locales } from "@eazyautodelete/eazyautodelete-lang";
 import { APIMessage } from "discord-api-types/v10";
 import WebHook from "./WebHook";
@@ -20,10 +18,8 @@ import Event from "./Event";
 type AssetType = "urls" | "emojis" | "images" | "colors";
 type AssetValue =
   | string
-  | Record<
-      string,
-      string | Record<string, string | Record<string, string | Record<string, string>>>
-    >;
+  | Record<string, string>
+  | Record<string, Record<string, string>>;
 
 class Bot extends Discord.Client {
   activeEvents: string[];
@@ -305,41 +301,6 @@ class Bot extends Discord.Client {
       });
     }
     return filteredMessages;
-  }
-
-  public async bulkDelete(
-    channel: string,
-    messages: Discord.Collection<string, Discord.Message>
-  ): Promise<void | string[]> {
-    if (!channel || typeof channel != "string") return [];
-    if (messages instanceof Discord.Collection) {
-      let messageIds =
-        messages instanceof Discord.Collection
-          ? [...messages.keys()]
-          : messages.map((x: Discord.Message) => x?.id || x);
-      messageIds = messageIds.filter(
-        (id: string) =>
-          Date.now() - Discord.SnowflakeUtil.deconstruct(id).timestamp < 1_209_600_000
-      );
-      if (messageIds.length === 0) return [];
-      if (messageIds.length === 1) {
-        await this.api.channels[channel]
-          .messages(messageIds[0])
-          .delete()
-          .catch((error: string) => {
-            this.Logger.error(error);
-            return [];
-          });
-        return messageIds;
-      }
-      await this.api.channels[channel].messages["bulk-delete"]
-        .post({ data: { messages: messageIds } })
-        .catch((error: string) => {
-          this.Logger.error(error);
-          return [];
-        });
-      return messageIds;
-    }
   }
 
   public async clientValue(value: string): Promise<string | void> {

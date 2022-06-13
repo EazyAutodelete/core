@@ -27,6 +27,7 @@ export interface BotConfig {
   sharding: Record<string, HostConfig>;
   redis: RedisHandlerConfig;
   mongo: MongoHandlerConfig;
+  staffserver: string;
 }
 
 export interface HostConfig {
