@@ -5,7 +5,9 @@ import Discord, { ColorResolvable, TextChannel } from "discord.js";
 import Logger from "./Logger";
 import Timers from "timers";
 import util from "util";
-import { ChannelSettings, DatabaseHandler } from "@eazyautodelete/eazyautodelete-db-client";
+import {
+  DatabaseHandler,
+} from "@eazyautodelete/eazyautodelete-db-client";
 import Translator, { Locale, locales } from "@eazyautodelete/eazyautodelete-lang";
 import { APIMessage } from "discord-api-types/v10";
 import WebHook from "./WebHook";
@@ -77,7 +79,7 @@ class Bot extends Discord.Client {
       WITHOUT_ATTACHMENT: number;
     };
   };
-  activeChannels: { config: ChannelSettings, channel: TextChannel }[];
+  activeChannels: string[];
 
   constructor(config: BotConfig) {
     super({
