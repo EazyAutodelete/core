@@ -4,7 +4,6 @@
   "description": "🧰 Core Package used by the EazyAutodelete Discord Bot",
   "main": "build/index.js",
   "scripts": {
-    "prepare": "husky install",
     "format": "npx prettier --write .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
