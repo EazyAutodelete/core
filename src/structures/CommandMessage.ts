@@ -35,7 +35,7 @@ export default class CommandMessage {
       guild: await this.client.database.getGuildSettings(
         this.message.guild?.id as string
       ),
-      user: await this.client.database.getUserSettings(this.message.id),
+      user: await this.client.database.getUserSettings(this.author.id),
     };
   }
 
