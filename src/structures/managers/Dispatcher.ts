@@ -26,6 +26,7 @@ class Dispatcher extends Base {
       "guildRoleCreate",
       "guildRoleDelete",
       "guildRoleUpdate",
+      "interactionCreate",
       "messageCreate",
       "messageDelete",
       "messageDeleteBulk",
