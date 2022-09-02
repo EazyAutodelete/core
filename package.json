@@ -11,7 +11,7 @@
     "test": "npm run lint && npm run lint:typings && npm run test:typescript",
     "test:typescript": "tsc",
     "build": "npm run format & tsc",
-    "publish": "git push --follow-tags origin main && npm publish"
+    "postpublish": "git push --follow-tags origin main && npm publish"
   },
   "files": [
     "build/*.js",
