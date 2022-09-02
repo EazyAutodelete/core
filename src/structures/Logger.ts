@@ -1,5 +1,6 @@
 import { Console } from "console";
 import chalk from "chalk";
+import Bot from "./Bot";
 
 export default class Logger extends Console {
   constructor() {
@@ -10,17 +11,17 @@ export default class Logger extends Console {
     if (type === "BLANK") {
       return this.log(chalk.hidden("-"));
     }
-    const mess = chalk.bold.cyan(this.date() + " - [ " + type + " ] => ") + input;
+    const mess = chalk.cyan("[INFO]" + (type ? "[" + type + "]" : "")) + ": " + input;
     super.log(mess);
   }
 
-  error(input: string): void {
-    const mess = chalk.bold.redBright(this.date() + " - [ ERR- ] => ") + input;
+  error(input: string, type?: string): void {
+    const mess = chalk.bold.redBright("[ERRO]" + (type ? "[" + type + "]" : "")) + ": " + input;
     super.error(mess);
   }
 
-  warn(input: string): void {
-    const mess = chalk.bold.yellow(this.date() + " - [ WARN ] => ") + input;
+  warn(input: string, type?: string): void {
+    const mess = chalk.bold.yellow("[WARN]" + (type ? "[" + type + "]" : "")) + ": " + input;
     super.warn(mess);
   }
 

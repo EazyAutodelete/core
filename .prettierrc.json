@@ -3,7 +3,7 @@
   "bracketSpacing": true,
   "embeddedLanguageFormatting": "auto",
   "endOfLine": "lf",
-  "printWidth": 90,
+  "printWidth": 120,
   "quoteProps": "consistent",
   "semi": true,
   "singleQuote": false,

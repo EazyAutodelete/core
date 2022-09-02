@@ -4,86 +4,75 @@ import {
   MessageButton,
   SelectMenuInteraction,
   ApplicationCommandOptionChoiceData,
+  ApplicationCommandOptionData,
+  ApplicationCommandData,
+  ColorResolvable,
 } from "discord.js";
-import { CommandConfig, CommandData, CommandHelp, CommandOptions } from "../";
+import { Cooldown, PermissionLevel } from "..";
 import Bot from "./Bot";
-import ButtonArgs from "./ButtonArgs";
-import Logger from "./Logger";
+import ButtonArgs from "./CommandButtonArgs";
 import CommandArgs from "./CommandArgs";
 import CommandButton from "./CommandButton";
 import CommandMessage from "./CommandMessage";
+import Base from "./Base";
+import Module from "./Module";
 
-export default class Command {
-  client: Bot;
-  config: CommandConfig;
-  help: CommandHelp;
-  data: CommandData;
-  Logger: Logger;
-  shardId: number[] | undefined;
-  constructor(
-    client: Bot,
-    {
-      name = "",
-      description = "",
+class Command extends Base {
+  public bot: Bot;
 
-      dirname = __dirname,
+  public name: string;
+  public aliases: string[];
+  public description: string;
+  public module!: Module;
+  public usage: string;
+  public examples: string[];
+  public permissionLevel: PermissionLevel;
+  public cooldown: Cooldown;
 
-      permissionLevel = 1,
+  public shardId: number;
 
-      botPermissions = [],
+  public data: ApplicationCommandData;
+  public options: ApplicationCommandOptionData[];
 
-      cooldown = 5000,
+  constructor(bot: Bot) {
+    super(bot);
+    this.bot = bot;
 
-      aliases = [],
+    this.name = "";
+    this.aliases = [];
+    this.description = "";
+    this.usage = "";
+    this.examples = [];
+    this.permissionLevel = "botAdmin";
+    this.cooldown = 3000;
 
-      example = "",
-
-      usage = "",
-
-      options = [],
-    }: CommandOptions
-  ) {
-    this.client = client;
-
-    this.config = {
-      options,
-      name,
-      description,
-      cooldown,
-      usage,
-      example,
-      permissionLevel,
-      botPermissions,
-    };
-
-    this.help = {
-      name,
-      description,
-      permissionLevel,
-      cooldown,
-      category: dirname.split("\\")[dirname.split("\\").length - 1],
-      usage,
-      example,
-      aliases,
-    };
+    this.options = [];
 
     this.data = {
-      name: this.help.name,
-      description: this.help.description,
-      options: this.config.options,
+      name: this.name,
+      description: this.description,
+      options: this.options,
     };
 
-    this.Logger = client?.Logger;
+    this.shardId = parseInt(this.client.shard?.ids.toString() || "0");
+  }
 
-    this.shardId = client.shard?.ids;
+  public hasCooldown(user: string) {
+    return this.bot.cooldowns.hasCooldown(this.name, user);
+  }
+
+  public t(phrase: string, locale: string, ...args: any[]) {
+    return this.bot.translate(phrase, locale, ...args.map(a => new String(a).toString()));
   }
 
   get embed(): MessageEmbed {
-    return new MessageEmbed({ color: 4605931 }).setTimestamp().setFooter({
-      text: "EazyAutodelete",
-      iconURL:
-        "https://cdn.discordapp.com/avatars/748215564455116961/ff37be1ab3cdf46c6c4179dcc9c11a91.png?size=1024",
-    });
+    return new MessageEmbed()
+      .setColor(this.bot.utils.getColor("default") as ColorResolvable)
+      .setTimestamp()
+      .setFooter({
+        text: this.client.user!.username,
+        iconURL: this.client.user!.displayAvatarURL({ dynamic: true }),
+      });
   }
 
   urlButton(url: string, label: string, emoji?: string): MessageActionRow {
@@ -104,40 +93,28 @@ export default class Command {
   async run(client: Bot, message: CommandMessage, args: CommandArgs): Promise<void> {
     message.error("An Error occured - Please contact staff: Core.Command.run");
 
-    return this.Logger.warn(
-      "Ended up in command.js [ " +
-        this.config.name +
-        " - " +
-        message.guild?.id +
-        " - " +
-        message.channel?.id +
-        " ]"
+    return this.logger.warn(
+      "Ended up in command.js [ " + this.name + " - " + message.guild?.id + " - " + message.channel?.id + " ]"
     );
   }
 
-  async autocompleteHandler(
-    query: string
-  ): Promise<ApplicationCommandOptionChoiceData[]> {
-    this.Logger.warn(
-      "Ended up in command.js [ " + this.config.name + " - " + query + " ]"
-    );
+  async autocompleteHandler(query: string): Promise<ApplicationCommandOptionChoiceData[]> {
+    this.logger.warn("Ended up in command.js [ " + this.name + " - " + query + " ]");
 
     return [];
   }
 
   async selectMenuHandler(interaction: SelectMenuInteraction): Promise<void> {
-    this.Logger.warn(
-      "Ended up in command.js [ " + this.config.name + " - " + interaction.id + " ]"
-    );
+    this.logger.warn("No Select Menu Handler", this.name);
 
     return;
   }
 
   async buttonHandler(button: CommandButton, args: ButtonArgs): Promise<void> {
-    this.Logger.warn(
-      "Ended up in command.js [ " + this.config.name + " - " + button.id + " ]"
-    );
+    this.logger.warn("No Button Handler", this.name);
 
     return;
   }
 }
+
+export default Command;

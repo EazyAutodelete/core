@@ -37,7 +37,7 @@ export default class WebHook {
     this.webhook_url = webhook_url;
   }
 
-  send() {
+  public async send(): Promise<void> {
     const objBody = {
       content: this?.content,
       embeds:
@@ -65,56 +65,56 @@ export default class WebHook {
 
     if (!this.webhook_url) throw new SyntaxError("No WebHook URL");
 
-    axios({
+    await axios({
       method: "post",
       url: this.webhook_url,
       data: JSON.stringify(objBody),
       headers: { "Content-Type": "application/json" },
-    });
+    }).catch(console.error);
 
     return;
   }
 
-  setAuthor(name: string, icon_url: string | null = null, url: string | null = null) {
+  public setAuthor(name: string, icon_url: string | null = null, url: string | null = null): WebHook {
     this.author.name = name;
     this.author.icon_url = icon_url;
     this.author.url = url;
     return this;
   }
 
-  setUrl(url: string) {
+  public setUrl(url: string): WebHook {
     this.url = url;
     return this;
   }
 
-  setColor(color: string) {
+  public setColor(color: string): WebHook {
     this.color = parseInt(color.replace("#", ""), 16);
     if (isNaN(this.color) || !this.color) throw new SyntaxError("Invalid Color");
     return this;
   }
 
-  setTitle(text: string) {
+  public setTitle(text: string): WebHook {
     this.title = text;
     return this;
   }
 
-  setContent(text: string) {
+  public setContent(text: string): WebHook {
     this.content = text;
     return this;
   }
 
-  setDescription(text: string) {
+  public setDescription(text: string): WebHook {
     this.description = text;
     return this;
   }
 
-  setFooter(text: string, icon_url: string | null = null) {
+  public setFooter(text: string, icon_url: string | null = null): WebHook {
     this.footer.text = text;
     this.footer.icon_url = icon_url;
     return this;
   }
 
-  setTimestamp(timestamp: number = new Date().getTime()) {
+  public setTimestamp(timestamp: number = new Date().getTime()): WebHook {
     this.timestamp = new Date(timestamp).toISOString();
     return this;
   }
