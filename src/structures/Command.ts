@@ -28,6 +28,7 @@ class Command extends Base {
   public examples: string[];
   public permissionLevel: PermissionLevel;
   public cooldown: Cooldown;
+  public botPermissions: bigint[]
 
   public shardId: number;
 
@@ -45,6 +46,7 @@ class Command extends Base {
     this.examples = [];
     this.permissionLevel = "botAdmin";
     this.cooldown = 3000;
+    this.botPermissions = [];
 
     this.options = [];
 
