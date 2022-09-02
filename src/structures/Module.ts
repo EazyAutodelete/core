@@ -58,17 +58,13 @@ class Module extends Base {
     );
   }
 
-  public start(client: Client, ...args: any[]) {
-    
-  }
+  public start(...args: any[]) {}
 
-  public unload(...args: any[]) {
-    
-  }
+  public unload(...args: any[]) {}
 
-  public _start(client: Client, ...args: any[]) {
+  public _start(...args: any[]) {
     if (this.start) {
-      this.start(client, ...args);
+      this.start(...args);
     }
 
     this.logger.info(`Started Module ${this.name}`, "MODULE");
