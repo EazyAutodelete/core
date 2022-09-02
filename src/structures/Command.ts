@@ -28,7 +28,7 @@ class Command extends Base {
   public examples: string[];
   public permissionLevel: PermissionLevel;
   public cooldown: Cooldown;
-  public botPermissions: bigint[]
+  public botPermissions: bigint[];
 
   public shardId: number;
 
