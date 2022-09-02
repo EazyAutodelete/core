@@ -1,5 +1,5 @@
-import Discord from "discord.js";
-import CommandMessage from "./CommandMessage.js";
+import { Channel, Role, User, MessageAttachment } from "discord.js";
+import CommandMessage from "./CommandMessage";
 import { ms } from "@eazyautodelete/bot-utils";
 
 export default class CommandArgs {
@@ -39,9 +39,7 @@ export default class CommandArgs {
   consume(argName: string): string | null;
   consume(argNames: string[]): string[] | null[];
   consume(argName: string | string[]): string | (null | string)[] | null {
-    const args = Array.isArray(argName)
-      ? argName.map(x => this.get(x))
-      : this.get(argName);
+    const args = Array.isArray(argName) ? argName.map(x => this.get(x)) : this.get(argName);
     return args;
   }
 
@@ -59,22 +57,19 @@ export default class CommandArgs {
     return typeof parsed === "number" ? parsed : null;
   }
 
-  consumeChannel(argName: string): Discord.Channel | null {
-    return this.message.message.options.getChannel(argName) as Discord.Channel;
+  consumeChannel(argName: string): Channel | null {
+    return this.message.message.options.getChannel(argName) as Channel;
   }
 
-  consumeUser(argName: string): Discord.User | null {
-    return this.message.message.options.getUser(argName) as Discord.User;
+  consumeUser(argName: string): User | null {
+    return this.message.message.options.getUser(argName) as User;
   }
 
-  consumeRole(argName: string): Discord.Role | null {
-    return this.message.message.options.getRole(argName) as Discord.Role;
+  consumeRole(argName: string): Role | null {
+    return this.message.message.options.getRole(argName) as Role;
   }
 
-  consumeAttachment(
-    argName: string,
-    check?: (attachment: Discord.MessageAttachment) => boolean
-  ): Discord.MessageAttachment | null {
+  consumeAttachment(argName: string, check?: (attachment: MessageAttachment) => boolean): MessageAttachment | null {
     const attachment = this.message.message.options.getAttachment(argName);
     if (attachment && (!check || check(attachment))) return attachment;
     return null;

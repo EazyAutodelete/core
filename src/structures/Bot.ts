@@ -1,359 +1,152 @@
-import { BotConfig } from "../";
-import Command from "./Command";
-import CommandResponseHandler from "./discord/CommandResponseHandler";
-import Discord, { ColorResolvable, TextChannel } from "discord.js";
-import Logger from "./Logger";
-import Timers from "timers";
-import util from "util";
 import { DatabaseHandler } from "@eazyautodelete/eazyautodelete-db-client";
-import Translator, { Locale, locales } from "@eazyautodelete/eazyautodelete-lang";
-import { APIMessage } from "discord-api-types/v10";
-import WebHook from "./WebHook";
-import { readdirSync, readFileSync } from "fs";
-import { lstat, readdir } from "fs/promises";
-import { parse } from "json5";
-import path from "path";
-import Event from "./Event";
+import Translator, { locales } from "@eazyautodelete/eazyautodelete-lang";
+import { Client, ClientOptions, Intents } from "discord.js";
+import CommandCollection from "./collections/CommandCollection";
+import ModuleCollection from "./collections/ModuleCollection";
+import Logger from "./Logger";
+import CooldownsManager from "./managers/CooldownsManager";
+import Dispatcher from "./managers/Dispatcher";
+import PermissionsManager from "./managers/PermissionsManager";
+import ResponseManager from "./managers/ResponseManager";
+import * as utils from "@eazyautodelete/bot-utils";
+import { BotOptions } from "..";
 
-type AssetType = "urls" | "emojis" | "images" | "colors";
-type AssetValue =
-  | string
-  | Record<string, string>
-  | Record<string, Record<string, string>>;
+class Bot {
+  public isReady: boolean;
+  public startTime: number;
+  public dispatcher!: Dispatcher;
+  public modules!: ModuleCollection;
+  public commands!: CommandCollection;
+  public permissions!: PermissionsManager;
+  public cooldowns!: CooldownsManager;
+  public response!: ResponseManager;
+  public staff!: { botAdmins: string[]; botMods: string[] };
 
-class Bot extends Discord.Client {
-  activeEvents: string[];
-  allShardsReady: boolean;
-  commands: Discord.Collection<string, Command>;
-  config: BotConfig;
-  cooldown: Map<string, number>;
-  database: DatabaseHandler;
-  disabledCommands: Map<string, string>;
-  Logger: Logger;
-  ready: boolean;
-  response: CommandResponseHandler;
-  Translator: Translator;
+  private _logger!: Logger;
+  private _client!: Client;
+  private _database!: DatabaseHandler;
+  private _config!: any;
+  private _i18n!: Translator;
+  private _clientOptions!: ClientOptions;
 
-  wait: <T = void>(
-    delay?: number | undefined,
-    value?: T | undefined,
-    options?: Timers.TimerOptions | undefined
-  ) => Promise<T>;
+  private _token!: string;
 
-  private _assets: Record<AssetType, AssetValue>;
-  urls: Record<string, AssetValue>;
-  customEmojis: Record<string, AssetValue>;
-  images: Record<string, AssetValue>;
-  colors: Record<string, Discord.ColorResolvable>;
-  filters: {
-    FLAGS: {
-      PINNED: string;
-      NOT_PINNED: string;
-      REGEX: string;
-      NOT_REGEX: string;
-      ALL: string;
-      WITH_LINK: string;
-      WITHOUT_LINK: string;
-      WITH_EMOJIS: string;
-      WITHOUT_EMOJIS: string;
-      WITH_ATTACHMENT: string;
-      WITHOUT_ATTACHMENT: string;
-      USAGE_ALL: string;
-      USAGE_ONE: string;
-    };
-    IDS: {
-      PINNED: number;
-      NOT_PINNED: number;
-      REGEX: number;
-      NOT_REGEX: number;
-      ALL: number;
-      WITH_LINK: number;
-      WITHOUT_LINK: number;
-      WITH_EMOJIS: number;
-      WITHOUT_EMOJIS: number;
-      WITH_ATTACHMENT: number;
-      WITHOUT_ATTACHMENT: number;
-    };
-  };
-  activeChannels: string[];
+  public staffServer: any;
+  public supportServer: any;
 
-  constructor(config: BotConfig) {
-    super({
-      intents: [
-        Discord.Intents.FLAGS.DIRECT_MESSAGES,
-        Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
-        Discord.Intents.FLAGS.DIRECT_MESSAGE_TYPING,
-        Discord.Intents.FLAGS.GUILDS,
-        Discord.Intents.FLAGS.GUILD_BANS,
-        Discord.Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-        Discord.Intents.FLAGS.GUILD_INTEGRATIONS,
-        Discord.Intents.FLAGS.GUILD_INVITES,
-        Discord.Intents.FLAGS.GUILD_MEMBERS,
-        Discord.Intents.FLAGS.GUILD_MESSAGES,
-        Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-        Discord.Intents.FLAGS.GUILD_MESSAGE_TYPING,
-        Discord.Intents.FLAGS.GUILD_PRESENCES,
-        Discord.Intents.FLAGS.GUILD_VOICE_STATES,
-        Discord.Intents.FLAGS.GUILD_WEBHOOKS,
+  utils!: typeof utils;
+
+  constructor() {
+    this.isReady = false;
+    this.startTime = Date.now();
+  }
+
+  public get client(): Client {
+    return this._client;
+  }
+
+  public get logger(): Logger {
+    return this._logger;
+  }
+
+  public get config() {
+    return this._config;
+  }
+
+  public get db() {
+    return this._database;
+  }
+
+  public async setup(options: BotOptions) {
+    this._config = {};
+    await this._configure(options);
+
+    this.utils = utils;
+
+    this._logger = new Logger();
+    this._database = new DatabaseHandler(this._config.mongo, this._logger);
+
+    this._client = new Client(this._clientOptions);
+
+    this._client.on("error", err => this._logger.error(err.toString()));
+    this._client.on("warn", err => this._logger.error(err.toString()));
+    this._client.on("debug", err => this._logger.error(err.toString()));
+
+    this.dispatcher = new Dispatcher(this);
+
+    this.modules = new ModuleCollection(this);
+    await this.modules.loadModules();
+
+    this.commands = new CommandCollection(this);
+    await this.commands.loadCommands();
+
+    this._i18n = new Translator({ locales: locales, defaultLocale: "en" });
+
+    this.cooldowns = new CooldownsManager(this);
+    this.permissions = new PermissionsManager(this);
+    this.response = new ResponseManager(this);
+
+    this.login();
+  }
+
+  private async _configure(options: any = {}) {
+    this._clientOptions = {
+      intents: options.intents || [
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+        Intents.FLAGS.DIRECT_MESSAGE_TYPING,
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_BANS,
+        Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+        Intents.FLAGS.GUILD_INTEGRATIONS,
+        Intents.FLAGS.GUILD_INVITES,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+        Intents.FLAGS.GUILD_MESSAGE_TYPING,
+        Intents.FLAGS.GUILD_PRESENCES,
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_WEBHOOKS,
       ],
-      partials: ["CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION", "USER"],
-    });
-
-    // config
-    this.config = config || new Error("no config");
-
-    // wait
-    this.wait = util.promisify(setTimeout);
-
-    // shards
-    this.allShardsReady = false;
-
-    // logging
-    this.Logger = new Logger();
-
-    // response
-    this.response = new CommandResponseHandler(this);
-
-    // translator
-    this.Translator = new Translator({ defaultLocale: "en", locales: locales });
-
-    // cooldown
-    this.cooldown = new Discord.Collection();
-
-    // commands
-    this.commands = new Discord.Collection();
-    this.disabledCommands = new Map();
-
-    // ready
-    this.ready = false;
-
-    // database
-    this.database = new DatabaseHandler(
-      { mongo: config.mongo, redis: config.redis },
-      this.Logger
-    );
-
-    // Filter Flags
-    this.filters = {
-      FLAGS: {
-        PINNED: "pinned",
-        NOT_PINNED: "not_pinned",
-        REGEX: "regex",
-        NOT_REGEX: "not_regex",
-        ALL: "all",
-        WITH_LINK: "with_link",
-        WITHOUT_LINK: "without_link",
-        WITH_EMOJIS: "with_emojis",
-        WITHOUT_EMOJIS: "without_emojis",
-        WITH_ATTACHMENT: "with_attachment",
-        WITHOUT_ATTACHMENT: "without_attachment",
-        USAGE_ALL: "all",
-        USAGE_ONE: "one",
-      },
-      IDS: {
-        PINNED: 7,
-        NOT_PINNED: 8,
-        REGEX: 9,
-        NOT_REGEX: 10,
-        ALL: 0,
-        WITH_LINK: 3,
-        WITHOUT_LINK: 4,
-        WITH_EMOJIS: 1,
-        WITHOUT_EMOJIS: 2,
-        WITH_ATTACHMENT: 5,
-        WITHOUT_ATTACHMENT: 6,
-      },
+      partials: options.partials || ["CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION", "USER"],
     };
 
-    // assets
-    this._assets = {
-      emojis: {},
-      images: {},
-      urls: {},
-      colors: {},
+    this._token = options.token;
+
+    this.staffServer = options.staffServer;
+    this.supportServer = options.supportServer;
+
+    this._config.mongo = {
+      uri: options.mongo.uri,
+      host: options.mongo.host,
+      port: options.mongo.port,
+      username: options.mongo.username,
+      password: options.mongo.password,
     };
-    this.loadAssets();
+    this._config.redis = {
+      host: options.redis.host,
+      port: options.redis.port,
+      password: options.redis.password,
+    };
 
-    this.urls = this._assets.urls as Record<string, AssetValue>;
-    this.images = this._assets.images as Record<string, AssetValue>;
-    this.customEmojis = this._assets.emojis as Record<string, AssetValue>;
-    this.colors = this._assets.colors as Record<string, ColorResolvable>;
+    this._config.sharding = {
+      shardCount: options.sharding.shardCount || 1,
+      shardList: options.sharding.shardList || [0],
+      id: options.sharding.id || 0,
+    };
 
-    // active events
-    this.activeEvents = [];
-
-    // active channels
-    this.activeChannels = [];
+    this.staff = {
+      botAdmins: options.staff.botAdmins || [],
+      botMods: options.staff.botMods || [],
+    };
   }
 
-  private loadAssets(): void {
-    for (const file of readdirSync(
-      path.join(require.main?.path || "", "..", "config/assets")
-    )) {
-      this._assets[file.replace(".json5", "") as AssetType] = parse(
-        readFileSync(path.join(require.main?.path || "", "..", "config/assets", file), {
-          encoding: "utf-8",
-        })
-      );
-    }
+  public login() {
+    this._client.login(this._token);
   }
 
-  public translate(data: { phrase: string; locale: Locale }, ...args: string[]): string {
-    return this.Translator.translate(data.phrase, data.locale, ...args) as string;
-  }
-
-  public filterMessages(
-    messages: Discord.Message[],
-    filters: number[],
-    filterUsage: string,
-    regex: RegExp
-  ): Discord.Collection<string, Discord.Message | APIMessage> {
-    const emojiRegex = /<a?:(\w+):(\d+)>/gm;
-    const urlRegex = new RegExp(
-      /(((http|https):\/\/)|www\.)[a-zA-Z0-9\-.]+.[a-zA-Z]{2,6}/
-    );
-    const filteredMessages: Discord.Collection<string, Discord.Message | APIMessage> =
-      new Discord.Collection();
-
-    if (filterUsage === this.filters.FLAGS.USAGE_ALL) {
-      messages.forEach((message): void => {
-        let i = 0;
-        filters.forEach(filter => {
-          if (filter === this.filters.IDS.PINNED && message.pinned) i++;
-          if (filter === this.filters.IDS.NOT_PINNED && !message.pinned) i++;
-          if (filter === this.filters.IDS.REGEX && regex && regex?.test(message.content))
-            i++;
-          if (
-            filter === this.filters.IDS.NOT_REGEX &&
-            regex &&
-            !regex?.test(message.content)
-          )
-            i++;
-          if (
-            filter === this.filters.IDS.WITH_ATTACHMENT &&
-            message?.attachments?.keys.length >= 0
-          )
-            i++;
-          if (filter === this.filters.IDS.WITHOUT_ATTACHMENT && !message.attachments) i++;
-          if (
-            filter === this.filters.IDS.WITHOUT_EMOJIS &&
-            !emojiRegex.test(message.content)
-          )
-            i++;
-          if (filter === this.filters.IDS.WITH_EMOJIS && emojiRegex.test(message.content))
-            i++;
-          if (
-            filter === this.filters.IDS.WITHOUT_EMOJIS &&
-            !emojiRegex.test(message.content)
-          )
-            i++;
-          if (filter === this.filters.IDS.WITH_LINK && urlRegex.test(message.content))
-            i++;
-          if (filter === this.filters.IDS.WITHOUT_LINK && !urlRegex.test(message.content))
-            i++;
-        });
-        if (i === filters.length) filteredMessages.set(message.id, message);
-        return;
-      });
-    } else if (filterUsage === this.filters.FLAGS.USAGE_ONE) {
-      messages.forEach((message): void => {
-        let i = 0;
-        filters.forEach(filter => {
-          if (filter === this.filters.IDS.PINNED && message.pinned) i++;
-          if (filter === this.filters.IDS.NOT_PINNED && !message.pinned) i++;
-          if (filter === this.filters.IDS.REGEX && regex && regex?.test(message.content))
-            i++;
-          if (
-            filter === this.filters.IDS.NOT_REGEX &&
-            regex &&
-            !regex?.test(message.content)
-          )
-            i++;
-          if (
-            filter === this.filters.IDS.WITH_ATTACHMENT &&
-            message?.attachments?.keys.length >= 0
-          )
-            i++;
-          if (
-            filter === this.filters.IDS.WITHOUT_ATTACHMENT &&
-            (!message.attachments || message?.attachments?.keys.length === 0)
-          )
-            i++;
-          if (
-            filter === this.filters.IDS.WITHOUT_EMOJIS &&
-            !emojiRegex.test(message.content)
-          )
-            i++;
-          if (filter === this.filters.IDS.WITH_EMOJIS && emojiRegex.test(message.content))
-            i++;
-          if (
-            filter === this.filters.IDS.WITHOUT_EMOJIS &&
-            !emojiRegex.test(message.content)
-          )
-            i++;
-          if (filter === this.filters.IDS.WITH_LINK && urlRegex.test(message.content))
-            i++;
-          if (filter === this.filters.IDS.WITHOUT_LINK && !urlRegex.test(message.content))
-            i++;
-        });
-        if (i !== 0) filteredMessages.set(message.id, message);
-        return;
-      });
-    }
-    return filteredMessages;
-  }
-
-  public async clientValue(value: string): Promise<string | void> {
-    const results = await this.shard?.fetchClientValues(value).catch(this.Logger.error);
-    if (!Array.isArray(results)) return;
-    const r: string[] = [];
-    results.forEach(v => r.push(`${v}`));
-    return r ? r.reduce((prev: string, val: string) => prev + val) : undefined;
-  }
-
-  public sendWebhook(url: string, message: string): void {
-    if (!url || !message) return;
-
-    new WebHook(url).setContent(message).send();
-  }
-
-  public async registerEvents(client: Bot, dir = ""): Promise<void> {
-    const files = await readdir(require.main?.path + dir);
-    for (const file of files) {
-      const stat = await lstat(require.main?.path + `${dir}/${file}`);
-      if (stat.isDirectory()) this.registerEvents(client, `${dir}/${file}`);
-      if (file.endsWith(".js")) {
-        const event = require(require.main?.path + `/${dir}/${file}`).default;
-        if (event) {
-          if (event.prototype instanceof Event) {
-            const evnt = new event(client);
-            client.on(evnt.name, evnt.run.bind(evnt, client));
-            client.activeEvents.push(evnt.name);
-          }
-        }
-      }
-    }
-  }
-
-  public async registerCommands(client: Bot, dir = ""): Promise<void> {
-    const files = await readdir(require.main?.path + dir);
-
-    for (const file of files) {
-      const stat = await lstat(require.main?.path + `${dir}/${file}`);
-
-      if (stat.isDirectory()) client.registerCommands(client, `${dir}/${file}`);
-
-      if (file.endsWith(".js")) {
-        const command = require(require.main?.path + `/${dir}/${file}`).default;
-
-        if (command) {
-          if (command.prototype instanceof Command) {
-            const cmd = new command(client);
-            client.commands.set(cmd.help.name, cmd);
-          }
-        }
-      }
-    }
+  public translate(key: string, language: string, ...args: string[]): string {
+    return this._i18n.translate(key, language, ...args) || key;
   }
 }
 
