@@ -69,8 +69,8 @@ class Bot {
     this._client = new Client(this._clientOptions);
 
     this._client.on("error", err => this._logger.error(err.toString()));
-    this._client.on("warn", err => this._logger.error(err.toString()));
-    this._client.on("debug", err => this._logger.error(err.toString()));
+    this._client.on("warn", err => this._logger.warn(err.toString()));
+    this._client.on("debug", err => this._logger.debug(err.toString()));
 
     this.dispatcher = new Dispatcher(this);
 

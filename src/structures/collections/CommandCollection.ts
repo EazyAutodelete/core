@@ -32,12 +32,12 @@ class CommandCollection extends Collection {
     let activeCommand = this.get(command.name);
 
     if (activeCommand) {
-      this.logger.debug(`Unloading Command ${command.name}`, "COMMAND");
+      this.logger.info(`Unloading Command ${command.name}`, "COMMAND");
       activeCommand._unload();
       this.delete(command.name);
     }
 
-    this.logger.debug(`Registering command ${command.name}`, "COMMAND");
+    this.logger.info(`Registering command ${command.name}`, "COMMAND");
 
     this.set(command.name, command);
   }

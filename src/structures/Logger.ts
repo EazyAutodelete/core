@@ -25,6 +25,11 @@ export default class Logger extends Console {
     super.warn(mess);
   }
 
+  debug(message: string): void {
+    const mess = chalk.magenta("[DEBG]") + ": " + message;
+    super.log(mess);
+  }
+
   date(msTimeStamp: number = new Date().getTime()): string {
     const date = new Date(msTimeStamp);
 
