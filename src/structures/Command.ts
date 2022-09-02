@@ -90,7 +90,7 @@ class Command extends Base {
     return this.urlButton("https://docs.eazyautodelete.xyz/" + url, "Help", "❓");
   }
 
-  async run(client: Bot, message: CommandMessage, args: CommandArgs): Promise<void> {
+  async run(message: CommandMessage, args: CommandArgs): Promise<void> {
     message.error("An Error occured - Please contact staff: Core.Command.run");
 
     return this.logger.warn(
