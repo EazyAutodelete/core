@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/eazyautodelete/eazyautodelete-core/compare/v1.4.0...v3.0.0) (2022-09-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **core:** using modules now
+* **buttons:** rename Args to CommandArgs
+
+### Features
+
+* **bot:** add activeChannels property ([bebf0cc](https://github.com/eazyautodelete/eazyautodelete-core/commit/bebf0ccc7b38b1baf4a5d481193c5b9726f191b4))
+* **buttons:** add CommandButton & ButtonArgs ([d9901cb](https://github.com/eazyautodelete/eazyautodelete-core/commit/d9901cb8a51c463462bea389851a6d34af2d9584))
+* **buttons:** add deferupdate to commandbutton ([cb8bb6e](https://github.com/eazyautodelete/eazyautodelete-core/commit/cb8bb6e0ec802d5c498759ea5bb5ef6f8229f8fb))
+* **core:** everything new ([1a99646](https://github.com/eazyautodelete/eazyautodelete-core/commit/1a996469b364c144b64e0eec4f09a0df2ec52c23))
+
+
+### Bug Fixes
+
+* **args:** change args.get return to value ([cf1a8c2](https://github.com/eazyautodelete/eazyautodelete-core/commit/cf1a8c23bea8c98d1309059f647537bbc13a0213))
+* **bot:** change activeChannels to IDs onkly ([21f7c13](https://github.com/eazyautodelete/eazyautodelete-core/commit/21f7c13ff0d8696301505368f44b03f0a7b4eec3))
+* **bot:** fix translate function ([43dc5d2](https://github.com/eazyautodelete/eazyautodelete-core/commit/43dc5d2b5e0440d553db6726cda8ba02c2bf5cb6))
+* **database:** fix loaddata for user: now user id not message id ([6c639b2](https://github.com/eazyautodelete/eazyautodelete-core/commit/6c639b2f01f1b0d09c8a83886fca2cb9c2ce15d8))
+* **database:** fix loadData on buttonCommand ([346084e](https://github.com/eazyautodelete/eazyautodelete-core/commit/346084e59a594bb982a0020a44680d6009589252))
+* fix some stuff + remove client.bulkDelete ([e0c6274](https://github.com/eazyautodelete/eazyautodelete-core/commit/e0c6274d73c3cd92015e91b1a2d920ab8ad3972b))
+* fix something ig ([a7b28b9](https://github.com/eazyautodelete/eazyautodelete-core/commit/a7b28b9f11a076eca17ad63e987e963e9a2f45c4))
+
 ## 1.4.0 (2022-06-06)
 
 
