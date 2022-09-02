@@ -1,4 +1,3 @@
-import { stringToMs } from "@eazyautodelete/bot-utils";
 import { exec } from "node:child_process";
 import { readdir } from "fs/promises";
 import Base from "./Base";
@@ -22,13 +21,11 @@ class Module extends Base {
   }
 
   public async build() {
-    console.log("Starting to build Module: ", this.name);
     const buildModuleCP = exec("npm run build");
     buildModuleCP.stdout?.on("error", d => console.error(d.toString()));
     await new Promise(resolve => {
       buildModuleCP.on("close", resolve);
     });
-    console.log("Built Module: ", this.name);
   }
 
   public registerListener(event: string, listener: (...args: any[]) => void) {
@@ -62,17 +59,19 @@ class Module extends Base {
   }
 
   public start(client: Client, ...args: any[]) {
-    this.logger.info("Started Module: " + this.name, "MODULE");
+    
   }
 
   public unload(...args: any[]) {
-    this.logger.info("Unloaded Module: " + this.name, "MODULE");
+    
   }
 
   public _start(client: Client, ...args: any[]) {
     if (this.start) {
       this.start(client, ...args);
     }
+
+    this.logger.info(`Started Module ${this.name}`, "MODULE");
   }
 
   public _unload(...args: any[]) {
@@ -85,6 +84,8 @@ class Module extends Base {
     if (this.unload) {
       this.unload(...args);
     }
+
+    this.logger.warn(`Unloaded Module ${this.name}`, "MODULE");
   }
 }
 

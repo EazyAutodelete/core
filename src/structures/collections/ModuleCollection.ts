@@ -27,12 +27,8 @@ class ModuleCollection extends Collection {
 
     await Promise.all(
       files.map(async file => {
-        // build module first
-        this.logger.log("Starting to build: " + file, "MODULE");
         await this._buildModule(path.join(path.resolve(), "node_modules", "@eazyautodelete", file));
-        this.logger.log("Built: " + file, "MODULE");
 
-        // load module
         const module = require("@eazyautodelete/" + file);
         await this.register(module);
       })
@@ -47,12 +43,10 @@ class ModuleCollection extends Collection {
       let activeModule = this.get(module.name);
 
       if (activeModule) {
-        this.logger.debug(`Unloading Module ${module.name}`, "MODULE");
+        this.logger.info(`Unloading Module ${module.name}`, "MODULE");
         activeModule._unload();
         this.delete(module.name);
       }
-
-      this.logger.debug(`Registering module ${module.name}`);
 
       this.set(module.name, module);
 
@@ -66,7 +60,7 @@ class ModuleCollection extends Collection {
 
       this.get(module.name)._start(this._client);
     } catch (err) {
-      console.log("skipping");
+      console.error(err);
     }
   }
 
