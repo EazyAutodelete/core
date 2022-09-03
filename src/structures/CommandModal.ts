@@ -44,7 +44,7 @@ export default class CommandModal extends Base {
 
   public async loadData() {
     this.data = {
-      guild: await this.bot.db.getGuildSettings(this.message.guild?.id as string),
+      guild: await this.bot.db.getGuildSettings(this.interaction.guild?.id as string),
       user: await this.bot.db.getUserSettings(this.author.id),
     };
   }
