@@ -7,6 +7,7 @@ import {
   ApplicationCommandOptionData,
   ApplicationCommandData,
   ColorResolvable,
+  ModalSubmitInteraction,
 } from "discord.js";
 import { Cooldown, PermissionLevel } from "..";
 import Bot from "./Bot";
@@ -114,6 +115,12 @@ class Command extends Base {
 
   async buttonHandler(button: CommandButton, args: ButtonArgs): Promise<void> {
     this.logger.warn("No Button Handler", this.name);
+
+    return;
+  }
+
+  async modalHandler(interaction: ModalSubmitInteraction): Promise<void> {
+    this.logger.warn("No Modal Handler", this.name);
 
     return;
   }
