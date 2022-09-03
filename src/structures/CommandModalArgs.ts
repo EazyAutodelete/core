@@ -1,6 +1,6 @@
 import CommandModal from "./CommandModal";
 
-export default class ButtonArgs {
+export default class CommandModalArgs {
   command: string;
   modal: CommandModal;
 

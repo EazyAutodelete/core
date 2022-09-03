@@ -1,6 +1,6 @@
 import CommandButton from "./CommandButton";
 
-export default class ButtonArgs {
+export default class CommandMenuArgs {
   command: string;
   button: CommandButton;
 

@@ -19,13 +19,26 @@ class ResponseManager extends Base {
   }
 
   async send(
-    message: CommandMessage | CommandButton | CommandMenu | CommandModal | CommandInteraction | ButtonInteraction | SelectMenuInteraction | ModalSubmitInteraction,
+    message:
+      | CommandMessage
+      | CommandButton
+      | CommandMenu
+      | CommandModal
+      | CommandInteraction
+      | ButtonInteraction
+      | SelectMenuInteraction
+      | ModalSubmitInteraction,
     data: MessageEmbed[],
     ephemeral: boolean = false,
     components: MessageActionRow[] = []
   ): Promise<void> {
     try {
-      if (message instanceof CommandMessage || message instanceof CommandButton || message instanceof CommandMenu || message instanceof CommandModal) {
+      if (
+        message instanceof CommandMessage ||
+        message instanceof CommandButton ||
+        message instanceof CommandMenu ||
+        message instanceof CommandModal
+      ) {
         await message.send(data, ephemeral, components).catch(this.logger.error);
         return;
       } else

@@ -14,6 +14,8 @@ import Bot from "./Bot";
 import ButtonArgs from "./CommandButtonArgs";
 import CommandArgs from "./CommandArgs";
 import CommandButton from "./CommandButton";
+import CommandModal from "./CommandModal";
+import CommandModalArgs from "./CommandModalArgs"
 import CommandMessage from "./CommandMessage";
 import Base from "./Base";
 import Module from "./Module";
@@ -94,7 +96,7 @@ class Command extends Base {
   }
 
   async run(message: CommandMessage, args: CommandArgs): Promise<void> {
-    message.error("An Error occured - Please contact staff: Core.Command.run");
+    message.error("No run method served for this command.");
 
     return this.logger.warn(
       "Ended up in command.js [ " + this.name + " - " + message.guild?.id + " - " + message.channel?.id + " ]"
@@ -119,7 +121,7 @@ class Command extends Base {
     return;
   }
 
-  async modalHandler(interaction: ModalSubmitInteraction): Promise<void> {
+  async modalHandler(modal: CommandModal, args: CommandModalArgs): Promise<void> {
     this.logger.warn("No Modal Handler", this.name);
 
     return;
