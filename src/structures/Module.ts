@@ -67,7 +67,7 @@ class Module extends Base {
       this.start(...args);
     }
 
-    this.logger.info(`Started Module ${this.name}`, "MODULE");
+    this.logger.info(`[🧱] Started Module '${this.name}'`, "MDUL");
   }
 
   public _unload(...args: any[]) {
