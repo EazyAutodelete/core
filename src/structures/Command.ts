@@ -11,11 +11,13 @@ import {
 } from "discord.js";
 import { Cooldown, PermissionLevel } from "..";
 import Bot from "./Bot";
-import ButtonArgs from "./CommandButtonArgs";
 import CommandArgs from "./CommandArgs";
 import CommandButton from "./CommandButton";
+import CommandButtonArgs from "./CommandButtonArgs";
 import CommandModal from "./CommandModal";
 import CommandModalArgs from "./CommandModalArgs";
+import CommandMenu from "./CommandMenu";
+import CommandMenuArgs from "./CommandMenuArgs";
 import CommandMessage from "./CommandMessage";
 import Base from "./Base";
 import Module from "./Module";
@@ -109,13 +111,13 @@ class Command extends Base {
     return [];
   }
 
-  async selectMenuHandler(interaction: SelectMenuInteraction): Promise<void> {
+  async selectMenuHandler(menu: CommandMenu, args: CommandMenuArgs): Promise<void> {
     this.logger.warn("No Select Menu Handler", this.name);
 
     return;
   }
 
-  async buttonHandler(button: CommandButton, args: ButtonArgs): Promise<void> {
+  async buttonHandler(button: CommandButton, args: CommandButtonArgs): Promise<void> {
     this.logger.warn("No Button Handler", this.name);
 
     return;
