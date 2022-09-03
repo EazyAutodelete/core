@@ -1,19 +1,19 @@
-import CommandButton from "./CommandButton";
+import CommandMenu from "./CommandMenu";
 
 export default class CommandMenuArgs {
   command: string;
-  button: CommandButton;
+  menu: CommandMenu;
 
-  constructor(button: CommandButton) {
-    this.button = button;
+  constructor(menu: CommandMenu) {
+    this.menu = menu;
     this.command = this.getCommand();
   }
 
   isCommand(): boolean {
-    return this.button.interaction.customId?.startsWith("cmd_") || false;
+    return this.menu.interaction.customId?.startsWith("cmd_") || false;
   }
 
   getCommand(): string {
-    return this.button.interaction.customId.split("_")[1] as string;
+    return this.menu.interaction.customId.split("_")[1] as string;
   }
 }
