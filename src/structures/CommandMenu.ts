@@ -8,6 +8,7 @@ import {
   MessageActionRow,
   MessageEmbed,
   MessageEmbedOptions,
+  SelectMenuInteraction,
   Snowflake,
   TextBasedChannel,
   User,
@@ -17,7 +18,7 @@ import { Locale } from "@eazyautodelete/eazyautodelete-lang";
 import Base from "./Base";
 import Bot from "./Bot";
 
-export default class CommandButton extends Base {
+export default class CommandMenu extends Base {
   channel!: TextBasedChannel;
   member: GuildMember;
   author: User;
@@ -27,9 +28,9 @@ export default class CommandButton extends Base {
   locale: string;
   data!: { guild: GuildSettings; user: UserSettings };
   message: Message;
-  interaction: ButtonInteraction;
+  interaction: SelectMenuInteraction;
 
-  constructor(bot: Bot, interaction: ButtonInteraction) {
+  constructor(bot: Bot, interaction: SelectMenuInteraction) {
     super(bot);
     this.message = interaction.message as Message;
     this.interaction = interaction;
@@ -53,7 +54,7 @@ export default class CommandButton extends Base {
     return this.bot.translate(phrase, (this.data.user.language as Locale) || "en", ...replace);
   }
 
-  public async error(message: string, ...args: string[]): Promise<CommandButton> {
+  public async error(message: string, ...args: string[]): Promise<CommandMenu> {
     try {
       await this.send(
         new MessageEmbed({
@@ -72,7 +73,7 @@ export default class CommandButton extends Base {
     message: MessageEmbed | MessageEmbed[] | MessageEmbedOptions | MessageEmbedOptions[],
     ephemeral: boolean | undefined = false,
     components: MessageActionRow | MessageActionRow[] = []
-  ): Promise<CommandButton> {
+  ): Promise<CommandMenu> {
     try {
       await this.bot.response
         .send(
@@ -92,7 +93,7 @@ export default class CommandButton extends Base {
     return this;
   }
 
-  public async success(message: string, ...args: string[]): Promise<CommandButton> {
+  public async success(message: string, ...args: string[]): Promise<CommandMenu> {
     try {
       await this.send(
         new MessageEmbed({
@@ -107,7 +108,7 @@ export default class CommandButton extends Base {
     return this;
   }
 
-  public async info(message: string, ...args: string[]): Promise<CommandButton> {
+  public async info(message: string, ...args: string[]): Promise<CommandMenu> {
     try {
       await this.send(
         new MessageEmbed({
@@ -122,7 +123,7 @@ export default class CommandButton extends Base {
     return this;
   }
 
-  async react(emoji: string): Promise<CommandButton> {
+  async react(emoji: string): Promise<CommandMenu> {
     try {
       await this.interaction.followUp({
         ephemeral: true,
@@ -135,7 +136,7 @@ export default class CommandButton extends Base {
     return this;
   }
 
-  async delete(): Promise<CommandButton | void> {
+  async delete(): Promise<CommandMenu | void> {
     try {
       return await this.interaction.deleteReply().catch(this.logger.error);
     } catch (e) {
@@ -143,7 +144,7 @@ export default class CommandButton extends Base {
     }
   }
 
-  async edit(payload: InteractionReplyOptions): Promise<CommandButton> {
+  async edit(payload: InteractionReplyOptions): Promise<CommandMenu> {
     try {
       await this.interaction.editReply(payload).catch(this.logger.error);
     } catch (e) {
@@ -153,7 +154,7 @@ export default class CommandButton extends Base {
     return this;
   }
 
-  async continue(ephemeral: boolean = true): Promise<CommandButton> {
+  async continue(ephemeral: boolean = true): Promise<CommandMenu> {
     try {
       await this.interaction.deferReply({ ephemeral: ephemeral }).catch(this.logger.error);
     } catch (e) {

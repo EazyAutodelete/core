@@ -7,12 +7,17 @@ import {
   ApplicationCommandOptionData,
   ApplicationCommandData,
   ColorResolvable,
+  ModalSubmitInteraction,
 } from "discord.js";
 import { Cooldown, PermissionLevel } from "..";
 import Bot from "./Bot";
-import ButtonArgs from "./CommandButtonArgs";
 import CommandArgs from "./CommandArgs";
 import CommandButton from "./CommandButton";
+import CommandButtonArgs from "./CommandButtonArgs";
+import CommandModal from "./CommandModal";
+import CommandModalArgs from "./CommandModalArgs";
+import CommandMenu from "./CommandMenu";
+import CommandMenuArgs from "./CommandMenuArgs";
 import CommandMessage from "./CommandMessage";
 import Base from "./Base";
 import Module from "./Module";
@@ -28,6 +33,7 @@ class Command extends Base {
   public examples: string[];
   public permissionLevel: PermissionLevel;
   public cooldown: Cooldown;
+  public botPermissions: bigint[];
 
   public shardId: number;
 
@@ -45,6 +51,7 @@ class Command extends Base {
     this.examples = [];
     this.permissionLevel = "botAdmin";
     this.cooldown = 3000;
+    this.botPermissions = [];
 
     this.options = [];
 
@@ -90,8 +97,8 @@ class Command extends Base {
     return this.urlButton("https://docs.eazyautodelete.xyz/" + url, "Help", "❓");
   }
 
-  async run(client: Bot, message: CommandMessage, args: CommandArgs): Promise<void> {
-    message.error("An Error occured - Please contact staff: Core.Command.run");
+  async run(message: CommandMessage, args: CommandArgs): Promise<void> {
+    message.error("No run method served for this command.");
 
     return this.logger.warn(
       "Ended up in command.js [ " + this.name + " - " + message.guild?.id + " - " + message.channel?.id + " ]"
@@ -104,14 +111,20 @@ class Command extends Base {
     return [];
   }
 
-  async selectMenuHandler(interaction: SelectMenuInteraction): Promise<void> {
+  async selectMenuHandler(menu: CommandMenu, args: CommandMenuArgs): Promise<void> {
     this.logger.warn("No Select Menu Handler", this.name);
 
     return;
   }
 
-  async buttonHandler(button: CommandButton, args: ButtonArgs): Promise<void> {
+  async buttonHandler(button: CommandButton, args: CommandButtonArgs): Promise<void> {
     this.logger.warn("No Button Handler", this.name);
+
+    return;
+  }
+
+  async modalHandler(modal: CommandModal, args: CommandModalArgs): Promise<void> {
+    this.logger.warn("No Modal Handler", this.name);
 
     return;
   }

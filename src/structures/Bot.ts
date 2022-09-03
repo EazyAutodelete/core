@@ -64,13 +64,17 @@ class Bot {
     this.utils = utils;
 
     this._logger = new Logger();
-    this._database = new DatabaseHandler(this._config.mongo, this._logger);
+    this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
+    await this._database.connect();
 
     this._client = new Client(this._clientOptions);
 
     this._client.on("error", err => this._logger.error(err.toString()));
     this._client.on("warn", err => this._logger.warn(err.toString()));
     this._client.on("debug", err => this._logger.debug(err.toString()));
+    this._client.on("ready", () => {
+      this._client.emit("clientReady");
+    });
 
     this.dispatcher = new Dispatcher(this);
 

@@ -26,6 +26,7 @@ class Dispatcher extends Base {
       "guildRoleCreate",
       "guildRoleDelete",
       "guildRoleUpdate",
+      "interactionCreate",
       "messageCreate",
       "messageDelete",
       "messageDeleteBulk",
@@ -59,7 +60,7 @@ class Dispatcher extends Base {
     this._listeners[eventName].push({ module: module, listener: listener });
 
     // Register the bound listener
-    this.client.on(eventName, listener);
+    this.client.on(eventName, listener.bind(module));
   }
 
   unregisterListener(event: string, listener: Function) {

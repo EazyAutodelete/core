@@ -20,7 +20,7 @@ class CooldownsManager extends Base {
 
   public setCooldown(commandName: string, user: string): void {
     if (!this._cooldowns.has(commandName)) {
-      this._cooldowns.set(user, {});
+      this._cooldowns.set(commandName, {});
     }
 
     this._cooldowns.get(commandName)![user] = this._now() + this.bot.commands.get(commandName)!.cooldown;

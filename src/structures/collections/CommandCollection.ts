@@ -32,14 +32,13 @@ class CommandCollection extends Collection {
     let activeCommand = this.get(command.name);
 
     if (activeCommand) {
-      this.logger.info(`Unloading Command ${command.name}`, "COMMAND");
+      this.logger.info(`[💬] Unloading Command '${command.name}'`, "CMND");
       activeCommand._unload();
       this.delete(command.name);
     }
 
-    this.logger.info(`Registering command ${command.name}`, "COMMAND");
-
     this.set(command.name, command);
+    this.logger.info(`[💬] Loaded command '${command.name}'`, "CMND");
   }
 
   public getListenerCount(): number {
