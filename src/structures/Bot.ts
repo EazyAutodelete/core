@@ -65,6 +65,7 @@ class Bot {
 
     this._logger = new Logger();
     this._database = new DatabaseHandler(this._config.mongo, this._logger);
+    await this._database.connect();
 
     this._client = new Client(this._clientOptions);
 
