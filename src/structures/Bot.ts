@@ -64,7 +64,7 @@ class Bot {
     this.utils = utils;
 
     this._logger = new Logger();
-    this._database = new DatabaseHandler(this._config.mongo, this._logger);
+    this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
     await this._database.connect();
 
     this._client = new Client(this._clientOptions);
