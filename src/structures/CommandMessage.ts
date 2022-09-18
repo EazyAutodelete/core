@@ -12,8 +12,7 @@ import {
   User,
 } from "discord.js";
 import Bot from "./Bot";
-import { UserSettings, GuildSettings } from "@eazyautodelete/eazyautodelete-db-client";
-import { Locale } from "@eazyautodelete/eazyautodelete-lang";
+import { UserSettings, GuildSettings } from "@eazyautodelete/db-client";
 import Base from "./Base";
 
 class CommandMessage extends Base {
@@ -48,7 +47,7 @@ class CommandMessage extends Base {
   }
 
   public translate(phrase: string, ...replace: string[]): string {
-    return this.bot.translate(phrase, (this.data.user.language as Locale) || "en", ...replace);
+    return this.bot.translate(phrase, this.data.user.language || "en", ...replace);
   }
 
   public async error(message: string, ...args: string[]): Promise<CommandMessage> {

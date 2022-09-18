@@ -1,9 +1,9 @@
-import { DatabaseHandler } from "@eazyautodelete/eazyautodelete-db-client";
-import Translator, { locales } from "@eazyautodelete/eazyautodelete-lang";
+import { DatabaseHandler } from "@eazyautodelete/db-client";
+import Translator from "@eazyautodelete/translator";
 import { Client, ClientOptions, Intents } from "discord.js";
 import CommandCollection from "./collections/CommandCollection";
 import ModuleCollection from "./collections/ModuleCollection";
-import Logger from "./Logger";
+import Logger from "@eazyautodelete/logger";
 import CooldownsManager from "./managers/CooldownsManager";
 import Dispatcher from "./managers/Dispatcher";
 import PermissionsManager from "./managers/PermissionsManager";
@@ -84,7 +84,7 @@ class Bot {
     this.commands = new CommandCollection(this);
     await this.commands.loadCommands();
 
-    this._i18n = new Translator({ locales: locales, defaultLocale: "en" });
+    this._i18n = new Translator(this.config.weblate_token);
 
     this.cooldowns = new CooldownsManager(this);
     this.permissions = new PermissionsManager(this);
@@ -143,6 +143,8 @@ class Bot {
       botAdmins: options.staff.botAdmins || [],
       botMods: options.staff.botMods || [],
     };
+
+    this._config.weblate_token = options.weblate_token;
   }
 
   public login() {

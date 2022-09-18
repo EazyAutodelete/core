@@ -17,7 +17,6 @@ export { default as CommandModalArgs } from "./structures/CommandModalArgs";
 export { default as CommandMenu } from "./structures/CommandMenu";
 export { default as CommandMenuArgs } from "./structures/CommandMenuArgs";
 
-export { default as Logger } from "./structures/Logger";
 export { default as Module } from "./structures/Module";
 export { default as WebHook } from "./structures/WebHook";
 
@@ -25,6 +24,7 @@ export interface BotOptions {
   token: string;
   staffServer: string;
   supportServer: string;
+  weblate_token: string;
   mongo: {
     uri: string;
     host: string;
