@@ -2,7 +2,6 @@ import { exec } from "node:child_process";
 import { readdir } from "fs/promises";
 import Base from "./Base";
 import Bot from "./Bot";
-import { Client } from "discord.js";
 import Command from "./Command";
 import path from "path";
 

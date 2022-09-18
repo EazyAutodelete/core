@@ -2,12 +2,10 @@ import {
   MessageEmbed,
   MessageActionRow,
   MessageButton,
-  SelectMenuInteraction,
   ApplicationCommandOptionChoiceData,
   ApplicationCommandOptionData,
   ApplicationCommandData,
   ColorResolvable,
-  ModalSubmitInteraction,
 } from "discord.js";
 import { Cooldown, PermissionLevel } from "..";
 import Bot from "./Bot";
@@ -58,6 +56,7 @@ class Command extends Base {
     this.data = {
       name: this.name,
       description: this.description,
+      descriptionLocalizations: {},
       options: this.options,
     };
 
@@ -66,10 +65,6 @@ class Command extends Base {
 
   public hasCooldown(user: string) {
     return this.bot.cooldowns.hasCooldown(this.name, user);
-  }
-
-  public t(phrase: string, locale: string, ...args: any[]) {
-    return this.bot.translate(phrase, locale, ...args.map(a => new String(a).toString()));
   }
 
   get embed(): MessageEmbed {

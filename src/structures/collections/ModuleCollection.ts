@@ -3,7 +3,7 @@ import { Client } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
 import Bot from "../Bot";
-import Logger from "../Logger";
+import Logger from "@eazyautodelete/logger";
 import Module from "../Module";
 import Collection from "./Collection";
 

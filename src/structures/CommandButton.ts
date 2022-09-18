@@ -12,8 +12,7 @@ import {
   TextBasedChannel,
   User,
 } from "discord.js";
-import { UserSettings, GuildSettings } from "@eazyautodelete/eazyautodelete-db-client";
-import { Locale } from "@eazyautodelete/eazyautodelete-lang";
+import { UserSettings, GuildSettings } from "@eazyautodelete/db-client";
 import Base from "./Base";
 import Bot from "./Bot";
 
@@ -50,7 +49,7 @@ export default class CommandButton extends Base {
   }
 
   public translate(phrase: string, ...replace: string[]): string {
-    return this.bot.translate(phrase, (this.data.user.language as Locale) || "en", ...replace);
+    return this.bot.translate(phrase, this.data.user.language || "en", ...replace);
   }
 
   public async error(message: string, ...args: string[]): Promise<CommandButton> {

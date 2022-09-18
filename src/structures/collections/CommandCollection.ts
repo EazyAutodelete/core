@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
 import Bot from "../Bot";
 import Command from "../Command";
-import Logger from "../Logger";
+import Logger from "@eazyautodelete/logger";
 import Module from "../Module";
 import Collection from "./Collection";
 

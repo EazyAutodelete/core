@@ -1,7 +1,7 @@
-import { DatabaseHandler } from "@eazyautodelete/eazyautodelete-db-client";
+import { DatabaseHandler } from "@eazyautodelete/db-client";
 import { Client } from "discord.js";
 import Bot from "./Bot";
-import Logger from "./Logger";
+import Logger from "@eazyautodelete/logger";
 
 class Base {
   public bot: Bot;

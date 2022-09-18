@@ -1,4 +1,4 @@
-import { GuildSettings } from "@eazyautodelete/eazyautodelete-db-client";
+import { GuildSettings } from "@eazyautodelete/db-client";
 import { GuildMember } from "discord.js";
 import Base from "../Base";
 import Bot from "../Bot";
