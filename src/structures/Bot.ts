@@ -62,7 +62,7 @@ class Bot {
   }
 
   public shard(): number {
-    return this._client.shard?.ids[0] || 0;
+    return this._client?.shard?.ids?.[0] || 0;
   }
 
   public async setup(options: BotOptions) {
@@ -70,11 +70,6 @@ class Bot {
     await this._configure(options);
 
     this.utils = utils;
-
-    this._logger = new Logger(this.shard());
-
-    this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
-    await this._database.connect();
 
     this._client = new Client(this._clientOptions);
 
@@ -84,6 +79,11 @@ class Bot {
     this._client.on("ready", () => {
       this._client.emit("clientReady");
     });
+
+    this._logger = new Logger(this.shard());
+
+    this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
+    await this._database.connect();
 
     this.dispatcher = new Dispatcher(this);
 
