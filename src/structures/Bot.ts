@@ -57,13 +57,22 @@ class Bot {
     return this._database;
   }
 
+  public get uptime() {
+    return Date.now() - this.startTime;
+  }
+
+  public shard(): number {
+    return this._client.shard?.ids[0] || 0;
+  }
+
   public async setup(options: BotOptions) {
     this._config = {};
     await this._configure(options);
 
     this.utils = utils;
 
-    this._logger = new Logger();
+    this._logger = new Logger(this.shard());
+
     this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
     await this._database.connect();
 
