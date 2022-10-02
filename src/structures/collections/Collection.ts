@@ -15,7 +15,7 @@ export default class Collection extends Map {
     return this.toArray().reduce(callbackFn, currentIndex);
   }
 
-  public find(predicate: any, thisArg: any) {
+  public find(predicate: any, thisArg?: any) {
     return this.toArray().find(predicate, thisArg);
   }
 }
