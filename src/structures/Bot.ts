@@ -61,6 +61,10 @@ class Bot {
     return Date.now() - this.startTime;
   }
 
+  public get Translator() {
+    return this._i18n;
+  }
+
   public shard(): number {
     return this._client?.shard?.ids?.[0] || 0;
   }

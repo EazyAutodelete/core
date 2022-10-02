@@ -34,18 +34,19 @@ class PermissionsManager extends Base {
   }
 
   public isBotMod(userId: string): boolean {
-    return this.bot.staff.botMods.includes(userId);
+    return this.bot.staff.botMods.includes(userId) || this.isBotAdmin(userId);
   }
 
   public isServerAdmin(member: GuildMember, guildConfig: GuildSettings): boolean {
     return (
       member.roles.cache.some(role => guildConfig.adminroles.includes(role.id)) ||
-      member.permissions.has("ADMINISTRATOR")
+      member.permissions.has("ADMINISTRATOR") ||
+      this.isBotAdmin(member.user.id)
     );
   }
 
   public isServerMod(member: GuildMember, guildConfig: GuildSettings): boolean {
-    return member.roles.cache.some(role => guildConfig.modroles.includes(role.id));
+    return member.roles.cache.some(role => guildConfig.modroles.includes(role.id)) || this.isBotAdmin(member.user.id);
   }
 }
 
