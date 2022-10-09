@@ -136,6 +136,18 @@ class Command extends Base {
 
     return;
   }
+
+  public unload(...args: any[]) {}
+
+  public _unload(...args: any[]) {
+    this.bot.commands.delete(this.name);
+
+    if (this.unload) {
+      this.unload(...args);
+    }
+
+    this.logger.warn(`Unloaded Command ${this.name}`, "COMMAND");
+  }
 }
 
 export default Command;
