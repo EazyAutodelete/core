@@ -80,6 +80,10 @@ class Module extends Base {
       this.unload(...args);
     }
 
+    this._loadedCommands.forEach(cmd => {
+      this.bot.commands.unregister(cmd);
+    });
+
     this.logger.warn(`Unloaded Module ${this.name}`, "MODULE");
   }
 }

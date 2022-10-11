@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/eazyautodelete/core/compare/v3.0.0...v3.3.0) (2022-10-11)
+
+
+### Features
+
+* **bot:** emit clientReady event ([0940179](https://github.com/eazyautodelete/core/commit/09401791cfc00fa4d5fc2b245439fba30c905a41))
+* **cmd:** add modal support ([f367e32](https://github.com/eazyautodelete/core/commit/f367e328a2334ebf6724808e306450e7a034d415))
+* **command:** add botPermissions array to command ([ada9dfa](https://github.com/eazyautodelete/core/commit/ada9dfaee2fd48409a756b696454d07b4ae378bc))
+* **command:** add command localization ([06e0a15](https://github.com/eazyautodelete/core/commit/06e0a151b756c668d6cb768504186e4b0fd15325))
+* **command:** add unload ([eec9a00](https://github.com/eazyautodelete/core/commit/eec9a009fb27fde5e1080d4e52e4bc48f458318e))
+* **dispatcher:** add interactionCreate Event ([90dc888](https://github.com/eazyautodelete/core/commit/90dc888e3c9bf57ea05dede706ab2b466ccaa05d))
+* modal, select menu support ([7e932de](https://github.com/eazyautodelete/core/commit/7e932de2af95f7927ca4a1c8e8d27c7c02f18adb))
+* **module:** unload commands when unloading module ([eff7e27](https://github.com/eazyautodelete/core/commit/eff7e27a6161895736c8cc95a7e48edf92012b11))
+
+
+### Bug Fixes
+
+* **cmds:** fix guild id ([1d3b7dc](https://github.com/eazyautodelete/core/commit/1d3b7dc6c60aebb5b594d90fa97b3149b9ae6579))
+* **command:** fix run params ([ae6cd0d](https://github.com/eazyautodelete/core/commit/ae6cd0d69443bbd409bc7f8157f7e74b986a53aa))
+* **cooldowns:** set cooldownMap to command, not to user ([de9aac0](https://github.com/eazyautodelete/core/commit/de9aac0759bec93200f9b2c3e4e5429ea18eb040))
+* **db:** connect db ([af0ff19](https://github.com/eazyautodelete/core/commit/af0ff19dd1076c30b782cb353c3d0d3544ec77a0))
+* **db:** fix config ([544ef17](https://github.com/eazyautodelete/core/commit/544ef17d6217c72cd6b5f561432521547aafe928))
+* **dispatcher:** bind module as this in events ([75da963](https://github.com/eazyautodelete/core/commit/75da963a6c3c07f5ffa65cc4b0a2ce771fe65355))
+* **logger:** fix shard id when creating logger ([be622f9](https://github.com/eazyautodelete/core/commit/be622f9c48bc4fa4685b5568b0ccdd22df726707))
+* **logging:** fix shardid at logger ([eec6c86](https://github.com/eazyautodelete/core/commit/eec6c86f703ba0d943215ffd8fce3f43ca22579e))
+* **logs:** fix log types of client intern events ([7b9043d](https://github.com/eazyautodelete/core/commit/7b9043db2fc9968c306e33b2cb2286bc9aad7a06))
+* **module:** fix params of Module.start and Module.unload ([8b8919b](https://github.com/eazyautodelete/core/commit/8b8919bb0e1ce2d92647429e95b1c07da2cd55fb))
+* **package-lock:** fix package-lock versions ([69599f0](https://github.com/eazyautodelete/core/commit/69599f092e8d4672498f5b7c40bf970fcc41fff1))
+* some fixes ([5ebb685](https://github.com/eazyautodelete/core/commit/5ebb68509567ea12508d99d0f36f4613c4d915ee))
+* stuff ([e7c68cf](https://github.com/eazyautodelete/core/commit/e7c68cf6fdf25b84c6469fb9101908a8f501c8cc))
+* **types:** fix ([2611a99](https://github.com/eazyautodelete/core/commit/2611a994fbc845978b346376fbaaab5fe49c66a2))
+* **types:** fix types ([f32c349](https://github.com/eazyautodelete/core/commit/f32c349b7768d000ac597ee82bbec36c30b52709))
+
+### [1.5.2](https://github.com/eazyautodelete/core/compare/v1.4.0...v1.5.2) (2022-06-12)
+
 ## [3.0.0](https://github.com/eazyautodelete/eazyautodelete-core/compare/v1.4.0...v3.0.0) (2022-09-02)
 
 

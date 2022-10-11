@@ -57,15 +57,23 @@ class Bot {
     return this._database;
   }
 
+  public get uptime() {
+    return Date.now() - this.startTime;
+  }
+
+  public get Translator() {
+    return this._i18n;
+  }
+
+  public shard(): number {
+    return this._client?.shard?.ids?.[0] || 0;
+  }
+
   public async setup(options: BotOptions) {
     this._config = {};
     await this._configure(options);
 
     this.utils = utils;
-
-    this._logger = new Logger();
-    this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
-    await this._database.connect();
 
     this._client = new Client(this._clientOptions);
 
@@ -76,6 +84,11 @@ class Bot {
       this._client.emit("clientReady");
     });
 
+    this._logger = new Logger({ shardId: this.shard() });
+
+    this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
+    await this._database.connect();
+
     this.dispatcher = new Dispatcher(this);
 
     this.modules = new ModuleCollection(this);
@@ -84,7 +97,8 @@ class Bot {
     this.commands = new CommandCollection(this);
     await this.commands.loadCommands();
 
-    this._i18n = new Translator(this.config.weblate_token);
+    this._i18n = new Translator(this._config.weblate_token, this._logger);
+    await this._i18n.loadMessages();
 
     this.cooldowns = new CooldownsManager(this);
     this.permissions = new PermissionsManager(this);
@@ -147,8 +161,9 @@ class Bot {
     this._config.weblate_token = options.weblate_token;
   }
 
-  public login() {
-    this._client.login(this._token);
+  public async login() {
+    await this._client.login(this._token);
+    this._logger.setShardId(this.shard());
   }
 
   public translate(key: string, language: string, ...args: string[]): string {

@@ -34,17 +34,23 @@ class Command extends Base {
   public botPermissions: bigint[];
 
   public shardId: number;
-
-  public data: ApplicationCommandData;
   public options: ApplicationCommandOptionData[];
+  public nameLocalizations: { [index: string]: string };
+  public descriptionLocalizations: { [index: string]: string };
+  public type: number;
+  dmPermission: boolean;
 
   constructor(bot: Bot) {
     super(bot);
     this.bot = bot;
 
+    this.type = 1;
+    this.dmPermission = false;
     this.name = "";
+    this.nameLocalizations = {};
     this.aliases = [];
     this.description = "";
+    this.descriptionLocalizations = {};
     this.usage = "";
     this.examples = [];
     this.permissionLevel = "botAdmin";
@@ -53,18 +59,25 @@ class Command extends Base {
 
     this.options = [];
 
-    this.data = {
-      name: this.name,
-      description: this.description,
-      descriptionLocalizations: {},
-      options: this.options,
-    };
-
     this.shardId = parseInt(this.client.shard?.ids.toString() || "0");
   }
 
   public hasCooldown(user: string) {
     return this.bot.cooldowns.hasCooldown(this.name, user);
+  }
+
+  get data(): ApplicationCommandData {
+    return {
+      type: this.type || 1,
+      dmPermission: false,
+
+      name: this.name,
+      nameLocalizations: this.nameLocalizations,
+      description: this.description,
+      descriptionLocalizations: this.descriptionLocalizations,
+
+      options: this.options,
+    };
   }
 
   get embed(): MessageEmbed {
@@ -122,6 +135,18 @@ class Command extends Base {
     this.logger.warn("No Modal Handler", this.name);
 
     return;
+  }
+
+  public unload(...args: any[]) {}
+
+  public _unload(...args: any[]) {
+    this.bot.commands.delete(this.name);
+
+    if (this.unload) {
+      this.unload(...args);
+    }
+
+    this.logger.warn(`Unloaded Command ${this.name}`, "COMMAND");
   }
 }
 
