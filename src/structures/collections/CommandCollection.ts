@@ -38,7 +38,14 @@ class CommandCollection extends Collection {
     }
 
     this.set(command.name, command);
+
     this.logger.info(`[💬] Loaded command '${command.name}'`, "CMND");
+  }
+
+  public unregister(command: Command) {
+    command._unload();
+    this.delete(command.name);
+    this.logger.info(`[💬] Unregistered Command '${command.name}'`, "CMND");
   }
 
   public getListenerCount(): number {

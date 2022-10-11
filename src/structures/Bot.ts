@@ -84,7 +84,7 @@ class Bot {
       this._client.emit("clientReady");
     });
 
-    this._logger = new Logger(this.shard());
+    this._logger = new Logger({ shardId: this.shard() });
 
     this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
     await this._database.connect();
@@ -161,8 +161,9 @@ class Bot {
     this._config.weblate_token = options.weblate_token;
   }
 
-  public login() {
-    this._client.login(this._token);
+  public async login() {
+    await this._client.login(this._token);
+    this._logger.setShardId(this.shard());
   }
 
   public translate(key: string, language: string, ...args: string[]): string {
