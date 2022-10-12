@@ -27,8 +27,6 @@ class ModuleCollection extends Collection {
 
     await Promise.all(
       files.map(async file => {
-        await this._buildModule(path.join(path.resolve(), "node_modules", "@eazyautodelete", file));
-
         const module = require("@eazyautodelete/" + file);
         await this.register(module);
       })
@@ -62,16 +60,6 @@ class ModuleCollection extends Collection {
     } catch (err) {
       console.error(err);
     }
-  }
-
-  private async _buildModule(path: string): Promise<any> {
-    const child = exec("npm run build", { cwd: path });
-
-    await new Promise(resolve => {
-      child.on("close", resolve);
-    });
-
-    return;
   }
 
   public getListenerCount(): number {
