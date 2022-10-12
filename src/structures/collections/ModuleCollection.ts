@@ -41,7 +41,6 @@ class ModuleCollection extends Collection {
       let activeModule = this.get(module.name);
 
       if (activeModule) {
-        this.logger.info(`[🧱] Unloading Module '${module.name}'`, "MDUL");
         activeModule._unload();
         this.delete(module.name);
       }

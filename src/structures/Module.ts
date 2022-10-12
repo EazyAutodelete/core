@@ -84,7 +84,7 @@ class Module extends Base {
       this.bot.commands.unregister(cmd);
     });
 
-    this.logger.warn(`Unloaded Module ${this.name}`, "MODULE");
+    this.logger.warn(`[🧱] Unloaded Module ${this.name}`, "MDUL");
   }
 }
 
