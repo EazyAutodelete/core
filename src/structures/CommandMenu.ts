@@ -1,5 +1,4 @@
 import {
-  ButtonInteraction,
   ColorResolvable,
   Guild,
   GuildMember,
@@ -153,7 +152,7 @@ export default class CommandMenu extends Base {
     return this;
   }
 
-  async continue(ephemeral: boolean = true): Promise<CommandMenu> {
+  async continue(ephemeral = true): Promise<CommandMenu> {
     try {
       await this.interaction.deferReply({ ephemeral: ephemeral }).catch(this.logger.error);
     } catch (e) {

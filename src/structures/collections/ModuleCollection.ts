@@ -1,4 +1,3 @@
-import { exec } from "child_process";
 import { Client } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
@@ -27,18 +26,20 @@ class ModuleCollection extends Collection {
 
     await Promise.all(
       files.map(async file => {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const module = require("@eazyautodelete/" + file);
         await this.register(module);
       })
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async register(requiredModule: any) {
     try {
       if (!requiredModule.default) return;
-      let module = new requiredModule.default(this.bot);
+      const module = new requiredModule.default(this.bot);
       if (!(module instanceof Module)) return;
-      let activeModule = this.get(module.name);
+      const activeModule = this.get(module.name);
 
       if (activeModule) {
         activeModule._unload();
@@ -49,7 +50,10 @@ class ModuleCollection extends Collection {
 
       await Promise.all(
         this.bot.dispatcher.events.map(event => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           if (!(module as any)[event]) return;
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           module.registerListener(event, (module as any)[event] as (...args: any[]) => void);
           this._listenerCount++;
         })

@@ -152,7 +152,7 @@ export default class CommandButton extends Base {
     return this;
   }
 
-  async continue(ephemeral: boolean = true): Promise<CommandButton> {
+  async continue(ephemeral = true): Promise<CommandButton> {
     try {
       await this.interaction.deferReply({ ephemeral: ephemeral }).catch(this.logger.error);
     } catch (e) {

@@ -7,8 +7,9 @@ import path from "path";
 
 class Module extends Base {
   bot: Bot;
-  name: String;
-  private _registeredListeners: Map<string, Function>;
+  name: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private _registeredListeners: Map<string, (...args: any[]) => void>;
   private _loadedCommands: Map<string, Command>;
   constructor(bot: Bot) {
     super(bot);
@@ -27,6 +28,7 @@ class Module extends Base {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public registerListener(event: string, listener: (...args: any[]) => void) {
     this.bot.dispatcher.registerListener(event, listener, this);
     this._registeredListeners.set(event, listener);
@@ -40,6 +42,8 @@ class Module extends Base {
     await Promise.all(
       files.map(async file => {
         if (!file.endsWith(".js")) return;
+
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const command = require(path.join(
           path.resolve(),
           "node_modules",
@@ -57,10 +61,17 @@ class Module extends Base {
     );
   }
 
-  public start(...args: any[]) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  public start(...args: any[]) {
+    return;
+  }
 
-  public unload(...args: any[]) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  public unload(...args: any[]) {
+    return;
+  }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public _start(...args: any[]) {
     if (this.start) {
       this.start(...args);
@@ -69,6 +80,7 @@ class Module extends Base {
     this.logger.info(`[🧱] Started Module '${this.name}'`, "MDUL");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public _unload(...args: any[]) {
     if (this._registeredListeners.size > 0) {
       for (const [event, listener] of this._registeredListeners.entries()) {

@@ -152,7 +152,7 @@ export default class CommandModal extends Base {
     return this;
   }
 
-  async continue(ephemeral: boolean = true): Promise<CommandModal> {
+  async continue(ephemeral = true): Promise<CommandModal> {
     try {
       await this.interaction.deferReply({ ephemeral: ephemeral }).catch(this.logger.error);
     } catch (e) {
