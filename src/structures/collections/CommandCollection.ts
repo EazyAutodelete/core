@@ -29,7 +29,7 @@ class CommandCollection extends Collection {
   }
 
   public register(command: Command) {
-    let activeCommand = this.get(command.name);
+    const activeCommand = this.get(command.name);
 
     if (activeCommand) {
       this.logger.info(`[💬] Unloading Command '${command.name}'`, "CMND");

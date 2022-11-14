@@ -29,7 +29,7 @@ class ResponseManager extends Base {
       | SelectMenuInteraction
       | ModalSubmitInteraction,
     data: MessageEmbed[],
-    ephemeral: boolean = false,
+    ephemeral = false,
     components: MessageActionRow[] = []
   ): Promise<void> {
     try {

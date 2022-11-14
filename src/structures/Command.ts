@@ -85,7 +85,9 @@ class Command extends Base {
       .setColor(this.bot.utils.getColor("default") as ColorResolvable)
       .setTimestamp()
       .setFooter({
-        text: this.client.user!.username,
+        text: this.client.user?.username ?? "EazyAutodelete",
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         iconURL: this.client.user!.displayAvatarURL({ dynamic: true }),
       });
   }
@@ -105,6 +107,7 @@ class Command extends Base {
     return this.urlButton("https://docs.eazyautodelete.xyz/" + url, "Help", "❓");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async run(message: CommandMessage, args: CommandArgs): Promise<void> {
     message.error("No run method served for this command.");
 
@@ -119,26 +122,33 @@ class Command extends Base {
     return [];
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async selectMenuHandler(menu: CommandMenu, args: CommandMenuArgs): Promise<void> {
     this.logger.warn("No Select Menu Handler", this.name);
 
     return;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async buttonHandler(button: CommandButton, args: CommandButtonArgs): Promise<void> {
     this.logger.warn("No Button Handler", this.name);
 
     return;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async modalHandler(modal: CommandModal, args: CommandModalArgs): Promise<void> {
     this.logger.warn("No Modal Handler", this.name);
 
     return;
   }
 
-  public unload(...args: any[]) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  public unload(...args: any[]) {
+    return;
+  }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public _unload(...args: any[]) {
     this.bot.commands.delete(this.name);
 

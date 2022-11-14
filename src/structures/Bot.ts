@@ -25,14 +25,16 @@ class Bot {
   private _logger!: Logger;
   private _client!: Client;
   private _database!: DatabaseHandler;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _config!: any;
   private _i18n!: Translator;
   private _clientOptions!: ClientOptions;
 
   private _token!: string;
 
-  public staffServer: any;
-  public supportServer: any;
+  public staffServer!: string;
+  public supportServer!: string;
 
   utils!: typeof utils;
 
@@ -79,7 +81,6 @@ class Bot {
 
     this._client.on("error", err => this._logger.error(err.toString()));
     this._client.on("warn", err => this._logger.warn(err.toString()));
-    this._client.on("debug", err => this._logger.debug(err.toString()));
     this._client.on("ready", () => {
       this._client.emit("clientReady");
     });
@@ -107,6 +108,7 @@ class Bot {
     this.login();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async _configure(options: any = {}) {
     this._clientOptions = {
       intents: options.intents || [
