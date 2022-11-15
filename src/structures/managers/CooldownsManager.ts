@@ -39,7 +39,7 @@ class CooldownsManager extends Base {
   }
 
   private _remainingCooldown(commandName: string, user: string): number {
-    const remainingCooldown = this._cooldowns.get(commandName)?.[user] || 0 - this._now();
+    const remainingCooldown = (this._cooldowns.get(commandName)?.[user] || 0) - this._now();
     return remainingCooldown < 0 ? 0 : remainingCooldown;
   }
 }
