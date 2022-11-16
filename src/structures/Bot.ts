@@ -160,6 +160,10 @@ class Bot {
       botMods: options.staff.botMods || [],
     };
 
+    this._config.performance = options.performance;
+
+    this._config.commands = options.commands;
+
     this._config.weblate_token = options.weblate_token;
   }
 
