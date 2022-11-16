@@ -71,11 +71,12 @@ class CommandMessage extends Base {
     components: MessageActionRow | MessageActionRow[] = []
   ): Promise<CommandMessage> {
     try {
+      let embeds;
       if (Array.isArray(message))
         embeds = message.map((m: MessageEmbed | MessageEmbedOptions) => {
           return m instanceof MessageEmbed ? m : new MessageEmbed(m);
         });
-      else var embeds = [message instanceof MessageEmbed ? message : new MessageEmbed(message)];
+      else embeds = [message instanceof MessageEmbed ? message : new MessageEmbed(message)];
 
       if (this.data.user.isNew)
         embeds.unshift(
