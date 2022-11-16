@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.5.2](https://github.com/eazyautodelete/core/compare/v3.5.0...v3.5.2) (2022-11-16)
+
+
+### Bug Fixes
+
+* **cmd:** fix no var in command message send methosd ([25c6674](https://github.com/eazyautodelete/core/commit/25c6674f6dc85b1d162c85fc2e680254e9ef3443))
+
 ### [3.5.1](https://github.com/eazyautodelete/core/compare/v3.5.0...v3.5.1) (2022-11-16)
 
 ## [3.5.0](https://github.com/eazyautodelete/core/compare/v3.4.0...v3.5.0) (2022-11-16)
