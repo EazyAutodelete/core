@@ -71,17 +71,23 @@ class CommandMessage extends Base {
     components: MessageActionRow | MessageActionRow[] = []
   ): Promise<CommandMessage> {
     try {
+      if (Array.isArray(message))
+        embeds = message.map((m: MessageEmbed | MessageEmbedOptions) => {
+          return m instanceof MessageEmbed ? m : new MessageEmbed(m);
+        });
+      else var embeds = [message instanceof MessageEmbed ? message : new MessageEmbed(message)];
+
+      if (this.data.user.isNew)
+        embeds.unshift(
+          new MessageEmbed({
+            title: this.translate("userWelcome"),
+            description: this.translate("userIsNew"),
+            color: this.bot.utils.getColor("default") as ColorResolvable,
+          })
+        );
+
       await this.bot.response
-        .send(
-          this.message,
-          Array.isArray(message)
-            ? message.map((m: MessageEmbed | MessageEmbedOptions) => {
-                return m instanceof MessageEmbed ? m : new MessageEmbed(m);
-              })
-            : [message instanceof MessageEmbed ? message : new MessageEmbed(message)],
-          ephemeral,
-          Array.isArray(components) ? components : [components]
-        )
+        .send(this.message, embeds, ephemeral, Array.isArray(components) ? components : [components])
         .catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
