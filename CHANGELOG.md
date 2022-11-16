@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.0](https://github.com/eazyautodelete/core/compare/v3.3.6...v3.4.0) (2022-11-16)
+
+
+### Features
+
+* **commandmessage:** add introduction embed when user is new to bot ([02d3530](https://github.com/eazyautodelete/core/commit/02d3530b2d0a34a24b49f4e2fa1431f49423c9a5))
+
 ### [3.3.6](https://github.com/eazyautodelete/core/compare/v3.3.5...v3.3.6) (2022-11-15)
 
 
