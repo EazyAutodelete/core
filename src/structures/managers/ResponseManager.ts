@@ -41,10 +41,13 @@ class ResponseManager extends Base {
       ) {
         await message.send(data, ephemeral, components).catch(this.logger.error);
         return;
-      } else
-        message.deferred
-          ? await message.editReply({ embeds: data, components: components }).catch(this.logger.error)
-          : await message.reply({ embeds: data, ephemeral, components: components }).catch(this.logger.error);
+      } else {
+        if (message.deferred)
+          await message.editReply({ embeds: data, components: components }).catch(this.logger.error);
+        else if (message.replied)
+          await message.followUp({ embeds: data, ephemeral, components }).catch(this.logger.error);
+        else await message.reply({ embeds: data, ephemeral, components }).catch(this.logger.error);
+      }
     } catch (e) {
       this.logger.error(e as string);
     }

@@ -155,7 +155,7 @@ export default class CommandButton extends Base {
 
   async editSource(payload: MessageEditOptions) {
     try {
-      await this.message.edit(payload).catch(this.logger.error);
+      await this.interaction.update(payload).catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }
