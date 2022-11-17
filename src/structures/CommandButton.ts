@@ -6,6 +6,7 @@ import {
   InteractionReplyOptions,
   Message,
   MessageActionRow,
+  MessageEditOptions,
   MessageEmbed,
   MessageEmbedOptions,
   Snowflake,
@@ -150,6 +151,14 @@ export default class CommandButton extends Base {
     }
 
     return this;
+  }
+
+  async editSource(payload: MessageEditOptions) {
+    try {
+      await this.message.edit(payload).catch(this.logger.error);
+    } catch (e) {
+      this.logger.error(e as string);
+    }
   }
 
   async continue(ephemeral = true): Promise<CommandButton> {
