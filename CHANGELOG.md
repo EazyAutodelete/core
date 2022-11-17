@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.6.0](https://github.com/eazyautodelete/core/compare/v3.5.2...v3.6.0) (2022-11-17)
+
+
+### Features
+
+* **cmds:** add editSource to CommandButton and CommandMenu ([07f6c54](https://github.com/eazyautodelete/core/commit/07f6c54eb91dfdb1e7b3b6d339bc3ab860a40d50))
+
 ### [3.5.2](https://github.com/eazyautodelete/core/compare/v3.5.0...v3.5.2) (2022-11-16)
 
 
