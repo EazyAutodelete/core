@@ -1,6 +1,6 @@
 import { DatabaseHandler } from "@eazyautodelete/db-client";
 import Translator from "@eazyautodelete/translator";
-import { Client, ClientOptions, Intents } from "discord.js";
+import { Client, ClientOptions, Intents, Options } from "discord.js";
 import CommandCollection from "./collections/CommandCollection";
 import ModuleCollection from "./collections/ModuleCollection";
 import Logger from "@eazyautodelete/logger";
@@ -128,7 +128,10 @@ class Bot {
         Intents.FLAGS.GUILD_VOICE_STATES,
         Intents.FLAGS.GUILD_WEBHOOKS,
       ],
-      partials: options.partials || ["CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION", "USER"],
+      partials: options.partials || ["MESSAGE"],
+      makeCache: Options.cacheWithLimits({
+        MessageManager: options.performance.cache.messageManager || 500,
+      }),
     };
 
     this._token = options.token;
