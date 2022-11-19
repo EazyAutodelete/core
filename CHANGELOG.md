@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.7.0](https://github.com/eazyautodelete/core/compare/v3.6.1...v3.7.0) (2022-11-19)
+
+
+### Features
+
+* **config:** add commands and performance config ([a6526e9](https://github.com/eazyautodelete/core/commit/a6526e92672726a24cab0cc85b53f81c00417ce3))
+
 ### [3.6.1](https://github.com/eazyautodelete/core/compare/v3.6.0...v3.6.1) (2022-11-17)
 
 
