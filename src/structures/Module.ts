@@ -53,6 +53,8 @@ class Module extends Base {
           "commands",
           file
         ));
+        console.log(command);
+        if (!command || !command.default) return;
         const cmd: Command = new command.default(this.bot);
         cmd.module = this;
         this.bot.commands.register(cmd);
