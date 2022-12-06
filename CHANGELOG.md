@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/eazyautodelete/core/compare/v3.7.0...v4.0.0) (2022-12-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* everything new
+
+### Features
+
+* use eris ([16f4ee8](https://github.com/eazyautodelete/core/commit/16f4ee8649f74ac6e76baee2ed74a706055c3ade))
+
+
+### Bug Fixes
+
+* **module:** return if no command default ([0a00ab1](https://github.com/eazyautodelete/core/commit/0a00ab1bb977897c999ebe9e90566bb3c67787ec))
+
 ## [3.7.0](https://github.com/eazyautodelete/core/compare/v3.6.1...v3.7.0) (2022-11-19)
 
 
