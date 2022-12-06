@@ -1,4 +1,3 @@
-import { Client } from "discord.js";
 import { readdir } from "fs/promises";
 import path from "path";
 import Bot from "../Bot";
@@ -10,7 +9,6 @@ class ModuleCollection extends Collection {
   bot: Bot;
   logger: Logger;
   private _listenerCount: number;
-  private _client: Client;
   constructor(bot: Bot) {
     super();
 
@@ -18,16 +16,18 @@ class ModuleCollection extends Collection {
     this.logger = bot.logger;
 
     this._listenerCount = 0;
-    this._client = bot.client;
   }
 
   public async loadModules() {
     const files = await readdir(path.join(path.resolve(), "node_modules", "@eazyautodelete"));
 
+    console.log(files);
+
     await Promise.all(
       files.map(async file => {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const module = require("@eazyautodelete/" + file);
+        console.log(module, module.default);
         await this.register(module);
       })
     );
@@ -36,7 +36,7 @@ class ModuleCollection extends Collection {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async register(requiredModule: any) {
     try {
-      if (!requiredModule.default) return;
+      if (!requiredModule || !requiredModule.default) return;
       const module = new requiredModule.default(this.bot);
       if (!(module instanceof Module)) return;
       const activeModule = this.get(module.name);
@@ -59,7 +59,7 @@ class ModuleCollection extends Collection {
         })
       );
 
-      this.get(module.name)._start(this._client);
+      this.get(module.name)._start(this.bot);
     } catch (err) {
       console.error(err);
     }

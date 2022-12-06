@@ -1,4 +1,3 @@
-import { exec } from "node:child_process";
 import { readdir } from "fs/promises";
 import Base from "./Base";
 import Bot from "./Bot";
@@ -18,14 +17,6 @@ class Module extends Base {
 
     this._registeredListeners = new Map();
     this._loadedCommands = new Map();
-  }
-
-  public async build() {
-    const buildModuleCP = exec("npm run build");
-    buildModuleCP.stdout?.on("error", d => console.error(d.toString()));
-    await new Promise(resolve => {
-      buildModuleCP.on("close", resolve);
-    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

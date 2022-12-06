@@ -1,51 +1,55 @@
-import {
-  ButtonInteraction,
-  ColorResolvable,
-  Guild,
-  GuildMember,
-  InteractionReplyOptions,
-  Message,
-  MessageActionRow,
-  MessageEditOptions,
-  MessageEmbed,
-  MessageEmbedOptions,
-  Snowflake,
-  TextBasedChannel,
-  User,
-} from "discord.js";
 import { UserSettings, GuildSettings } from "@eazyautodelete/db-client";
+import {
+  ActionRow,
+  ComponentInteraction,
+  Embed,
+  EmbedOptions,
+  Guild,
+  InteractionContentEdit,
+  Member,
+  Message,
+  MessageContent,
+  TextableChannel,
+  User,
+} from "eris";
 import Base from "./Base";
 import Bot from "./Bot";
 
 export default class CommandButton extends Base {
-  channel!: TextBasedChannel;
-  member: GuildMember;
-  author: User;
-  guild!: Guild;
-  id: Snowflake;
-  createdTimestamp: number;
-  locale: string;
-  data!: { guild: GuildSettings; user: UserSettings };
+  id: string;
+  interaction: ComponentInteraction;
   message: Message;
-  interaction: ButtonInteraction;
+  channel: TextableChannel | undefined;
+  member: Member | undefined;
+  user: User;
+  guild: Guild;
+  guildId: string;
 
-  constructor(bot: Bot, interaction: ButtonInteraction) {
+  data!: { guild: GuildSettings; user: UserSettings };
+
+  constructor(bot: Bot, interaction: ComponentInteraction) {
     super(bot);
-    this.message = interaction.message as Message;
+    this.message = interaction.message;
     this.interaction = interaction;
     if (interaction.channel) this.channel = interaction.channel;
-    if (interaction.guild) this.guild = interaction.guild;
+
+    this.interaction = interaction;
     this.id = interaction.id;
-    this.createdTimestamp = interaction.createdTimestamp;
-    this.member = this.interaction.member as GuildMember;
-    this.author = this.interaction.user as User;
-    this.locale = this.interaction.locale;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.guildId = interaction.guildID!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.user = this.interaction.user!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.guild = this.bot.client.guilds.get(this.guildId)!;
+
+    if (interaction.channel) this.channel = interaction.channel;
+    if (interaction.member) this.member = this.interaction.member;
   }
 
   public async loadData() {
     this.data = {
-      guild: await this.bot.db.getGuildSettings(this.interaction.guild?.id as string),
-      user: await this.bot.db.getUserSettings(this.author.id),
+      guild: await this.bot.db.getGuildSettings(this.guildId),
+      user: await this.bot.db.getUserSettings(this.user.id),
     };
   }
 
@@ -56,9 +60,10 @@ export default class CommandButton extends Base {
   public async error(message: string, ...args: string[]): Promise<CommandButton> {
     try {
       await this.send(
-        new MessageEmbed({
+        {
           description: this.translate(message, ...args),
-        }).setColor("#ff0000"),
+          color: this.bot.utils.getColor("error"),
+        },
         true
       ).catch(this.logger.error);
     } catch (e) {
@@ -69,22 +74,21 @@ export default class CommandButton extends Base {
   }
 
   public async send(
-    message: MessageEmbed | MessageEmbed[] | MessageEmbedOptions | MessageEmbedOptions[],
+    message: Embed | Embed[] | EmbedOptions | EmbedOptions[],
     ephemeral: boolean | undefined = false,
-    components: MessageActionRow | MessageActionRow[] = []
+    components: ActionRow[] = []
   ): Promise<CommandButton> {
     try {
+      const embeds = message instanceof Array ? message : [message];
+      if (this.data.user.isNew)
+        embeds.unshift({
+          title: this.translate("userWelcome"),
+          description: this.translate("userIsNew"),
+          color: this.bot.utils.getColor("default"),
+        });
+
       await this.bot.response
-        .send(
-          this.interaction,
-          Array.isArray(message)
-            ? message.map((m: MessageEmbed | MessageEmbedOptions) => {
-                return m instanceof MessageEmbed ? m : new MessageEmbed(m);
-              })
-            : [message instanceof MessageEmbed ? message : new MessageEmbed(message)],
-          ephemeral,
-          Array.isArray(components) ? components : [components]
-        )
+        .send(this.interaction, embeds, ephemeral, Array.isArray(components) ? components : [components])
         .catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
@@ -95,9 +99,10 @@ export default class CommandButton extends Base {
   public async success(message: string, ...args: string[]): Promise<CommandButton> {
     try {
       await this.send(
-        new MessageEmbed({
+        {
           description: this.translate(message, ...args),
-        }).setColor(this.bot.utils.getColor("success") as ColorResolvable),
+          color: this.bot.utils.getColor("success"),
+        },
         true
       ).catch(this.logger.error);
     } catch (e) {
@@ -110,9 +115,10 @@ export default class CommandButton extends Base {
   public async info(message: string, ...args: string[]): Promise<CommandButton> {
     try {
       await this.send(
-        new MessageEmbed({
+        {
           description: this.translate(message, ...args),
-        }).setColor(this.bot.utils.getColor("default") as ColorResolvable),
+          color: this.bot.utils.getColor("default"),
+        },
         true
       ).catch(this.logger.error);
     } catch (e) {
@@ -122,40 +128,28 @@ export default class CommandButton extends Base {
     return this;
   }
 
-  async react(emoji: string): Promise<CommandButton> {
+  async delete(): Promise<CommandButton> {
     try {
-      await this.interaction.followUp({
-        ephemeral: true,
-        content: emoji,
-      });
+      await this.interaction.deleteOriginalMessage().catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }
-
     return this;
   }
 
-  async delete(): Promise<CommandButton | void> {
+  async edit(payload: InteractionContentEdit): Promise<CommandButton> {
     try {
-      return await this.interaction.deleteReply().catch(this.logger.error);
-    } catch (e) {
-      return this.logger.error(e as string);
-    }
-  }
-
-  async edit(payload: InteractionReplyOptions): Promise<CommandButton> {
-    try {
-      await this.interaction.editReply(payload).catch(this.logger.error);
+      await this.interaction.editOriginalMessage(payload).catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }
-
     return this;
   }
 
-  async editSource(payload: MessageEditOptions) {
+  async editSource(payload: MessageContent) {
     try {
-      await this.interaction.update(payload).catch(this.logger.error);
+      this.interaction.message.edit;
+      await this.interaction.message.edit(payload).catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }
@@ -163,7 +157,7 @@ export default class CommandButton extends Base {
 
   async continue(ephemeral = true): Promise<CommandButton> {
     try {
-      await this.interaction.deferReply({ ephemeral: ephemeral }).catch(this.logger.error);
+      await this.interaction.defer(ephemeral ? 64 : 0).catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }

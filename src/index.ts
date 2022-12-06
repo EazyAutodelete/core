@@ -6,7 +6,7 @@ export { default as Bot } from "./structures/Bot";
 export { default as Command } from "./structures/Command";
 
 export { default as CommandMessage } from "./structures/CommandMessage";
-export { default as CommandArgs } from "./structures/CommandArgs";
+export { default as CommandMessageArgs } from "./structures/CommandMessageArgs";
 
 export { default as CommandButton } from "./structures/CommandButton";
 export { default as CommandButtonArgs } from "./structures/CommandButtonArgs";

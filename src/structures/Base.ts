@@ -1,5 +1,5 @@
 import { DatabaseHandler } from "@eazyautodelete/db-client";
-import { Client } from "discord.js";
+import { Client } from "eris";
 import Bot from "./Bot";
 import Logger from "@eazyautodelete/logger";
 
