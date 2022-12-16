@@ -1,48 +1,51 @@
-import {
-  ColorResolvable,
-  CommandInteraction,
-  Guild,
-  GuildMember,
-  InteractionReplyOptions,
-  MessageActionRow,
-  MessageEmbed,
-  MessageEmbedOptions,
-  Snowflake,
-  TextBasedChannel,
-  User,
-} from "discord.js";
-import Bot from "./Bot";
 import { UserSettings, GuildSettings } from "@eazyautodelete/db-client";
+import {
+  ActionRow,
+  Embed,
+  EmbedOptions,
+  Guild,
+  InteractionContentEdit,
+  Member,
+  TextableChannel,
+  CommandInteraction,
+  User,
+} from "eris";
 import Base from "./Base";
+import Bot from "./Bot";
 
 class CommandMessage extends Base {
-  message: CommandInteraction;
-  channel!: TextBasedChannel;
-  member: GuildMember;
-  author: User;
-  guild!: Guild;
-  id: Snowflake;
-  createdTimestamp: number;
-  locale: string;
+  id: string;
+  interaction: CommandInteraction;
+  channel: TextableChannel | undefined;
+  member: Member | undefined;
+  user: User;
+  guild: Guild;
+  guildId: string;
+
   data!: { guild: GuildSettings; user: UserSettings };
 
-  constructor(bot: Bot, message: CommandInteraction) {
+  constructor(bot: Bot, interaction: CommandInteraction) {
     super(bot);
+    this.interaction = interaction;
+    if (interaction.channel) this.channel = interaction.channel;
 
-    this.message = message;
-    if (message.channel) this.channel = message.channel;
-    if (message.guild) this.guild = message.guild;
-    this.id = message.id;
-    this.createdTimestamp = message.createdTimestamp;
-    this.member = this.message.member as GuildMember;
-    this.author = this.message.user as User;
-    this.locale = this.message.locale;
+    this.interaction = interaction;
+    this.id = interaction.id;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.guildId = interaction.guildID!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.user = this.interaction.user!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.guild = this.bot.client.guilds.get(this.guildId)!;
+
+    if (interaction.channel) this.channel = interaction.channel;
+    if (interaction.member) this.member = this.interaction.member;
   }
 
   public async loadData() {
     this.data = {
-      guild: await this.db.getGuildSettings(this.message.guild?.id as string),
-      user: await this.db.getUserSettings(this.author.id),
+      guild: await this.bot.db.getGuildSettings(this.guildId),
+      user: await this.bot.db.getUserSettings(this.user.id),
     };
   }
 
@@ -53,9 +56,10 @@ class CommandMessage extends Base {
   public async error(message: string, ...args: string[]): Promise<CommandMessage> {
     try {
       await this.send(
-        new MessageEmbed({
+        {
           description: this.translate(message, ...args),
-        }).setColor("#ff0000"),
+          color: this.bot.utils.getColor("error"),
+        },
         true
       ).catch(this.logger.error);
     } catch (e) {
@@ -66,22 +70,21 @@ class CommandMessage extends Base {
   }
 
   public async send(
-    message: MessageEmbed | MessageEmbed[] | MessageEmbedOptions | MessageEmbedOptions[],
+    message: Embed | Embed[] | EmbedOptions | EmbedOptions[],
     ephemeral: boolean | undefined = false,
-    components: MessageActionRow | MessageActionRow[] = []
+    components: ActionRow[] = []
   ): Promise<CommandMessage> {
     try {
+      const embeds = message instanceof Array ? message : [message];
+      if (this.data.user.isNew)
+        embeds.unshift({
+          title: this.translate("userWelcome"),
+          description: this.translate("userIsNew"),
+          color: this.bot.utils.getColor("default"),
+        });
+
       await this.bot.response
-        .send(
-          this.message,
-          Array.isArray(message)
-            ? message.map((m: MessageEmbed | MessageEmbedOptions) => {
-                return m instanceof MessageEmbed ? m : new MessageEmbed(m);
-              })
-            : [message instanceof MessageEmbed ? message : new MessageEmbed(message)],
-          ephemeral,
-          Array.isArray(components) ? components : [components]
-        )
+        .send(this.interaction, embeds, ephemeral, Array.isArray(components) ? components : [components])
         .catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
@@ -92,9 +95,10 @@ class CommandMessage extends Base {
   public async success(message: string, ...args: string[]): Promise<CommandMessage> {
     try {
       await this.send(
-        new MessageEmbed({
+        {
           description: this.translate(message, ...args),
-        }).setColor(this.bot.utils.getColor("success") as ColorResolvable),
+          color: this.bot.utils.getColor("success"),
+        },
         true
       ).catch(this.logger.error);
     } catch (e) {
@@ -107,9 +111,10 @@ class CommandMessage extends Base {
   public async info(message: string, ...args: string[]): Promise<CommandMessage> {
     try {
       await this.send(
-        new MessageEmbed({
+        {
           description: this.translate(message, ...args),
-        }).setColor(this.bot.utils.getColor("default") as ColorResolvable),
+          color: this.bot.utils.getColor("default"),
+        },
         true
       ).catch(this.logger.error);
     } catch (e) {
@@ -119,40 +124,27 @@ class CommandMessage extends Base {
     return this;
   }
 
-  async react(emoji: string): Promise<CommandMessage> {
+  async delete(): Promise<CommandMessage> {
     try {
-      await this.message.followUp({
-        ephemeral: true,
-        content: emoji,
-      });
+      await this.interaction.deleteOriginalMessage().catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }
-
     return this;
   }
 
-  async delete(): Promise<CommandMessage | void> {
+  async edit(payload: InteractionContentEdit): Promise<CommandMessage> {
     try {
-      return await this.message.deleteReply().catch(this.logger.error);
-    } catch (e) {
-      return this.logger.error(e as string);
-    }
-  }
-
-  async edit(payload: InteractionReplyOptions): Promise<CommandMessage> {
-    try {
-      await this.message.editReply(payload).catch(this.logger.error);
+      await this.interaction.editOriginalMessage(payload).catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }
-
     return this;
   }
 
-  async continue(): Promise<CommandMessage> {
+  async continue(ephemeral = true): Promise<CommandMessage> {
     try {
-      await this.message.deferReply().catch(this.logger.error);
+      await this.interaction.defer(ephemeral ? 64 : 0).catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }

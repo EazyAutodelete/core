@@ -1,6 +1,6 @@
 {
   "name": "@eazyautodelete/core",
-  "version": "3.3.5",
+  "version": "4.1.5",
   "description": "🧰 Core Package used by the EazyAutodelete Discord Bot",
   "main": "build/index.js",
   "scripts": {
@@ -50,14 +50,14 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "@discordjs/rest": "^0.5.0",
-    "@eazyautodelete/bot-utils": "^1.0.12",
-    "@eazyautodelete/db-client": "^1.4.0",
-    "@eazyautodelete/logger": "^1.0.3",
+    "@eazyautodelete/bot-utils": "^1.1.0",
+    "@eazyautodelete/db-client": "^1.4.1",
+    "@eazyautodelete/logger": "^1.0.5",
     "@eazyautodelete/translator": "^1.3.7",
     "axios": "^0.24.0",
-    "discord-api-types": "^0.30.0",
-    "discord.js": "^13.10.3"
+    "discord-api-types": "^0.37.21",
+    "discord-hybrid-sharding": "^1.7.5",
+    "eris": "github:EazyAutodelete/eris"
   },
   "config": {
     "commitizen": {
@@ -66,6 +66,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://npm.pkg.github.com"
   }
 }

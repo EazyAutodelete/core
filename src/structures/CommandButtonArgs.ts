@@ -10,10 +10,10 @@ export default class CommandButtonArgs {
   }
 
   isCommand(): boolean {
-    return this.button.interaction.customId?.startsWith("cmd_") || false;
+    return this.button.interaction.data.custom_id.startsWith("cmd_") || false;
   }
 
   getCommand(): string {
-    return this.button.interaction.customId.split("_")[1] as string;
+    return this.button.interaction.data.custom_id.split("_")[1];
   }
 }

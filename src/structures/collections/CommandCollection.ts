@@ -1,4 +1,3 @@
-import { Client } from "discord.js";
 import Bot from "../Bot";
 import Command from "../Command";
 import Logger from "@eazyautodelete/logger";
@@ -9,7 +8,6 @@ class CommandCollection extends Collection {
   bot: Bot;
   logger: Logger;
   private _listenerCount: number;
-  private _client: Client;
   constructor(bot: Bot) {
     super();
 
@@ -17,7 +15,6 @@ class CommandCollection extends Collection {
     this.logger = bot.logger;
 
     this._listenerCount = 0;
-    this._client = bot.client;
   }
 
   public async loadCommands() {

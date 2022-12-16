@@ -10,10 +10,10 @@ export default class CommandMenuArgs {
   }
 
   isCommand(): boolean {
-    return this.menu.interaction.customId?.startsWith("cmd_") || false;
+    return this.menu.interaction.data.custom_id.startsWith("cmd_") || false;
   }
 
   getCommand(): string {
-    return this.menu.interaction.customId.split("_")[1] as string;
+    return this.menu.interaction.data.custom_id.split("_")[1];
   }
 }

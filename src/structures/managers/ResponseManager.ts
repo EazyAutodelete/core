@@ -1,11 +1,4 @@
-import {
-  ButtonInteraction,
-  CommandInteraction,
-  MessageActionRow,
-  MessageEmbed,
-  ModalSubmitInteraction,
-  SelectMenuInteraction,
-} from "discord.js";
+import { ActionRow, CommandInteraction, ComponentInteraction, Embed, EmbedOptions, ModalSubmitInteraction } from "eris";
 import Base from "../Base";
 import Bot from "../Bot";
 import CommandButton from "../CommandButton";
@@ -24,13 +17,12 @@ class ResponseManager extends Base {
       | CommandButton
       | CommandMenu
       | CommandModal
+      | ComponentInteraction
       | CommandInteraction
-      | ButtonInteraction
-      | SelectMenuInteraction
       | ModalSubmitInteraction,
-    data: MessageEmbed[],
+    data: Embed | Embed[] | EmbedOptions | EmbedOptions[],
     ephemeral = false,
-    components: MessageActionRow[] = []
+    components: ActionRow[] = []
   ): Promise<void> {
     try {
       if (
@@ -41,10 +33,15 @@ class ResponseManager extends Base {
       ) {
         await message.send(data, ephemeral, components).catch(this.logger.error);
         return;
-      } else
-        message.deferred
-          ? await message.editReply({ embeds: data, components: components }).catch(this.logger.error)
-          : await message.reply({ embeds: data, ephemeral, components: components }).catch(this.logger.error);
+      } else {
+        const embeds = (Array.isArray(data) ? data : [data]).map(x => {
+          if (typeof x.color === "string") {
+            x.color = parseInt(x.color, 16);
+          }
+          return x;
+        });
+        message.createMessage({ embeds, components, flags: ephemeral ? 64 : 0 }).catch(this.logger.error);
+      }
     } catch (e) {
       this.logger.error(e as string);
     }

@@ -1,6 +1,6 @@
 import { DatabaseHandler } from "@eazyautodelete/db-client";
 import Translator from "@eazyautodelete/translator";
-import { Client, ClientOptions, Intents } from "discord.js";
+import { Channel, Client, ClientOptions, ExtendedUser, Guild, Member, Role, User } from "eris";
 import CommandCollection from "./collections/CommandCollection";
 import ModuleCollection from "./collections/ModuleCollection";
 import Logger from "@eazyautodelete/logger";
@@ -10,6 +10,8 @@ import PermissionsManager from "./managers/PermissionsManager";
 import ResponseManager from "./managers/ResponseManager";
 import * as utils from "@eazyautodelete/bot-utils";
 import { BotOptions } from "..";
+import Collection from "./collections/Collection";
+import Cluster from "discord-hybrid-sharding";
 
 class Bot {
   public isReady: boolean;
@@ -26,10 +28,11 @@ class Bot {
   private _client!: Client;
   private _database!: DatabaseHandler;
 
+  private _clientOptions!: ClientOptions;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _config!: any;
   private _i18n!: Translator;
-  private _clientOptions!: ClientOptions;
 
   private _token!: string;
 
@@ -37,10 +40,19 @@ class Bot {
   public supportServer!: string;
 
   utils!: typeof utils;
+  cache: { channels: Collection; guilds: Collection; users: Collection };
+
+  shardList!: number[];
 
   constructor() {
     this.isReady = false;
     this.startTime = Date.now();
+
+    this.cache = {
+      channels: new Collection(),
+      guilds: new Collection(),
+      users: new Collection(),
+    };
   }
 
   public get client(): Client {
@@ -67,8 +79,12 @@ class Bot {
     return this._i18n;
   }
 
+  public get user(): ExtendedUser {
+    return this._client.user;
+  }
+
   public shard(): number {
-    return this._client?.shard?.ids?.[0] || 0;
+    return this._client.guilds.random()?.shard.id || 0;
   }
 
   public async setup(options: BotOptions) {
@@ -77,15 +93,31 @@ class Bot {
 
     this.utils = utils;
 
-    this._client = new Client(this._clientOptions);
+    this._client = new Client(this._token, this._clientOptions);
+    (<any>this._client).cluster = new Cluster.Client(this._client);
 
     this._client.on("error", err => this._logger.error(err.toString()));
     this._client.on("warn", err => this._logger.warn(err.toString()));
     this._client.on("ready", () => {
       this._client.emit("clientReady");
+
+      this._logger.info("-", "BLANK");
+      this._logger.info(`Cluster #${(<any>this._client).cluster.id} is ready!`, "CLSTR");
+      this._logger.info(
+        `Cluster #${(<any>this._client).cluster.id} is serving shards ${this.shardList.join(", ")}`,
+        "CLSTR"
+      );
+      this._logger.info("-", "BLANK");
+
+      (<any>this._client).cluster.triggerReady();
     });
 
-    this._logger = new Logger({ shardId: this.shard() });
+    this._client.on("shardReady", id => {
+      this._logger.setShardId(id);
+      this._logger.info(`Shard #${id} ready`, "SHARD");
+    });
+
+    this._logger = new Logger({ shardId: this.shard(), clusterId: (<any>this._client).cluster.id });
 
     this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
     await this._database.connect();
@@ -99,37 +131,25 @@ class Bot {
     await this.commands.loadCommands();
 
     this._i18n = new Translator(this._config.weblate_token, this._logger);
-    await this._i18n.loadMessages();
+    // await this._i18n.loadMessages();
 
     this.cooldowns = new CooldownsManager(this);
     this.permissions = new PermissionsManager(this);
     this.response = new ResponseManager(this);
 
-    this.login();
+    await this.login();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async _configure(options: any = {}) {
     this._clientOptions = {
-      intents: options.intents || [
-        Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
-        Intents.FLAGS.DIRECT_MESSAGE_TYPING,
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_BANS,
-        Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-        Intents.FLAGS.GUILD_INTEGRATIONS,
-        Intents.FLAGS.GUILD_INVITES,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-        Intents.FLAGS.GUILD_MESSAGE_TYPING,
-        Intents.FLAGS.GUILD_PRESENCES,
-        Intents.FLAGS.GUILD_VOICE_STATES,
-        Intents.FLAGS.GUILD_WEBHOOKS,
-      ],
-      partials: options.partials || ["CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION", "USER"],
+      intents: options.intents || ["all"],
+      maxShards: options.sharding.maxShards || 1,
+      firstShardID: options.sharding.firstShardID || 0,
+      lastShardID: options.sharding.lastShardID || 0,
     };
+
+    this.shardList = options.sharding.shardList || [0];
 
     this._token = options.token;
 
@@ -149,27 +169,85 @@ class Bot {
       password: options.redis.password,
     };
 
-    this._config.sharding = {
-      shardCount: options.sharding.shardCount || 1,
-      shardList: options.sharding.shardList || [0],
-      id: options.sharding.id || 0,
-    };
-
     this.staff = {
       botAdmins: options.staff.botAdmins || [],
       botMods: options.staff.botMods || [],
     };
 
+    this._config.performance = options.performance;
+
+    this._config.commands = options.commands;
+
     this._config.weblate_token = options.weblate_token;
   }
 
   public async login() {
-    await this._client.login(this._token);
+    await this._client.connect();
     this._logger.setShardId(this.shard());
   }
 
   public translate(key: string, language: string, ...args: string[]): string {
     return this._i18n.translate(key, language, ...args) || key;
+  }
+
+  public async getGuild(guildId: string): Promise<Guild> {
+    return this.cache.guilds.get(guildId) || this._client.guilds.get(guildId) || (await this._loadGuild(guildId));
+  }
+
+  private async _loadGuild(guildId: string): Promise<Guild> {
+    const guild = await this._client.getRESTGuild(guildId);
+    this.cache.guilds.set(guildId, guild);
+    return guild;
+  }
+
+  public async getRole(guildId: string, roleId: string): Promise<Role | undefined> {
+    const guild = await this.getGuild(guildId);
+    return guild.roles.get(roleId) || (await this._loadRole(guildId, roleId));
+  }
+
+  private async _loadRole(guildId: string, roleId: string): Promise<Role | undefined> {
+    const guild = await this.getGuild(guildId);
+    const role = guild.roles.get(roleId);
+    if (!role) {
+      const roles = await this._client.getRESTGuildRoles(guildId);
+      const role = roles.find(r => r.id === roleId);
+      if (role) {
+        guild.roles.set(roleId, role);
+        return role;
+      }
+    }
+    return role;
+  }
+
+  public async getMember(guildId: string, memberId: string): Promise<Member> {
+    const guild = await this.getGuild(guildId);
+    return guild.members.get(memberId) || (await this._loadMember(guildId, memberId));
+  }
+
+  private async _loadMember(guildId: string, memberId: string): Promise<Member> {
+    const guild = await this.getGuild(guildId);
+    const member = await guild.getRESTMember(memberId);
+    return member;
+  }
+
+  public async getUser(userId: string): Promise<User> {
+    return this.cache.users.get(userId) || this._client.users.get(userId) || (await this._loadUser(userId));
+  }
+
+  private async _loadUser(userId: string): Promise<User> {
+    const user = await this._client.getRESTUser(userId);
+    this.cache.users.set(userId, user);
+    return user;
+  }
+
+  public async getChannel(channelId: string): Promise<Channel> {
+    return this.cache.channels.get(channelId) || (await this._loadChannel(channelId));
+  }
+
+  private async _loadChannel(channelId: string): Promise<Channel> {
+    const channel = await this._client.getRESTChannel(channelId);
+    this.cache.channels.set(channelId, channel);
+    return channel;
   }
 }
 

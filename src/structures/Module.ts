@@ -1,4 +1,3 @@
-import { exec } from "node:child_process";
 import { readdir } from "fs/promises";
 import Base from "./Base";
 import Bot from "./Bot";
@@ -18,14 +17,6 @@ class Module extends Base {
 
     this._registeredListeners = new Map();
     this._loadedCommands = new Map();
-  }
-
-  public async build() {
-    const buildModuleCP = exec("npm run build");
-    buildModuleCP.stdout?.on("error", d => console.error(d.toString()));
-    await new Promise(resolve => {
-      buildModuleCP.on("close", resolve);
-    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,6 +44,8 @@ class Module extends Base {
           "commands",
           file
         ));
+        console.log(command);
+        if (!command || !command.default) return;
         const cmd: Command = new command.default(this.bot);
         cmd.module = this;
         this.bot.commands.register(cmd);
@@ -76,8 +69,6 @@ class Module extends Base {
     if (this.start) {
       this.start(...args);
     }
-
-    this.logger.info(`[🧱] Started Module '${this.name}'`, "MDUL");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -2,6 +2,98 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.5](https://github.com/eazyautodelete/core/compare/v4.1.4...v4.1.5) (2022-12-16)
+
+### [4.1.4](https://github.com/eazyautodelete/core/compare/v4.1.3...v4.1.4) (2022-12-16)
+
+### [4.1.3](https://github.com/eazyautodelete/core/compare/v4.1.1...v4.1.3) (2022-12-16)
+
+
+### Bug Fixes
+
+* **logs:** fix shard id in logger ([500b459](https://github.com/eazyautodelete/core/commit/500b45966aab70de1f8749d6d0730746ad1463e2))
+
+### [4.1.1](https://github.com/eazyautodelete/core/compare/v4.1.0...v4.1.1) (2022-12-16)
+
+
+### Bug Fixes
+
+* **bot:** remove unused cluster in constructor ([48f0a14](https://github.com/eazyautodelete/core/commit/48f0a14c497e96792edc2d0ca38e681a7af07f83))
+
+## [4.1.0](https://github.com/eazyautodelete/core/compare/v4.0.0...v4.1.0) (2022-12-16)
+
+
+### Features
+
+* **bot:** cluster support ([4a8c9d5](https://github.com/eazyautodelete/core/commit/4a8c9d56dffd3bfcf1324651936df78b552b0c86))
+
+## [4.0.0](https://github.com/eazyautodelete/core/compare/v3.7.0...v4.0.0) (2022-12-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* everything new
+
+### Features
+
+* use eris ([16f4ee8](https://github.com/eazyautodelete/core/commit/16f4ee8649f74ac6e76baee2ed74a706055c3ade))
+
+
+### Bug Fixes
+
+* **module:** return if no command default ([0a00ab1](https://github.com/eazyautodelete/core/commit/0a00ab1bb977897c999ebe9e90566bb3c67787ec))
+
+## [3.7.0](https://github.com/eazyautodelete/core/compare/v3.6.1...v3.7.0) (2022-11-19)
+
+
+### Features
+
+* **config:** add commands and performance config ([a6526e9](https://github.com/eazyautodelete/core/commit/a6526e92672726a24cab0cc85b53f81c00417ce3))
+
+### [3.6.1](https://github.com/eazyautodelete/core/compare/v3.6.0...v3.6.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* **cmds:** now using follow up when interaction already replied ([e936b66](https://github.com/eazyautodelete/core/commit/e936b666e493cb9528780901da42cec8bf2f7f3e))
+
+## [3.6.0](https://github.com/eazyautodelete/core/compare/v3.5.2...v3.6.0) (2022-11-17)
+
+
+### Features
+
+* **cmds:** add editSource to CommandButton and CommandMenu ([07f6c54](https://github.com/eazyautodelete/core/commit/07f6c54eb91dfdb1e7b3b6d339bc3ab860a40d50))
+
+### [3.5.2](https://github.com/eazyautodelete/core/compare/v3.5.0...v3.5.2) (2022-11-16)
+
+
+### Bug Fixes
+
+* **cmd:** fix no var in command message send methosd ([25c6674](https://github.com/eazyautodelete/core/commit/25c6674f6dc85b1d162c85fc2e680254e9ef3443))
+
+### [3.5.1](https://github.com/eazyautodelete/core/compare/v3.5.0...v3.5.1) (2022-11-16)
+
+## [3.5.0](https://github.com/eazyautodelete/core/compare/v3.4.0...v3.5.0) (2022-11-16)
+
+
+### Features
+
+* **config:** add commands and performance configs ([2d2e419](https://github.com/eazyautodelete/core/commit/2d2e419c21ba8e6a588d46a1c77ad25db531637f))
+
+## [3.4.0](https://github.com/eazyautodelete/core/compare/v3.3.6...v3.4.0) (2022-11-16)
+
+
+### Features
+
+* **commandmessage:** add introduction embed when user is new to bot ([02d3530](https://github.com/eazyautodelete/core/commit/02d3530b2d0a34a24b49f4e2fa1431f49423c9a5))
+
+### [3.3.6](https://github.com/eazyautodelete/core/compare/v3.3.5...v3.3.6) (2022-11-15)
+
+
+### Bug Fixes
+
+* **cooldown:** return right remaining cooldown ([52910aa](https://github.com/eazyautodelete/core/commit/52910aa71c2a37880e19158b43e048f9d6bc0f68))
+
 ### [3.3.5](https://github.com/eazyautodelete/core/compare/v3.3.0...v3.3.5) (2022-11-14)
 
 ## [3.3.0](https://github.com/eazyautodelete/core/compare/v3.0.0...v3.3.0) (2022-10-11)

@@ -10,10 +10,10 @@ export default class CommandModalArgs {
   }
 
   isCommand(): boolean {
-    return this.modal.interaction.customId?.startsWith("cmd_") || false;
+    return this.modal.interaction.data.custom_id.startsWith("cmd_") || false;
   }
 
   getCommand(): string {
-    return this.modal.interaction.customId.split("_")[1] as string;
+    return this.modal.interaction.data.custom_id.split("_")[1];
   }
 }

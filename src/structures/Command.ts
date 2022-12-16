@@ -1,15 +1,6 @@
-import {
-  MessageEmbed,
-  MessageActionRow,
-  MessageButton,
-  ApplicationCommandOptionChoiceData,
-  ApplicationCommandOptionData,
-  ApplicationCommandData,
-  ColorResolvable,
-} from "discord.js";
 import { Cooldown, PermissionLevel } from "..";
 import Bot from "./Bot";
-import CommandArgs from "./CommandArgs";
+import CommandArgs from "./CommandMessageArgs";
 import CommandButton from "./CommandButton";
 import CommandButtonArgs from "./CommandButtonArgs";
 import CommandModal from "./CommandModal";
@@ -19,6 +10,8 @@ import CommandMenuArgs from "./CommandMenuArgs";
 import CommandMessage from "./CommandMessage";
 import Base from "./Base";
 import Module from "./Module";
+
+import { ApplicationCommandOptions, ApplicationCommandStructure } from "eris";
 
 class Command extends Base {
   public bot: Bot;
@@ -33,12 +26,11 @@ class Command extends Base {
   public cooldown: Cooldown;
   public botPermissions: bigint[];
 
-  public shardId: number;
-  public options: ApplicationCommandOptionData[];
+  public options: ApplicationCommandOptions[];
   public nameLocalizations: { [index: string]: string };
   public descriptionLocalizations: { [index: string]: string };
   public type: number;
-  dmPermission: boolean;
+  public dmPermission: boolean;
 
   constructor(bot: Bot) {
     super(bot);
@@ -58,53 +50,66 @@ class Command extends Base {
     this.botPermissions = [];
 
     this.options = [];
-
-    this.shardId = parseInt(this.client.shard?.ids.toString() || "0");
   }
 
   public hasCooldown(user: string) {
     return this.bot.cooldowns.hasCooldown(this.name, user);
   }
 
-  get data(): ApplicationCommandData {
+  get data(): ApplicationCommandStructure {
     return {
-      type: this.type || 1,
-      dmPermission: false,
+      type: 1,
 
       name: this.name,
-      nameLocalizations: this.nameLocalizations,
       description: this.description,
-      descriptionLocalizations: this.descriptionLocalizations,
 
       options: this.options,
     };
   }
 
-  get embed(): MessageEmbed {
-    return new MessageEmbed()
-      .setColor(this.bot.utils.getColor("default") as ColorResolvable)
-      .setTimestamp()
-      .setFooter({
-        text: this.client.user?.username ?? "EazyAutodelete",
-
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        iconURL: this.client.user!.displayAvatarURL({ dynamic: true }),
-      });
+  get embed() {
+    return {
+      color: this.bot.config.color,
+      timestamp: new Date(),
+      footer: {
+        text: this.bot.client.user.username,
+        iconURL: this.bot.client.user.avatarURL,
+      },
+    };
   }
 
-  urlButton(url: string, label: string, emoji?: string): MessageActionRow {
-    return new MessageActionRow().addComponents([
-      new MessageButton()
-        .setDisabled(false)
-        .setLabel(label)
-        .setEmoji(emoji || "🔗")
-        .setStyle("LINK")
-        .setURL(url),
-    ]);
+  urlButton(url: string, label: string, emoji?: string) {
+    return [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            style: 5,
+            label: label,
+            emoji: emoji ? { name: emoji } : undefined,
+            url: url,
+          },
+        ],
+      },
+    ];
   }
 
-  docsButton(url: string): MessageActionRow {
-    return this.urlButton("https://docs.eazyautodelete.xyz/" + url, "Help", "❓");
+  docsButton(url: string) {
+    return [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            style: 5,
+            label: "Help",
+            emoji: { name: "❓" },
+            url: "https://docs.eazyautodelete.xyz/" + url,
+          },
+        ],
+      },
+    ];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -116,7 +121,7 @@ class Command extends Base {
     );
   }
 
-  async autocompleteHandler(query: string): Promise<ApplicationCommandOptionChoiceData[]> {
+  async autocompleteHandler(query: string): Promise<{ name: string; value: string }[]> {
     this.logger.warn("Ended up in command.js [ " + this.name + " - " + query + " ]");
 
     return [];

@@ -1,5 +1,5 @@
 import { GuildSettings } from "@eazyautodelete/db-client";
-import { GuildMember } from "discord.js";
+import { Member } from "eris";
 import Base from "../Base";
 import Bot from "../Bot";
 import Command from "../Command";
@@ -17,7 +17,7 @@ class PermissionsManager extends Base {
     super(bot);
   }
 
-  private _getPermissionLevel(member: GuildMember, guildConfig: GuildSettings): number {
+  private _getPermissionLevel(member: Member, guildConfig: GuildSettings): number {
     if (this.isBotAdmin(member.user.id)) return permLevels["botAdmin"];
     if (this.isBotMod(member.user.id)) return permLevels["botMod"];
     if (this.isServerAdmin(member, guildConfig)) return permLevels["serverAdmin"];
@@ -25,7 +25,7 @@ class PermissionsManager extends Base {
     return permLevels["user"];
   }
 
-  public hasPermsToUseCommand(command: Command, member: GuildMember, guildConfig: GuildSettings): boolean {
+  public hasPermsToUseCommand(command: Command, member: Member, guildConfig: GuildSettings): boolean {
     return this._getPermissionLevel(member, guildConfig) >= permLevels[command.permissionLevel];
   }
 
@@ -37,16 +37,16 @@ class PermissionsManager extends Base {
     return this.bot.staff.botMods.includes(userId) || this.isBotAdmin(userId);
   }
 
-  public isServerAdmin(member: GuildMember, guildConfig: GuildSettings): boolean {
+  public isServerAdmin(member: Member, guildConfig: GuildSettings): boolean {
     return (
-      member.roles.cache.some(role => guildConfig.adminroles.includes(role.id)) ||
-      member.permissions.has("ADMINISTRATOR") ||
+      member.roles.some(role => guildConfig.adminroles.includes(role)) ||
+      member.permissions.has("administrator") ||
       this.isBotAdmin(member.user.id)
     );
   }
 
-  public isServerMod(member: GuildMember, guildConfig: GuildSettings): boolean {
-    return member.roles.cache.some(role => guildConfig.modroles.includes(role.id)) || this.isBotAdmin(member.user.id);
+  public isServerMod(member: Member, guildConfig: GuildSettings): boolean {
+    return member.roles.some(role => guildConfig.modroles.includes(role)) || this.isBotAdmin(member.user.id);
   }
 }
 
