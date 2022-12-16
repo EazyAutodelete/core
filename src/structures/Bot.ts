@@ -46,7 +46,7 @@ class Bot {
 
   shardList!: number[];
 
-  constructor(cluster: Cluster.Client) {
+  constructor() {
     this.isReady = false;
     this.startTime = Date.now();
 

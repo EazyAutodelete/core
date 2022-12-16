@@ -54,5 +54,5 @@ export interface BotOptions {
   };
   gateway: {
     intents: string[];
-  }
+  };
 }
