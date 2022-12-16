@@ -20,9 +20,6 @@ class ModuleCollection extends Collection {
 
   public async loadModules() {
     const files = await readdir(path.join(path.resolve(), "node_modules", "@eazyautodelete"));
-
-    console.log(files);
-
     await Promise.all(
       files.map(async file => {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -30,6 +27,8 @@ class ModuleCollection extends Collection {
         await this.register(module);
       })
     );
+
+    this.logger.info(`Loaded ${this.size} modules: ${this.map((x: Module) => x.name).join(", ")}`, "MODULE");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

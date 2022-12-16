@@ -69,8 +69,6 @@ class Module extends Base {
     if (this.start) {
       this.start(...args);
     }
-
-    this.logger.info(`[🧱] Started Module '${this.name}'`, "MDUL");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
