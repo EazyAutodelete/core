@@ -1,7 +1,6 @@
 import { UserSettings, GuildSettings } from "@eazyautodelete/db-client";
 import {
   ActionRow,
-  ComponentInteraction,
   Embed,
   EmbedOptions,
   Guild,
@@ -9,6 +8,7 @@ import {
   Member,
   Message,
   MessageContent,
+  ModalSubmitInteraction,
   TextableChannel,
   User,
 } from "eris";
@@ -17,8 +17,7 @@ import Bot from "./Bot";
 
 class CommandModal extends Base {
   id: string;
-  interaction: ComponentInteraction;
-  message: Message;
+  interaction: ModalSubmitInteraction;
   channel: TextableChannel | undefined;
   member: Member | undefined;
   user: User;
@@ -27,9 +26,8 @@ class CommandModal extends Base {
 
   data!: { guild: GuildSettings; user: UserSettings };
 
-  constructor(bot: Bot, interaction: ComponentInteraction) {
+  constructor(bot: Bot, interaction: ModalSubmitInteraction) {
     super(bot);
-    this.message = interaction.message;
     this.interaction = interaction;
     if (interaction.channel) this.channel = interaction.channel;
 
@@ -148,8 +146,7 @@ class CommandModal extends Base {
 
   async editSource(payload: MessageContent) {
     try {
-      this.interaction.message.edit;
-      await this.interaction.message.edit(payload).catch(this.logger.error);
+      await this.interaction.editOriginalMessage(payload).catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }

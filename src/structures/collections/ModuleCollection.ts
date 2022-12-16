@@ -27,7 +27,6 @@ class ModuleCollection extends Collection {
       files.map(async file => {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const module = require("@eazyautodelete/" + file);
-        console.log(module, module.default);
         await this.register(module);
       })
     );
@@ -37,7 +36,7 @@ class ModuleCollection extends Collection {
   public async register(requiredModule: any) {
     try {
       if (!requiredModule || !requiredModule.default) return;
-      const module = new requiredModule.default(this.bot);
+      const module = requiredModule.default ? new requiredModule.default(this.bot) : new requiredModule(this.bot);
       if (!(module instanceof Module)) return;
       const activeModule = this.get(module.name);
 

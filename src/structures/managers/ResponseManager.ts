@@ -1,4 +1,4 @@
-import { ActionRow, CommandInteraction, ComponentInteraction, Embed, EmbedOptions } from "eris";
+import { ActionRow, CommandInteraction, ComponentInteraction, Embed, EmbedOptions, ModalSubmitInteraction } from "eris";
 import Base from "../Base";
 import Bot from "../Bot";
 import CommandButton from "../CommandButton";
@@ -12,7 +12,14 @@ class ResponseManager extends Base {
   }
 
   async send(
-    message: CommandMessage | CommandButton | CommandMenu | CommandModal | ComponentInteraction | CommandInteraction,
+    message:
+      | CommandMessage
+      | CommandButton
+      | CommandMenu
+      | CommandModal
+      | ComponentInteraction
+      | CommandInteraction
+      | ModalSubmitInteraction,
     data: Embed | Embed[] | EmbedOptions | EmbedOptions[],
     ephemeral = false,
     components: ActionRow[] = []

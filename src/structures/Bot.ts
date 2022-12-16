@@ -11,6 +11,7 @@ import ResponseManager from "./managers/ResponseManager";
 import * as utils from "@eazyautodelete/bot-utils";
 import { BotOptions } from "..";
 import Collection from "./collections/Collection";
+import Cluster from "discord-hybrid-sharding";
 
 class Bot {
   public isReady: boolean;
@@ -38,10 +39,14 @@ class Bot {
   public staffServer!: string;
   public supportServer!: string;
 
+  private _cluster!: Cluster.Client;
+
   utils!: typeof utils;
   cache: { channels: Collection; guilds: Collection; users: Collection };
 
-  constructor() {
+  shardList!: number[];
+
+  constructor(cluster: Cluster.Client) {
     this.isReady = false;
     this.startTime = Date.now();
 
@@ -50,6 +55,10 @@ class Bot {
       guilds: new Collection(),
       users: new Collection(),
     };
+  }
+
+  public get cluster(): Cluster.Client {
+    return this._cluster;
   }
 
   public get client(): Client {
@@ -91,14 +100,26 @@ class Bot {
     this.utils = utils;
 
     this._client = new Client(this._token, this._clientOptions);
+    this._cluster = new Cluster.Client(this._client);
 
     this._client.on("error", err => this._logger.error(err.toString()));
     this._client.on("warn", err => this._logger.warn(err.toString()));
     this._client.on("ready", () => {
       this._client.emit("clientReady");
+
+      this._logger.info("-", "BLANK");
+      this._logger.info(`Cluster #${this._cluster.id} is ready!`, "CLSTR");
+      this._logger.info(`Cluster #${this._cluster.id} is serving shards ${this.shardList.join(", ")}`, "CLSTR");
+      this._logger.info("-", "BLANK");
+
+      this.cluster.triggerReady();
     });
 
-    this._logger = new Logger({ shardId: this.shard() });
+    this._client.on("shardReady", id => {
+      this._logger.info(`Shard #${id} ready`, "SHARD");
+    });
+
+    this._logger = new Logger({ shardId: this.shard(), clusterId: this.cluster.id });
 
     this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
     await this._database.connect();
@@ -125,7 +146,12 @@ class Bot {
   private async _configure(options: any = {}) {
     this._clientOptions = {
       intents: options.intents || ["all"],
+      maxShards: options.sharding.maxShards || 1,
+      firstShardID: options.sharding.firstShardID || 0,
+      lastShardID: options.sharding.lastShardID || 0,
     };
+
+    this.shardList = options.sharding.shardList || [0];
 
     this._token = options.token;
 
@@ -143,12 +169,6 @@ class Bot {
       host: options.redis.host,
       port: options.redis.port,
       password: options.redis.password,
-    };
-
-    this._config.sharding = {
-      shardCount: options.sharding.shardCount || 1,
-      shardList: options.sharding.shardList || [0],
-      id: options.sharding.id || 0,
     };
 
     this.staff = {

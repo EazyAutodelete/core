@@ -37,13 +37,22 @@ export interface BotOptions {
     port: number;
     password: string;
   };
-  sharding?: {
-    shardCount?: number;
-    shardList?: number[];
-    id?: number;
+  sharding: {
+    shardCount: number;
+    shardList: number[];
+    id: number;
   };
   staff?: {
     botAdmins?: string[];
     botMods?: string[];
   };
+  performance: {
+    cache: {
+      messageCacheMaxSize: number;
+    };
+    disableEvents: string[];
+  };
+  gateway: {
+    intents: string[];
+  }
 }
