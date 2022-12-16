@@ -39,8 +39,6 @@ class Bot {
   public staffServer!: string;
   public supportServer!: string;
 
-  private _cluster!: Cluster.Client;
-
   utils!: typeof utils;
   cache: { channels: Collection; guilds: Collection; users: Collection };
 
@@ -55,10 +53,6 @@ class Bot {
       guilds: new Collection(),
       users: new Collection(),
     };
-  }
-
-  public get cluster(): Cluster.Client {
-    return this._cluster;
   }
 
   public get client(): Client {
@@ -100,7 +94,7 @@ class Bot {
     this.utils = utils;
 
     this._client = new Client(this._token, this._clientOptions);
-    this._cluster = new Cluster.Client(this._client);
+    (<any>this._client).cluster = new Cluster.Client(this._client);
 
     this._client.on("error", err => this._logger.error(err.toString()));
     this._client.on("warn", err => this._logger.warn(err.toString()));
@@ -108,18 +102,22 @@ class Bot {
       this._client.emit("clientReady");
 
       this._logger.info("-", "BLANK");
-      this._logger.info(`Cluster #${this._cluster.id} is ready!`, "CLSTR");
-      this._logger.info(`Cluster #${this._cluster.id} is serving shards ${this.shardList.join(", ")}`, "CLSTR");
+      this._logger.info(`Cluster #${(<any>this._client).cluster.id} is ready!`, "CLSTR");
+      this._logger.info(
+        `Cluster #${(<any>this._client).cluster.id} is serving shards ${this.shardList.join(", ")}`,
+        "CLSTR"
+      );
       this._logger.info("-", "BLANK");
 
-      this.cluster.triggerReady();
+      (<any>this._client).cluster.triggerReady();
     });
 
     this._client.on("shardReady", id => {
+      this._logger.setShardId(id);
       this._logger.info(`Shard #${id} ready`, "SHARD");
     });
 
-    this._logger = new Logger({ shardId: this.shard(), clusterId: this.cluster.id });
+    this._logger = new Logger({ shardId: this.shard(), clusterId: (<any>this._client).cluster.id });
 
     this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
     await this._database.connect();
@@ -133,7 +131,7 @@ class Bot {
     await this.commands.loadCommands();
 
     this._i18n = new Translator(this._config.weblate_token, this._logger);
-    await this._i18n.loadMessages();
+    // await this._i18n.loadMessages();
 
     this.cooldowns = new CooldownsManager(this);
     this.permissions = new PermissionsManager(this);
