@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.1](https://github.com/eazyautodelete/core/compare/v4.1.0...v4.1.1) (2022-12-16)
+
+
+### Bug Fixes
+
+* **bot:** remove unused cluster in constructor ([48f0a14](https://github.com/eazyautodelete/core/commit/48f0a14c497e96792edc2d0ca38e681a7af07f83))
+
 ## [4.1.0](https://github.com/eazyautodelete/core/compare/v4.0.0...v4.1.0) (2022-12-16)
 
 
