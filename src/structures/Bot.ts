@@ -94,6 +94,8 @@ class Bot {
     this.utils = utils;
 
     this._client = new Client(this._token, this._clientOptions);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (<any>this._client).cluster = new Cluster.Client(this._client);
 
     this._client.on("error", err => this._logger.error(err.toString()));
@@ -102,13 +104,16 @@ class Bot {
       this._client.emit("clientReady");
 
       this._logger.info("-", "BLANK");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this._logger.info(`Cluster #${(<any>this._client).cluster.id} is ready!`, "CLSTR");
       this._logger.info(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         `Cluster #${(<any>this._client).cluster.id} is serving shards ${this.shardList.join(", ")}`,
         "CLSTR"
       );
       this._logger.info("-", "BLANK");
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (<any>this._client).cluster.triggerReady();
     });
 
@@ -117,6 +122,7 @@ class Bot {
       this._logger.info(`Shard #${id} ready`, "SHARD");
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this._logger = new Logger({ shardId: this.shard(), clusterId: (<any>this._client).cluster.id });
 
     this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);

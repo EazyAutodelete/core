@@ -6,7 +6,6 @@ import {
   Guild,
   InteractionContentEdit,
   Member,
-  Message,
   MessageContent,
   ModalSubmitInteraction,
   TextableChannel,

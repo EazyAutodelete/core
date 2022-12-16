@@ -41,6 +41,9 @@ export interface BotOptions {
     shardCount: number;
     shardList: number[];
     id: number;
+    firstShardID: number;
+    lastShardID: number;
+    maxShards: number;
   };
   staff?: {
     botAdmins?: string[];
