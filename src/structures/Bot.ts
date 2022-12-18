@@ -122,6 +122,12 @@ class Bot {
 
     this._client.on("shardReady", id => {
       this._logger.info(`Shard #${id} ready`, "SHARD");
+      this._client.shards
+        .find(x => x.id === id)
+        ?.editStatus("online", {
+          name: `${this._client.user.username} | /help`,
+          type: 3,
+        });
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
