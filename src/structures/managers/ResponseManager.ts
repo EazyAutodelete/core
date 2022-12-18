@@ -40,7 +40,7 @@ class ResponseManager extends Base {
           }
           return x;
         });
-        message.createMessage({ embeds, components, flags: ephemeral ? 64 : 0 }).catch(this.logger.error);
+        await message.createMessage({ embeds, components, flags: ephemeral ? 64 : 0 }).catch(this.logger.error);
       }
     } catch (e) {
       this.logger.error(e as string);
