@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.7](https://github.com/eazyautodelete/core/compare/v4.1.6...v4.1.7) (2022-12-18)
+
+
+### Bug Fixes
+
+* **opts:** use messageLimit option in client options ([d0e40c0](https://github.com/eazyautodelete/core/commit/d0e40c0a90593fb7e91d0fda4f20d2f22c8f74bb))
+
 ### [4.1.6](https://github.com/eazyautodelete/core/compare/v4.1.5...v4.1.6) (2022-12-16)
 
 ### [4.1.5](https://github.com/eazyautodelete/core/compare/v4.1.4...v4.1.5) (2022-12-16)
