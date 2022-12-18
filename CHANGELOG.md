@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.16](https://github.com/eazyautodelete/core/compare/v4.1.15...v4.1.16) (2022-12-18)
+
+
+### Bug Fixes
+
+* **args:** add subcmdgroup ([78d9453](https://github.com/eazyautodelete/core/commit/78d94537852d324e507626a9c7bd68fb33a3dac6))
+
 ### [4.1.15](https://github.com/eazyautodelete/core/compare/v4.1.14...v4.1.15) (2022-12-18)
 
 
