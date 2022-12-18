@@ -77,7 +77,7 @@ export default class CommandMessageArgs {
     return typeof parsed === "number" ? parsed : null;
   }
 
-  public consumeChannel(argName: string): Channel {
+  public consumeChannel(argName: string): Channel | undefined {
     const opts =
       this.options.find(x => x.type === 2)?.options.find((x: any) => x.type === 1)?.options ||
       this.options.find(x => x.type === 1)?.options ||
@@ -85,7 +85,7 @@ export default class CommandMessageArgs {
 
     const channelId = opts.find((x: any) => x.type === 7 && argName === x.name)?.value;
 
-    return this.bot.client.getChannel(channelId);
+    return channelId ? this.bot.client.getChannel(channelId) : undefined;
   }
 
   public consumeUser(argName: string): User | undefined {
@@ -98,7 +98,7 @@ export default class CommandMessageArgs {
       opts.find((x: any) => (x.type === 6 || x.type === 9) && argName === x.name)
     )).value;
 
-    return this.bot.client.users.get(userId);
+    return userId ? this.bot.client.users.get(userId) : undefined;
   }
 
   public consumeRole(argName: string): Role | undefined {
