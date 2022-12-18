@@ -145,7 +145,7 @@ class Bot {
     await this.commands.loadCommands();
 
     this._i18n = new Translator(this._config.weblate_token, this._logger);
-    // await this._i18n.loadMessages();
+    await this._i18n.loadMessages();
 
     this.cooldowns = new CooldownsManager(this);
     this.permissions = new PermissionsManager(this);
