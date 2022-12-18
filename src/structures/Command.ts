@@ -11,7 +11,7 @@ import CommandMessage from "./CommandMessage";
 import Base from "./Base";
 import Module from "./Module";
 
-import { ApplicationCommandOptions, ApplicationCommandStructure } from "eris";
+import { ApplicationCommandOptions, ApplicationCommandStructure, Embed } from "eris";
 
 class Command extends Base {
   public bot: Bot;
@@ -67,13 +67,14 @@ class Command extends Base {
     };
   }
 
-  get embed() {
+  get embed(): Embed {
     return {
+      type: "rich",
       color: this.bot.config.color,
       timestamp: new Date(),
       footer: {
         text: this.bot.client.user.username,
-        iconURL: this.bot.client.user.avatarURL,
+        icon_url: this.bot.client.user.avatarURL,
       },
     };
   }
