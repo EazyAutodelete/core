@@ -48,7 +48,7 @@ export default class CommandMessageArgs {
   public getSubcommand(): string | null {
     return (
       this.options?.find(x => x.type === 1)?.name ||
-      (<any>this.options?.find(x => x.type === 2)).options.find((x: any) => x.type === 1).value ||
+      (<any>this.options?.find(x => x.type === 2)).options.find((x: any) => x.type === 1).name ||
       null
     );
   }
