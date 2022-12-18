@@ -16,8 +16,8 @@ import Bot from "./Bot";
 class CommandMessage extends Base {
   id: string;
   interaction: CommandInteraction;
-  channel: TextableChannel | undefined;
-  member: Member | undefined;
+  channel: TextableChannel;
+  member: Member;
   user: User;
   guild: Guild;
   guildId: string;
@@ -34,12 +34,13 @@ class CommandMessage extends Base {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guildId = interaction.guildID!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.user = this.interaction.user!;
+    this.user = this.interaction.member?.user!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guild = this.bot.client.guilds.get(this.guildId)!;
-
-    if (interaction.channel) this.channel = interaction.channel;
-    if (interaction.member) this.member = this.interaction.member;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.channel = this.interaction.channel!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.member = this.interaction.member!;
   }
 
   public async loadData() {
