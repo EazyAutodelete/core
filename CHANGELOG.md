@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.14](https://github.com/eazyautodelete/core/compare/v4.1.13...v4.1.14) (2022-12-18)
+
+
+### Bug Fixes
+
+* **i18n:** load locales ([b187c68](https://github.com/eazyautodelete/core/commit/b187c68da00929c4c7a727c6dcf27ebd8ae469cf))
+
 ### [4.1.13](https://github.com/eazyautodelete/core/compare/v4.1.12...v4.1.13) (2022-12-18)
 
 
