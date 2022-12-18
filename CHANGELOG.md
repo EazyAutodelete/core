@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.29](https://github.com/eazyautodelete/core/compare/v4.1.28...v4.1.29) (2022-12-18)
+
+
+### Bug Fixes
+
+* **config:** add sharding config ([d936972](https://github.com/eazyautodelete/core/commit/d9369725e515a456cb3982d593a90b17fd16fc68))
+
 ### [4.1.28](https://github.com/eazyautodelete/core/compare/v4.1.27...v4.1.28) (2022-12-18)
 
 
