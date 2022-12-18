@@ -70,7 +70,7 @@ class Command extends Base {
   get embed(): Embed {
     return {
       type: "rich",
-      color: this.bot.config.color,
+      color: this.bot.utils.getColor("default"),
       timestamp: new Date(),
       footer: {
         text: this.bot.client.user.username,
