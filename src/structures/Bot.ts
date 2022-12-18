@@ -11,7 +11,7 @@ import ResponseManager from "./managers/ResponseManager";
 import * as utils from "@eazyautodelete/bot-utils";
 import { BotOptions } from "..";
 import Collection from "./collections/Collection";
-import Cluster from "discord-hybrid-sharding";
+import * as sharding from "discord-hybrid-sharding";
 
 class Bot {
   public isReady: boolean;
@@ -55,7 +55,7 @@ class Bot {
     };
   }
 
-  public get cluster(): Cluster.Client {
+  public get cluster(): sharding.Client {
     return (<any>this._client).cluster;
   }
 
@@ -104,7 +104,7 @@ class Bot {
     this._client = new Client(this._token, this._clientOptions);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (<any>this._client).cluster = new Cluster.Client(this._client);
+    (<any>this._client).cluster = new sharding.Client(this._client);
 
     this._client.on("error", err => this._logger.error(err.toString()));
     this._client.on("warn", err => this._logger.warn(err.toString()));
@@ -126,7 +126,6 @@ class Bot {
     });
 
     this._client.on("shardReady", id => {
-      this._logger.setShardId(id);
       this._logger.info(`Shard #${id} ready`, "SHARD");
     });
 
