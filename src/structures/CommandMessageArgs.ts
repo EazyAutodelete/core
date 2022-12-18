@@ -32,7 +32,7 @@ export default class CommandMessageArgs {
       this.options;
 
     const value = (<InteractionDataOptionsWithValue>opts.find((x: any) => x.name === argName))?.value;
-    return value ? value.toString().replace(/\\n/g, "\n") : null;
+    return value !== undefined && value !== null ? value.toString().replace(/\\n/g, "\n") : null;
   }
 
   public getCommand(): string {
