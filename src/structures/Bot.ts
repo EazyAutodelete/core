@@ -107,7 +107,7 @@ class Bot {
     (<any>this._client).cluster = new sharding.Client(this._client);
 
     this._client.on("error", err => this._logger.error(err.toString()));
-    this._client.on("warn", err => this._logger.warn(err.toString()));
+    this._client.on("warn", err => { if(!err.startsWith("Invalid session")) this._logger.warn(err.toString()) });
     this._client.on("ready", () => {
       this._client.emit("clientReady");
 
