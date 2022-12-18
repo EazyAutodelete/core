@@ -1,6 +1,20 @@
 import { DatabaseHandler } from "@eazyautodelete/db-client";
 import Translator from "@eazyautodelete/translator";
-import { Channel, Client, ClientOptions, ExtendedUser, Guild, Member, Role, Shard, User } from "eris";
+import {
+  Channel,
+  Client,
+  ClientOptions,
+  ExtendedUser,
+  Guild,
+  GuildChannel,
+  Member,
+  Role,
+  Shard,
+  TextableChannel,
+  TextChannel,
+  User,
+  VoiceChannel,
+} from "eris";
 import CommandCollection from "./collections/CommandCollection";
 import ModuleCollection from "./collections/ModuleCollection";
 import Logger from "@eazyautodelete/logger";
@@ -125,7 +139,7 @@ class Bot {
       this._client.shards
         .find(x => x.id === id)
         ?.editStatus("online", {
-          name: `${this._client.user.username} | /help`,
+          name: `/help | ${this._client.user.username} | #${id}`,
           type: 3,
         });
     });
