@@ -11,7 +11,7 @@ import CommandMessage from "./CommandMessage";
 import Base from "./Base";
 import Module from "./Module";
 
-import { ApplicationCommandOptions, ApplicationCommandStructure, Embed } from "eris";
+import { ActionRow, ApplicationCommandOptions, ApplicationCommandStructure, Embed } from "eris";
 
 class Command extends Base {
   public bot: Bot;
@@ -79,7 +79,7 @@ class Command extends Base {
     };
   }
 
-  urlButton(url: string, label: string, emoji?: string) {
+  urlButton(url: string, label: string, emoji?: string): ActionRow[] {
     return [
       {
         type: 1,
@@ -96,7 +96,7 @@ class Command extends Base {
     ];
   }
 
-  docsButton(url: string) {
+  docsButton(url: string): ActionRow[] {
     return [
       {
         type: 1,
