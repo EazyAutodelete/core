@@ -20,24 +20,23 @@ import Bot from "./Bot";
 export default class CommandMessageArgs {
   command: string;
   message: CommandMessage;
-  options: InteractionDataOptionsWithValue[] | InteractionDataOptions[] | [];
+  options: any[];
   bot: Bot;
 
   constructor(message: CommandMessage) {
     this.bot = message.bot;
     this.message = message;
-    this.options =
-      (this.message.interaction.data.options as
-        | InteractionDataOptionsWithValue[]
-        | InteractionDataOptions[]
-        | InteractionDataOptionsSubCommand[]
-        | InteractionDataOptionsSubCommandGroup[]
-        | undefined) || [];
+    this.options = this.message.interaction.data.options || [];
     this.command = this.getCommand();
   }
 
   public get(argName: string): string | null {
-    const value = (<InteractionDataOptionsWithValue>this.options.find(x => x.name === argName))?.value;
+    const opts =
+      this.options.find(x => x.type === 2)?.options.find((x: any) => x.type === 1)?.options ||
+      this.options.find(x => x.type === 1)?.options ||
+      this.options;
+
+    const value = (<InteractionDataOptionsWithValue>opts.find((x: any) => x.name === argName))?.value;
     return value ? value.toString().replace(/\\n/g, "\n") : null;
   }
 
@@ -72,23 +71,36 @@ export default class CommandMessageArgs {
   }
 
   public consumeLength(argName: string): number | null {
-    const lengthString = (<InteractionDataOptionsString>this.options.find(x => x.type === 3 && argName === x.name))
-      ?.value;
+    const opts =
+      this.options.find(x => x.type === 2)?.options.find((x: any) => x.type === 1)?.options ||
+      this.options.find(x => x.type === 1)?.options ||
+      this.options;
+
+    const lengthString = opts.find((x: any) => x.type === 3 && argName === x.name)?.value || null;
 
     const parsed = lengthString ? ms(lengthString) : null;
     return typeof parsed === "number" ? parsed : null;
   }
 
   public async consumeChannel(argName: string): Promise<Channel> {
-    const channelId = (<InteractionDataOptionsChannel>this.options.find(x => x.type === 7 && argName === x.name))
-      ?.value;
+    const opts =
+      this.options.find(x => x.type === 2)?.options.find((x: any) => x.type === 1)?.options ||
+      this.options.find(x => x.type === 1)?.options ||
+      this.options;
+
+    const channelId = opts.find((x: any) => x.type === 7 && argName === x.name)?.value;
 
     return this.bot.getChannel(channelId);
   }
 
   public async consumeUser(argName: string): Promise<User> {
+    const opts =
+      this.options.find(x => x.type === 2)?.options.find((x: any) => x.type === 1)?.options ||
+      this.options.find(x => x.type === 1)?.options ||
+      this.options;
+
     const userId = (<InteractionDataOptionsUser | InteractionDataOptionsMentionable>(
-      this.options.find(x => (x.type === 6 || x.type === 9) && argName === x.name)
+      opts.find((x: any) => (x.type === 6 || x.type === 9) && argName === x.name)
     )).value;
 
     return this.bot.getUser(userId);
