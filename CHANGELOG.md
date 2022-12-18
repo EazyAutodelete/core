@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.12](https://github.com/eazyautodelete/core/compare/v4.1.11...v4.1.12) (2022-12-18)
+
+
+### Bug Fixes
+
+* **module:** remove logging ([f9487cc](https://github.com/eazyautodelete/core/commit/f9487ccb7ab4d4e38e38c2aaa91e8fc6c1dba0d7))
+
 ### [4.1.11](https://github.com/eazyautodelete/core/compare/v4.1.10...v4.1.11) (2022-12-18)
 
 
