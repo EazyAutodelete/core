@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.20](https://github.com/eazyautodelete/core/compare/v4.1.19...v4.1.20) (2022-12-18)
+
+
+### Bug Fixes
+
+* **sharding:** cluster client ([cbbe456](https://github.com/eazyautodelete/core/commit/cbbe456570dbd64a46298ece30134b7fe0f45af5))
+
 ### [4.1.19](https://github.com/eazyautodelete/core/compare/v4.1.18...v4.1.19) (2022-12-18)
 
 
