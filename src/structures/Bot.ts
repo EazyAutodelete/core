@@ -40,19 +40,12 @@ class Bot {
   public supportServer!: string;
 
   utils!: typeof utils;
-  cache: { channels: Collection; guilds: Collection; users: Collection };
 
   shardList!: number[];
 
   constructor() {
     this.isReady = false;
     this.startTime = Date.now();
-
-    this.cache = {
-      channels: new Collection(),
-      guilds: new Collection(),
-      users: new Collection(),
-    };
   }
 
   public get cluster(): sharding.Client {
@@ -107,7 +100,9 @@ class Bot {
     (<any>this._client).cluster = new sharding.Client(this._client);
 
     this._client.on("error", err => this._logger.error(err.toString()));
-    this._client.on("warn", err => { if(!err.startsWith("Invalid session")) this._logger.warn(err.toString()) });
+    this._client.on("warn", err => {
+      if (!err.startsWith("Invalid session")) this._logger.warn(err.toString());
+    });
     this._client.on("ready", () => {
       this._client.emit("clientReady");
 
@@ -202,66 +197,6 @@ class Bot {
 
   public translate(key: string, language: string, ...args: string[]): string {
     return this._i18n.translate(key, language, ...args) || key;
-  }
-
-  public async getGuild(guildId: string): Promise<Guild> {
-    return this.cache.guilds.get(guildId) || this._client.guilds.get(guildId) || (await this._loadGuild(guildId));
-  }
-
-  private async _loadGuild(guildId: string): Promise<Guild> {
-    const guild = await this._client.getRESTGuild(guildId);
-    this.cache.guilds.set(guildId, guild);
-    return guild;
-  }
-
-  public async getRole(guildId: string, roleId: string): Promise<Role | undefined> {
-    const guild = await this.getGuild(guildId);
-    return guild.roles.get(roleId) || (await this._loadRole(guildId, roleId));
-  }
-
-  private async _loadRole(guildId: string, roleId: string): Promise<Role | undefined> {
-    const guild = await this.getGuild(guildId);
-    const role = guild.roles.get(roleId);
-    if (!role) {
-      const roles = await this._client.getRESTGuildRoles(guildId);
-      const role = roles.find(r => r.id === roleId);
-      if (role) {
-        guild.roles.set(roleId, role);
-        return role;
-      }
-    }
-    return role;
-  }
-
-  public async getMember(guildId: string, memberId: string): Promise<Member> {
-    const guild = await this.getGuild(guildId);
-    return guild.members.get(memberId) || (await this._loadMember(guildId, memberId));
-  }
-
-  private async _loadMember(guildId: string, memberId: string): Promise<Member> {
-    const guild = await this.getGuild(guildId);
-    const member = await guild.getRESTMember(memberId);
-    return member;
-  }
-
-  public async getUser(userId: string): Promise<User> {
-    return this.cache.users.get(userId) || this._client.users.get(userId) || (await this._loadUser(userId));
-  }
-
-  private async _loadUser(userId: string): Promise<User> {
-    const user = await this._client.getRESTUser(userId);
-    this.cache.users.set(userId, user);
-    return user;
-  }
-
-  public async getChannel(channelId: string): Promise<Channel> {
-    return this.cache.channels.get(channelId) || (await this._loadChannel(channelId));
-  }
-
-  private async _loadChannel(channelId: string): Promise<Channel> {
-    const channel = await this._client.getRESTChannel(channelId);
-    this.cache.channels.set(channelId, channel);
-    return channel;
   }
 }
 

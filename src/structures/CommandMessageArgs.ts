@@ -4,16 +4,11 @@ import {
   Channel,
   Role,
   User,
-  InteractionDataOptions,
   InteractionDataOptionsWithValue,
   InteractionDataOptionsRole,
   InteractionDataOptionsUser,
   InteractionDataOptionsMentionable,
-  InteractionDataOptionsString,
-  InteractionDataOptionsChannel,
   InteractionDataOptionsBoolean,
-  InteractionDataOptionsSubCommand,
-  InteractionDataOptionsSubCommandGroup,
 } from "eris";
 import Bot from "./Bot";
 
@@ -82,7 +77,7 @@ export default class CommandMessageArgs {
     return typeof parsed === "number" ? parsed : null;
   }
 
-  public async consumeChannel(argName: string): Promise<Channel> {
+  public consumeChannel(argName: string): Channel {
     const opts =
       this.options.find(x => x.type === 2)?.options.find((x: any) => x.type === 1)?.options ||
       this.options.find(x => x.type === 1)?.options ||
@@ -90,10 +85,10 @@ export default class CommandMessageArgs {
 
     const channelId = opts.find((x: any) => x.type === 7 && argName === x.name)?.value;
 
-    return this.bot.getChannel(channelId);
+    return this.bot.client.getChannel(channelId);
   }
 
-  public async consumeUser(argName: string): Promise<User> {
+  public consumeUser(argName: string): User | undefined {
     const opts =
       this.options.find(x => x.type === 2)?.options.find((x: any) => x.type === 1)?.options ||
       this.options.find(x => x.type === 1)?.options ||
@@ -103,13 +98,13 @@ export default class CommandMessageArgs {
       opts.find((x: any) => (x.type === 6 || x.type === 9) && argName === x.name)
     )).value;
 
-    return this.bot.getUser(userId);
+    return this.bot.client.users.get(userId);
   }
 
-  public async consumeRole(argName: string): Promise<Role | undefined> {
+  public consumeRole(argName: string): Role | undefined {
     const value = (<InteractionDataOptionsRole>this.options.find(x => x.type === 8 && argName === x.name))?.value;
-
-    return this.bot.getRole(this.message.guildId, value);
+    const guild = this.bot.client.guilds.get(this.message.guildId);
+    return guild?.roles.find(x => x.id === value);
   }
 
   public consumeBoolean(argName: string): boolean {
