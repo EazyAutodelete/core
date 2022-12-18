@@ -1,6 +1,6 @@
 import { DatabaseHandler } from "@eazyautodelete/db-client";
 import Translator from "@eazyautodelete/translator";
-import { Channel, Client, ClientOptions, ExtendedUser, Guild, Member, Role, User } from "eris";
+import { Channel, Client, ClientOptions, ExtendedUser, Guild, Member, Role, Shard, User } from "eris";
 import CommandCollection from "./collections/CommandCollection";
 import ModuleCollection from "./collections/ModuleCollection";
 import Logger from "@eazyautodelete/logger";
@@ -87,8 +87,12 @@ class Bot {
     return this._client.user;
   }
 
-  public shard(): number {
-    return this._client.guilds.random()?.shard.id || 0;
+  public get shard(): Shard | undefined {
+    return this._client.guilds.random()?.shard;
+  }
+
+  public get shardId(): number {
+    return this.shard?.id || 0;
   }
 
   public async setup(options: BotOptions) {
@@ -127,7 +131,7 @@ class Bot {
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this._logger = new Logger({ shardId: this.shard(), clusterId: (<any>this._client).cluster.id });
+    this._logger = new Logger({ shardId: this.shardId, clusterId: (<any>this._client).cluster.id });
 
     this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
     await this._database.connect();
@@ -194,7 +198,7 @@ class Bot {
 
   public async login() {
     await this._client.connect();
-    this._logger.setShardId(this.shard());
+    this._logger.setShardId(this.shardId);
   }
 
   public translate(key: string, language: string, ...args: string[]): string {
