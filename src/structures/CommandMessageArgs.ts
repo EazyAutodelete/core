@@ -45,6 +45,10 @@ export default class CommandMessageArgs {
     return this.options?.find(x => x.type === 1)?.name || null;
   }
 
+  getSubcommandGroup(): string | null {
+    return this.options?.find(x => x.type === 2)?.name || null;
+  }
+
   public consume(argName: string): string | null;
   public consume(argNames: string[]): string[] | null[];
   public consume(argName: string | string[]): string | (null | string)[] | null {
