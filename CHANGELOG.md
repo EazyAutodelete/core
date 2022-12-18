@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.24](https://github.com/eazyautodelete/core/compare/v4.1.23...v4.1.24) (2022-12-18)
+
+
+### Bug Fixes
+
+* **shard:** add status on ready ([004968c](https://github.com/eazyautodelete/core/commit/004968c0d5e4130232b235c538fcc996d0fa3d38))
+
 ### [4.1.23](https://github.com/eazyautodelete/core/compare/v4.1.22...v4.1.23) (2022-12-18)
 
 
