@@ -55,6 +55,10 @@ class Bot {
     };
   }
 
+  public get cluster(): Cluster.Client {
+    return (<any>this._client).cluster;
+  }
+
   public get client(): Client {
     return this._client;
   }
