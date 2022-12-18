@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.22](https://github.com/eazyautodelete/core/compare/v4.1.21...v4.1.22) (2022-12-18)
+
+
+### Bug Fixes
+
+* **bot:** dont use deactivated rest methods ([6b69111](https://github.com/eazyautodelete/core/commit/6b691110997e4fb953a6ffb56677436eb566c2af))
+
 ### [4.1.21](https://github.com/eazyautodelete/core/compare/v4.1.20...v4.1.21) (2022-12-18)
 
 ### [4.1.20](https://github.com/eazyautodelete/core/compare/v4.1.19...v4.1.20) (2022-12-18)
