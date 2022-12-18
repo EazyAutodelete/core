@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.9](https://github.com/eazyautodelete/core/compare/v4.1.8...v4.1.9) (2022-12-18)
+
+
+### Bug Fixes
+
+* **buttons:** fix button types ([07b6142](https://github.com/eazyautodelete/core/commit/07b61422de12e237643a5c44bdd1fea74d5e84f0))
+
 ### [4.1.8](https://github.com/eazyautodelete/core/compare/v4.1.7...v4.1.8) (2022-12-18)
 
 
