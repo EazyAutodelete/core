@@ -12,6 +12,8 @@ import {
   InteractionDataOptionsString,
   InteractionDataOptionsChannel,
   InteractionDataOptionsBoolean,
+  InteractionDataOptionsSubCommand,
+  InteractionDataOptionsSubCommandGroup,
 } from "eris";
 import Bot from "./Bot";
 
@@ -28,6 +30,8 @@ export default class CommandMessageArgs {
       (this.message.interaction.data.options as
         | InteractionDataOptionsWithValue[]
         | InteractionDataOptions[]
+        | InteractionDataOptionsSubCommand[]
+        | InteractionDataOptionsSubCommandGroup[]
         | undefined) || [];
     this.command = this.getCommand();
   }
@@ -42,10 +46,14 @@ export default class CommandMessageArgs {
   }
 
   public getSubcommand(): string | null {
-    return this.options?.find(x => x.type === 1)?.name || null;
+    return (
+      this.options?.find(x => x.type === 1)?.name ||
+      (<any>this.options?.find(x => x.type === 2)).options.find((x: any) => x.type === 1).value ||
+      null
+    );
   }
 
-  getSubcommandGroup(): string | null {
+  public getSubcommandGroup(): string | null {
     return this.options?.find(x => x.type === 2)?.name || null;
   }
 
