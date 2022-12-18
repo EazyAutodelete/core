@@ -153,6 +153,7 @@ class Bot {
       maxShards: options.sharding.maxShards || 1,
       firstShardID: options.sharding.firstShardID || 0,
       lastShardID: options.sharding.lastShardID || 0,
+      messageLimit: options.performance.messageLimit || 100,
     };
 
     this.shardList = options.sharding.shardList || [0];
