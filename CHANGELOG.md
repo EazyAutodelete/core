@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.15](https://github.com/eazyautodelete/core/compare/v4.1.14...v4.1.15) (2022-12-18)
+
+
+### Bug Fixes
+
+* **response:** await createMessage ([4ff77e6](https://github.com/eazyautodelete/core/commit/4ff77e650bc44ff89277eb4a88fa371868f392ac))
+
 ### [4.1.14](https://github.com/eazyautodelete/core/compare/v4.1.13...v4.1.14) (2022-12-18)
 
 
