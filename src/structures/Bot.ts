@@ -178,6 +178,8 @@ class Bot {
       messageLimit: options.performance.messageLimit || 100,
     };
 
+    this._config.sharding = options.sharding;
+
     this.shardList = options.sharding.shardList || [0];
 
     this._token = options.token;
