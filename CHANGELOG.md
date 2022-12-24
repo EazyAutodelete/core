@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.30](https://github.com/eazyautodelete/core/compare/v4.1.29...v4.1.30) (2022-12-24)
+
+
+### Bug Fixes
+
+* **components:** fix editSource method ([15ab1eb](https://github.com/eazyautodelete/core/commit/15ab1eb9f5afc44264f5d18b634fcdbb116a7f61))
+
 ### [4.1.29](https://github.com/eazyautodelete/core/compare/v4.1.28...v4.1.29) (2022-12-18)
 
 
