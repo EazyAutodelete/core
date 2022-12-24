@@ -149,8 +149,7 @@ class CommandMenu extends Base {
 
   async editSource(payload: MessageContent) {
     try {
-      this.interaction.message.edit;
-      await this.interaction.message.edit(payload).catch(this.logger.error);
+      await this.interaction.editMessage(this.interaction.message.id, payload).catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }
