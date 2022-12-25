@@ -110,7 +110,7 @@ class Command extends Base {
             type: 2,
             style: 5,
             label: "Help",
-            emoji: { name: "❓" },
+            emoji: { name: "❓", id: undefined },
             url: "https://docs.eazyautodelete.xyz/" + url,
           },
         ],
