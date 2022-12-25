@@ -88,12 +88,11 @@ class Command extends Base {
             type: 2,
             style: 5,
             label: label,
-            emoji:
-              (typeof emoji === "string"
-                ? emoji.length > 2
-                  ? { name: emoji.split(":")[1], id: emoji.split(":")[2]?.replace(">", "") || undefined }
-                  : { name: emoji, id: undefined }
-                : emoji) || undefined,
+            emoji: (typeof emoji === "string"
+              ? emoji.length > 2
+                ? { name: emoji.split(":")[1], id: emoji.split(":")[2]?.replace(">", "") || undefined }
+                : { name: emoji, id: undefined }
+              : emoji) || { name: "🔗", id: undefined },
             url: url,
           },
         ],
