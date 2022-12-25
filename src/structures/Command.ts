@@ -79,7 +79,7 @@ class Command extends Base {
     };
   }
 
-  urlButton(url: string, label: string, emoji?: string): ActionRow[] {
+  urlButton(url: string, label: string, emoji?: { name: string; id: string | null | undefined } | string): ActionRow[] {
     return [
       {
         type: 1,
@@ -88,7 +88,10 @@ class Command extends Base {
             type: 2,
             style: 5,
             label: label,
-            emoji: emoji ? { name: emoji } : undefined,
+            emoji:
+              (typeof emoji === "string"
+                ? { name: emoji.split(":")[1], id: emoji.split(":")[2].replace(">", "") }
+                : emoji) || undefined,
             url: url,
           },
         ],
