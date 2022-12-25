@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.31](https://github.com/eazyautodelete/core/compare/v4.1.30...v4.1.31) (2022-12-25)
+
+
+### Bug Fixes
+
+* **cmd:** fix emoji ([b9afd02](https://github.com/eazyautodelete/core/commit/b9afd02c40feea42852f684f4a211a2bcd8aba69))
+
 ### [4.1.30](https://github.com/eazyautodelete/core/compare/v4.1.29...v4.1.30) (2022-12-24)
 
 
