@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.35](https://github.com/eazyautodelete/core/compare/v4.1.34...v4.1.35) (2022-12-25)
+
+
+### Bug Fixes
+
+* **urlbutton+:** fix emohi ([d960733](https://github.com/eazyautodelete/core/commit/d9607336606a81cf1e731e2c9b4451716b07e332))
+
 ### [4.1.34](https://github.com/eazyautodelete/core/compare/v4.1.33...v4.1.34) (2022-12-25)
 
 
