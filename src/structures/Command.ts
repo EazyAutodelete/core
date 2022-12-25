@@ -90,7 +90,9 @@ class Command extends Base {
             label: label,
             emoji:
               (typeof emoji === "string"
-                ? { name: emoji.split(":")[1], id: emoji.split(":")[2].replace(">", "") }
+                ? emoji.length > 1
+                  ? { name: emoji.split(":")[1], id: emoji.split(":")[2]?.replace(">", "") || undefined }
+                  : { name: emoji, id: undefined }
                 : emoji) || undefined,
             url: url,
           },
