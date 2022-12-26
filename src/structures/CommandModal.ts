@@ -146,9 +146,9 @@ class CommandModal extends Base {
 
   async editSource(payload: MessageContent) {
     try {
-      await this.interaction
-        .editMessage((await this.interaction.getOriginalMessage()).id, payload)
-        .catch(this.logger.error);
+      if (!this.interaction.message) return;
+
+      await this.interaction.editMessage(this.interaction.message.id, payload).catch(this.logger.error);
     } catch (e) {
       this.logger.error(e as string);
     }
