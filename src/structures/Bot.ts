@@ -1,20 +1,6 @@
 import { DatabaseHandler } from "@eazyautodelete/db-client";
 import Translator from "@eazyautodelete/translator";
-import {
-  Channel,
-  Client,
-  ClientOptions,
-  ExtendedUser,
-  Guild,
-  GuildChannel,
-  Member,
-  Role,
-  Shard,
-  TextableChannel,
-  TextChannel,
-  User,
-  VoiceChannel,
-} from "eris";
+import { Client, ClientOptions, ExtendedUser, Shard } from "eris";
 import CommandCollection from "./collections/CommandCollection";
 import ModuleCollection from "./collections/ModuleCollection";
 import Logger from "@eazyautodelete/logger";
@@ -24,8 +10,9 @@ import PermissionsManager from "./managers/PermissionsManager";
 import ResponseManager from "./managers/ResponseManager";
 import * as utils from "@eazyautodelete/bot-utils";
 import { BotOptions } from "..";
-import Collection from "./collections/Collection";
 import * as sharding from "discord-hybrid-sharding";
+import { type } from "os";
+import { ifError } from "assert";
 
 class Bot {
   public isReady: boolean;
@@ -115,7 +102,7 @@ class Bot {
 
     this._client.on("error", err => this._logger.error(err.toString()));
     this._client.on("warn", err => {
-      if (!err.startsWith("Invalid session")) this._logger.warn(err.toString());
+      err && ("string" != typeof err || !err.startsWith("Invalid session")) && this._logger.warn(err.toString());
     });
     this._client.on("ready", () => {
       this._client.emit("clientReady");
