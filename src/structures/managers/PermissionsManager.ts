@@ -46,7 +46,11 @@ class PermissionsManager extends Base {
   }
 
   public isServerMod(member: Member, guildConfig: GuildSettings): boolean {
-    return member.roles.some(role => guildConfig.modroles.includes(role)) || this.isBotAdmin(member.user.id);
+    return (
+      member.roles.some(role => guildConfig.modroles.includes(role)) ||
+      this.isServerAdmin(member, guildConfig) ||
+      this.isBotAdmin(member.user.id)
+    );
   }
 }
 
