@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.44](https://github.com/eazyautodelete/core/compare/v4.1.43...v4.1.44) (2023-01-08)
+
+
+### Bug Fixes
+
+* **bot:** use correct intents ([e5cfe28](https://github.com/eazyautodelete/core/commit/e5cfe281588d6a4c0b0f96b52753ba407916d8f1))
+
 ### [4.1.43](https://github.com/eazyautodelete/core/compare/v4.1.42...v4.1.43) (2023-01-08)
 
 
