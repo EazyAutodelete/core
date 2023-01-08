@@ -158,11 +158,12 @@ class Bot {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async _configure(options: any = {}) {
     this._clientOptions = {
-      intents: options.gateway.intents || ["all"],
+      intents: options.gateway.intents || ["all", "guildMembers", "guilds"],
       maxShards: options.sharding.maxShards || 1,
       firstShardID: options.sharding.firstShardID || 0,
       lastShardID: options.sharding.lastShardID || 0,
       messageLimit: options.performance.messageLimit || 100,
+      getAllUsers: options.performance.getAllUsers || false,
     };
 
     this._config.sharding = options.sharding;
