@@ -11,8 +11,6 @@ import ResponseManager from "./managers/ResponseManager";
 import * as utils from "@eazyautodelete/bot-utils";
 import { BotOptions } from "..";
 import * as sharding from "discord-hybrid-sharding";
-import { type } from "os";
-import { ifError } from "assert";
 
 class Bot {
   public isReady: boolean;
