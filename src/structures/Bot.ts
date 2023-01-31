@@ -98,9 +98,9 @@ class Bot {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (<any>this._client).cluster = new sharding.Client(this._client);
 
-    this._client.on("error", err => this._logger.error(err.toString()));
+    this._client.on("error", err => this._logger.error(err.stack || err.toString()));
     this._client.on("warn", err => {
-      err && ("string" != typeof err || !err.startsWith("Invalid session")) && this._logger.warn(err.toString());
+      err && ("string" != typeof err || !err.startsWith("Invalid session")) && this._logger.warn(err);
     });
     this._client.on("ready", () => {
       this._client.emit("clientReady");
