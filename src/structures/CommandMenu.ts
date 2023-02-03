@@ -37,7 +37,7 @@ class CommandMenu extends Base {
     this.id = interaction.id;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guildId = interaction.guildID!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     this.user = this.interaction.member?.user!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guild = this.bot.client.guilds.get(this.guildId)!;
@@ -68,7 +68,7 @@ class CommandMenu extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMenu:error]: ` + e);
     }
 
     return this;
@@ -92,7 +92,7 @@ class CommandMenu extends Base {
         .send(this.interaction, embeds, ephemeral, Array.isArray(components) ? components : [components])
         .catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMenu:send]: ` + e);
     }
     return this;
   }
@@ -107,7 +107,7 @@ class CommandMenu extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMenu:success]: ` + e);
     }
 
     return this;
@@ -123,7 +123,7 @@ class CommandMenu extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMenu:info]: ` + e);
     }
 
     return this;
@@ -133,7 +133,7 @@ class CommandMenu extends Base {
     try {
       await this.interaction.deleteOriginalMessage().catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMenu:delete]: ` + e);
     }
     return this;
   }
@@ -142,7 +142,7 @@ class CommandMenu extends Base {
     try {
       await this.interaction.editOriginalMessage(payload).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMenu:edit]: ` + e);
     }
     return this;
   }
@@ -151,7 +151,7 @@ class CommandMenu extends Base {
     try {
       await this.interaction.editMessage(this.interaction.message.id, payload).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMenu:editSource]: ` + e);
     }
   }
 
@@ -159,7 +159,7 @@ class CommandMenu extends Base {
     try {
       await this.interaction.defer(ephemeral ? 64 : 0).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMenu:continue]: ` + e);
     }
 
     return this;
@@ -169,7 +169,7 @@ class CommandMenu extends Base {
     try {
       await this.interaction.deferUpdate().catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMenu:deferUpdate]: ` + e);
     }
 
     return this;

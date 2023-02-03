@@ -48,6 +48,7 @@ class Bot {
   }
 
   public get cluster(): sharding.Client {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (<any>this._client).cluster;
   }
 
@@ -98,7 +99,7 @@ class Bot {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (<any>this._client).cluster = new sharding.Client(this._client);
 
-    this._client.on("error", err => this._logger.error(err.stack || err.toString()));
+    this._client.on("error", err => this._logger.error(`[Core:Bot:setup]: ` + (err.stack || err.toString())));
     this._client.on("warn", err => {
       err && ("string" != typeof err || !err.startsWith("Invalid session")) && this._logger.warn(err);
     });
@@ -190,6 +191,8 @@ class Bot {
       botAdmins: options.staff.botAdmins || [],
       botMods: options.staff.botMods || [],
     };
+
+    this._config.webhooks = options.webhooks || {};
 
     this._config.performance = options.performance;
 

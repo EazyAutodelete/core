@@ -33,7 +33,7 @@ class CommandMessage extends Base {
     this.id = interaction.id;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guildId = interaction.guildID!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     this.user = this.interaction.member?.user!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guild = this.bot.client.guilds.get(this.guildId)!;
@@ -64,7 +64,7 @@ class CommandMessage extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMessage:error]: ` + e);
     }
 
     return this;
@@ -88,7 +88,7 @@ class CommandMessage extends Base {
         .send(this.interaction, embeds, ephemeral, Array.isArray(components) ? components : [components])
         .catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMessage:send]: ` + e);
     }
     return this;
   }
@@ -103,7 +103,7 @@ class CommandMessage extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMessage:success]: ` + e);
     }
 
     return this;
@@ -119,7 +119,7 @@ class CommandMessage extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMessage:info]: ` + e);
     }
 
     return this;
@@ -129,7 +129,7 @@ class CommandMessage extends Base {
     try {
       await this.interaction.deleteOriginalMessage().catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMessage:delete]: ` + e);
     }
     return this;
   }
@@ -138,7 +138,7 @@ class CommandMessage extends Base {
     try {
       await this.interaction.editOriginalMessage(payload).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMessage:edit]: ` + e);
     }
     return this;
   }
@@ -147,7 +147,7 @@ class CommandMessage extends Base {
     try {
       await this.interaction.defer(ephemeral ? 64 : 0).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandMessage:continue]: ` + e);
     }
 
     return this;

@@ -59,7 +59,7 @@ class ModuleCollection extends Collection {
 
       this.get(module.name)._start(this.bot);
     } catch (err) {
-      console.error(err);
+      this.logger.error(`[Core:ModuleCollection:register]: ` + err);
     }
   }
 

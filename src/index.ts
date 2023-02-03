@@ -58,4 +58,10 @@ export interface BotOptions {
   gateway: {
     intents: string[];
   };
+  webhooks?: {
+    error?: string;
+    warn?: string;
+    guilds?: string;
+    channels?: string;
+  }
 }

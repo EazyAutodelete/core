@@ -37,7 +37,7 @@ export default class CommandButton extends Base {
     this.id = interaction.id;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guildId = interaction.guildID!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     this.user = this.interaction.member?.user!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guild = this.bot.client.guilds.get(this.guildId)!;
@@ -68,7 +68,7 @@ export default class CommandButton extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandButton:error]: ` + e);
     }
 
     return this;
@@ -92,7 +92,7 @@ export default class CommandButton extends Base {
         .send(this.interaction, embeds, ephemeral, Array.isArray(components) ? components : [components])
         .catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandButton:send]: ` + e);
     }
     return this;
   }
@@ -107,7 +107,7 @@ export default class CommandButton extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandButton:success]: ` + e);
     }
 
     return this;
@@ -123,7 +123,7 @@ export default class CommandButton extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandButton:info]: ` + e);
     }
 
     return this;
@@ -133,7 +133,7 @@ export default class CommandButton extends Base {
     try {
       await this.interaction.deleteOriginalMessage().catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandButton:delete]: ` + e);
     }
     return this;
   }
@@ -142,7 +142,7 @@ export default class CommandButton extends Base {
     try {
       await this.interaction.editMessage(this.interaction.message.id, payload).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandButton:edit]: ` + e);
     }
     return this;
   }
@@ -151,7 +151,7 @@ export default class CommandButton extends Base {
     try {
       await this.interaction.editMessage(this.interaction.message.id, payload).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandButton:editSource]: ` + e);
     }
   }
 
@@ -159,7 +159,7 @@ export default class CommandButton extends Base {
     try {
       await this.interaction.defer(ephemeral ? 64 : 0).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandButton:continue]: ` + e);
     }
 
     return this;
@@ -169,7 +169,7 @@ export default class CommandButton extends Base {
     try {
       await this.interaction.deferUpdate().catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandButton:deferUpdate]: ` + e);
     }
 
     return this;

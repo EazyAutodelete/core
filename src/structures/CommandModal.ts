@@ -34,7 +34,7 @@ class CommandModal extends Base {
     this.id = interaction.id;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guildId = interaction.guildID!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     this.user = this.interaction.member?.user!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.guild = this.bot.client.guilds.get(this.guildId)!;
@@ -65,7 +65,7 @@ class CommandModal extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandModal:error]: ` + e);
     }
 
     return this;
@@ -89,7 +89,7 @@ class CommandModal extends Base {
         .send(this.interaction, embeds, ephemeral, Array.isArray(components) ? components : [components])
         .catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandModal:send]: ` + e);
     }
     return this;
   }
@@ -104,7 +104,7 @@ class CommandModal extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandModal:success]: ` + e);
     }
 
     return this;
@@ -120,7 +120,7 @@ class CommandModal extends Base {
         true
       ).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandModal:info]: ` + e);
     }
 
     return this;
@@ -130,7 +130,7 @@ class CommandModal extends Base {
     try {
       await this.interaction.deleteOriginalMessage().catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandModal:delete]: ` + e);
     }
     return this;
   }
@@ -139,7 +139,7 @@ class CommandModal extends Base {
     try {
       await this.interaction.editOriginalMessage(payload).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandModal:edit]: ` + e);
     }
     return this;
   }
@@ -150,7 +150,7 @@ class CommandModal extends Base {
 
       await this.interaction.editMessage(this.interaction.message.id, payload).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandModal:editSource]: ` + e);
     }
   }
 
@@ -158,7 +158,7 @@ class CommandModal extends Base {
     try {
       await this.interaction.defer(ephemeral ? 64 : 0).catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandModal:continue]: ` + e);
     }
 
     return this;
@@ -168,7 +168,7 @@ class CommandModal extends Base {
     try {
       await this.interaction.deferUpdate().catch(this.logger.error);
     } catch (e) {
-      this.logger.error(e as string);
+      this.logger.error(`[Core:CommandModal:deferUpdate]: ` + e);
     }
 
     return this;
