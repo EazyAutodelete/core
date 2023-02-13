@@ -24,7 +24,7 @@ class Bot {
   public staff!: { botAdmins: string[]; botMods: string[] };
 
   private _logger!: Logger;
-  private _client!: Client;
+  private _client!: Client & { _bot?: Bot };
   private _database!: DatabaseHandler;
 
   private _clientOptions!: ClientOptions;
@@ -52,7 +52,7 @@ class Bot {
     return (<any>this._client).cluster;
   }
 
-  public get client(): Client {
+  public get client() {
     return this._client;
   }
 
@@ -95,6 +95,7 @@ class Bot {
     this.utils = utils;
 
     this._client = new Client(this._token, this._clientOptions);
+    this._client._bot = this;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (<any>this._client).cluster = new sharding.Client(this._client);

@@ -63,5 +63,5 @@ export interface BotOptions {
     warn?: string;
     guilds?: string;
     channels?: string;
-  }
+  };
 }
