@@ -48,13 +48,13 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "@eazyautodelete/bot-utils": "^1.1.1",
-    "@eazyautodelete/db-client": "^1.5.0",
+    "@eazyautodelete/bot-utils": "^1.2.1",
+    "@eazyautodelete/db-client": "^1.5.1",
     "@eazyautodelete/logger": "^1.0.6",
     "@eazyautodelete/translator": "^1.3.7",
     "axios": "^0.24.0",
     "discord-api-types": "^0.37.21",
-    "discord-hybrid-sharding": "^1.7.5",
+    "discord-hybrid-sharding": "github:meister03/discord-hybrid-sharding",
     "eris": "github:EazyAutodelete/eris"
   },
   "config": {
