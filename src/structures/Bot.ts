@@ -10,7 +10,7 @@ import PermissionsManager from "./managers/PermissionsManager";
 import ResponseManager from "./managers/ResponseManager";
 import * as utils from "@eazyautodelete/bot-utils";
 import { BotOptions } from "..";
-import { ClusterClient } from "discord-hybrid-sharding";
+import * as sharding from "discord-hybrid-sharding";
 
 class Bot {
   public isReady: boolean;
@@ -47,7 +47,7 @@ class Bot {
     this.startTime = Date.now();
   }
 
-  public get cluster(): ClusterClient<this> {
+  public get cluster(): sharding.Client {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (<any>this._client).cluster;
   }
@@ -98,7 +98,7 @@ class Bot {
     this._client._bot = this;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (<any>this._client).cluster = new ClusterClient(this._client);
+    (<any>this._client).cluster = new sharding.Client(this._client);
 
     this._client.on("error", err => this._logger.error(`[Core:Bot:setup]: ` + (err.stack || err.toString())));
     this._client.on("warn", err => {
