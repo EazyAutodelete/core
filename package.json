@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@eazyautodelete/bot-utils": "^1.2.1",
-    "@eazyautodelete/db-client": "^2.4.3",
+    "@eazyautodelete/db-client": "^2.4.4",
     "@eazyautodelete/logger": "^1.0.6",
     "@eazyautodelete/translator": "^1.4.2",
     "axios": "^0.24.0",
