@@ -101,13 +101,22 @@ class Bot {
     (<any>this._client).cluster = new sharding.Client(this._client);
 
     this._client.on("error", err => {
-      if (err.message.startsWith("Connection reset by peer")) return;
-      this._logger.error(`[Core:Bot:setup]: ` + (err.stack || err.toString()));
+      const errStr = err.stack || err.message || err.toString();
+      if (!errStr) return;
+
+      if (errStr.startsWith("Error: Connection reset by peer"))
+        return this._logger.warn("[WS] Connection reset by peer");
+
+      if (errStr.startsWith("Error: 1001: CloudFlare WebSocket"))
+        return this._logger.warn("[WS] CloudFlare WebSocket proxy restarting");
+
+      this._logger.error(`[Bot:onError]: ` + errStr);
     });
     this._client.on("warn", err => {
       err && ("string" != typeof err || !err.startsWith("Invalid session")) && this._logger.warn(err);
     });
-    this._client.on("ready", () => {
+
+    this._client.once("ready", () => {
       this._client.emit("clientReady");
 
       this._logger.info("-", "BLANK");
