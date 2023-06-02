@@ -11,6 +11,7 @@ import ResponseManager from "./managers/ResponseManager";
 import * as utils from "@eazyautodelete/bot-utils";
 import { BotOptions } from "..";
 import * as sharding from "discord-hybrid-sharding";
+import LogManager from "@eazyautodelete/log-manager";
 
 class Bot {
   public isReady: boolean;
@@ -26,6 +27,7 @@ class Bot {
   private _logger!: Logger;
   private _client!: Client & { _bot?: Bot };
   private _database!: DatabaseHandler;
+  private _logs!: LogManager;
 
   private _clientOptions!: ClientOptions;
 
@@ -66,6 +68,10 @@ class Bot {
 
   public get db() {
     return this._database;
+  }
+
+  public get logs() {
+    return this._logs;
   }
 
   public get uptime() {
@@ -148,6 +154,8 @@ class Bot {
 
     this._database = new DatabaseHandler({ mongo: this._config.mongo, redis: this._config.redis }, this._logger);
     await this._database.connect();
+
+    this._logs = new LogManager(this._database);
 
     this.dispatcher = new Dispatcher(this);
 
