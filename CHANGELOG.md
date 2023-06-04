@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.0](https://github.com/eazyautodelete/core/compare/v4.1.70...v4.2.0) (2023-06-04)
+
+
+### Features
+
+* **events:** add threads events ([32fe2e6](https://github.com/eazyautodelete/core/commit/32fe2e6521ae3adfa13de02b3d8ef08814e648a0))
+
 ### [4.1.70](https://github.com/eazyautodelete/core/compare/v4.1.69...v4.1.70) (2023-06-04)
 
 ### [4.1.69](https://github.com/eazyautodelete/core/compare/v4.1.68...v4.1.69) (2023-06-04)
