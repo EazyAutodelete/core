@@ -39,6 +39,8 @@ class Dispatcher extends Base {
       "messageReactionAdd",
       "messageReactionRemove",
       "messageReactionRemoveAll",
+      "threadCreate",
+      "threadDelete",
     ];
   }
 
