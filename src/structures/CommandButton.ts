@@ -131,7 +131,9 @@ export default class CommandButton extends Base {
 
   async delete(): Promise<CommandButton> {
     try {
-      await this.interaction.deleteOriginalMessage().catch(this.logger.error);
+      if (!this.interaction.message) return this;
+
+      await this.interaction.deleteMessage(this.interaction.message.id).catch(this.logger.error);
     } catch (e) {
       this.logger.error(`[Core:CommandButton:delete]: ` + e);
     }

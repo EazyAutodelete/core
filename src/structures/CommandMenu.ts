@@ -131,7 +131,9 @@ class CommandMenu extends Base {
 
   async delete(): Promise<CommandMenu> {
     try {
-      await this.interaction.deleteOriginalMessage().catch(this.logger.error);
+      if (!this.interaction.message) return this;
+
+      await this.interaction.deleteMessage(this.interaction.message.id).catch(this.logger.error);
     } catch (e) {
       this.logger.error(`[Core:CommandMenu:delete]: ` + e);
     }
@@ -147,12 +149,13 @@ class CommandMenu extends Base {
     return this;
   }
 
-  async editSource(payload: MessageContent) {
+  async editSource(payload: MessageContent): Promise<CommandMenu> {
     try {
       await this.interaction.editMessage(this.interaction.message.id, payload).catch(this.logger.error);
     } catch (e) {
       this.logger.error(`[Core:CommandMenu:editSource]: ` + e);
     }
+    return this;
   }
 
   async continue(ephemeral = true): Promise<CommandMenu> {

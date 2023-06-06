@@ -128,7 +128,9 @@ class CommandModal extends Base {
 
   async delete(): Promise<CommandModal> {
     try {
-      await this.interaction.deleteOriginalMessage().catch(this.logger.error);
+      if (!this.interaction.message) return this;
+
+      await this.interaction.deleteMessage(this.interaction.message.id).catch(this.logger.error);
     } catch (e) {
       this.logger.error(`[Core:CommandModal:delete]: ` + e);
     }
@@ -144,14 +146,15 @@ class CommandModal extends Base {
     return this;
   }
 
-  async editSource(payload: MessageContent) {
+  async editSource(payload: MessageContent): Promise<CommandModal> {
     try {
-      if (!this.interaction.message) return;
+      if (!this.interaction.message) return this;
 
       await this.interaction.editMessage(this.interaction.message.id, payload).catch(this.logger.error);
     } catch (e) {
       this.logger.error(`[Core:CommandModal:editSource]: ` + e);
     }
+    return this;
   }
 
   async continue(ephemeral = true): Promise<CommandModal> {
