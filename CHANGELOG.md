@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.3.1](https://github.com/eazyautodelete/core/compare/v4.3.0...v4.3.1) (2023-06-07)
+
+
+### Bug Fixes
+
+* **bot:** export premium manager ([7ea2a96](https://github.com/eazyautodelete/core/commit/7ea2a969bf785bbf7d5e473be037b4da91b406c3))
+
 ## [4.3.0](https://github.com/eazyautodelete/core/compare/v4.2.9...v4.3.0) (2023-06-07)
 
 
