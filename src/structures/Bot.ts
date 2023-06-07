@@ -8,6 +8,7 @@ import CooldownsManager from "./managers/CooldownsManager";
 import Dispatcher from "./managers/Dispatcher";
 import PermissionsManager from "./managers/PermissionsManager";
 import ResponseManager from "./managers/ResponseManager";
+import PremiumManager from "./managers/PremiumMananger";
 import * as utils from "@eazyautodelete/bot-utils";
 import { BotOptions } from "..";
 import * as sharding from "discord-hybrid-sharding";
@@ -22,6 +23,7 @@ class Bot {
   public permissions!: PermissionsManager;
   public cooldowns!: CooldownsManager;
   public response!: ResponseManager;
+  public premium!: PremiumManager;
   public staff!: { botAdmins: string[]; botMods: string[] };
 
   private _logger!: Logger;
@@ -156,6 +158,8 @@ class Bot {
     await this._database.connect();
 
     this._logs = new LogManager(this._database);
+
+    this.premium = new PremiumManager(this);
 
     this.dispatcher = new Dispatcher(this);
 
