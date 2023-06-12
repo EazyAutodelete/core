@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@eazyautodelete/bot-utils": "^1.2.2",
-    "@eazyautodelete/db-client": "^2.6.4",
+    "@eazyautodelete/db-client": "^2.7.0",
     "@eazyautodelete/log-manager": "^1.0.8",
     "@eazyautodelete/logger": "^1.0.6",
     "@eazyautodelete/translator": "^1.4.2",
