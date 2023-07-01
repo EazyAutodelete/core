@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.3.8](https://github.com/eazyautodelete/core/compare/v4.3.7...v4.3.8) (2023-07-01)
+
 ### [4.3.7](https://github.com/eazyautodelete/core/compare/v4.3.6...v4.3.7) (2023-07-01)
 
 ### [4.3.6](https://github.com/eazyautodelete/core/compare/v4.3.5...v4.3.6) (2023-06-12)
