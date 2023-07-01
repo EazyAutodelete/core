@@ -53,7 +53,7 @@
     "@eazyautodelete/db-client": "^2.7.0",
     "@eazyautodelete/log-manager": "^1.1.0",
     "@eazyautodelete/logger": "^1.0.6",
-    "@eazyautodelete/translator": "^1.4.2",
+    "@eazyautodelete/translator": "^1.5.0",
     "axios": "^0.24.0",
     "discord-api-types": "^0.37.21",
     "discord-hybrid-sharding": "^1.7.5",
